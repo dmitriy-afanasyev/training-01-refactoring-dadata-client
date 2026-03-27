@@ -14,8 +14,12 @@
     </testsuites>
     <source>
         <include>
-            <directory>app</directory>
+            <directory suffix=".php">app/Geocoder</directory>
         </include>
+        <exclude>
+            <directory>app/Geocoder/Domain/Exceptions</directory>
+            <directory>app/Geocoder/Application/Exceptions</directory>
+        </exclude>
     </source>
     <php>
         <env name="APP_ENV" value="testing"/>

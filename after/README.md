@@ -1,58 +1,217 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Geocoder Module - DaData API Client
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+[![PHP Version](https://img.shields.io/badge/PHP-8.5-777BB4)](https://php.net)
+[![Laravel](https://img.shields.io/badge/Laravel-13.x-FF2D20)](https://laravel.com)
 
-## About Laravel
+Модуль для работы с DaData API в рамках Laravel-приложения.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 📋 Структура модуля
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+```
+app/Geocoder/
+├── Domain/                    # Domain Layer (ядро)
+│   ├── Entities/              # Сущности (Party, Bank, Address)
+│   ├── ValueObjects/          # Объекты-значения (Inn, Bic)
+│   ├── Repositories/          # Интерфейсы репозиториев
+│   └── Exceptions/            # Доменные исключения
+│
+├── Infrastructure/            # Infrastructure Layer
+│   ├── Http/Dadata/          # HTTP-клиент для DaData API
+│   └── Persistence/           # Реализации репозиториев
+│
+├── Application/               # Application Layer
+│   ├── Services/              # Сервисы приложения
+│   ├── DTO/                   # DTO для передачи данных
+│   └── Exceptions/            # Исключения приложения
+│
+├── UI/                        # Interface Layer
+│   └── Http/Controllers/      # HTTP-контроллеры
+│
+├── Providers/                 # Service Providers
+│   └── GeocoderServiceProvider.php
+│
+└── config/                    # Конфигурация модуля
+    └── geocoder.php
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## 🚀 Быстрый старт
 
-## Contributing
+### 1. Установка зависимостей
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+cd after
+composer install
+```
 
-## Code of Conduct
+### 2. Настройка окружения
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-## Security Vulnerabilities
+### 3. Настройка DaData API
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+В файле `.env` укажите ваш API ключ DaData:
 
-## License
+```env
+DADATA_API_KEY=ваш_ключ
+DADATA_BASE_URL=https://suggestions.dadata.ru/suggestions/api/4_1/rs
+```
+
+Получить API ключ можно на https://dadata.ru/api/
+
+### 4. Запуск через Docker (Laravel Sail)
+
+```bash
+# Запуск контейнеров
+./vendor/bin/sail up -d
+
+# Запуск тестов
+./vendor/bin/sail test
+
+# Запуск тестов с покрытием
+./vendor/bin/sail php artisan test --coverage
+```
+
+### 5. Запуск без Docker
+
+```bash
+# Миграция БД
+php artisan migrate
+
+# Запуск тестов
+php artisan test
+
+# Запуск сервера
+php artisan serve
+```
+
+## 📡 API Endpoints
+
+### Получить данные организации по ИНН
+
+```bash
+GET /api/dadata/party/by-inn?inn=7707083893
+```
+
+**Ответ:**
+```json
+{
+  "success": true,
+  "data": {
+    "name": "ПАО \"СБЕРБАНК\"",
+    "short_name": "СБЕРБАНК",
+    "inn": "7707083893",
+    "kpp": "773601001",
+    "status": "ACTIVE"
+  }
+}
+```
+
+### Получить данные банка по БИК
+
+```bash
+GET /api/dadata/bank/by-bic?bic=044525225
+```
+
+### Поиск адресов
+
+```bash
+GET /api/dadata/address/search?query=Москва
+```
+
+### Поиск стран
+
+```bash
+GET /api/dadata/country/search?query=Россия
+```
+
+## 🧪 Тестирование
+
+### Запуск всех тестов
+
+```bash
+./vendor/bin/sail test
+```
+
+### Запуск только Unit-тестов
+
+```bash
+./vendor/bin/sail php artisan test --testsuite=Unit
+```
+
+### Запуск только Feature-тестов
+
+```bash
+./vendor/bin/sail php artisan test --testsuite=Feature
+```
+
+### Запуск с покрытием
+
+```bash
+./vendor/bin/sail php artisan test --coverage
+```
+
+## 📦 Публикация конфигурации
+
+Для публикации конфигурации модуля в основной `config/`:
+
+```bash
+php artisan vendor:publish --tag=geocoder-config
+```
+
+## 🏗️ Архитектура
+
+Модуль построен на основе **Domain-Driven Design (DDD)** с разделением на слои:
+
+1. **Domain Layer** - бизнес-сущности и правила предметной области
+2. **Infrastructure Layer** - внешние зависимости (HTTP, БД)
+3. **Application Layer** - сервисы-посредники
+4. **UI Layer** - HTTP-контроллеры
+
+### Принципы
+
+- **SOLID** - соблюдение принципов объектно-ориентированного проектирования
+- **Dependency Inversion** - зависимость от абстракций, а не от деталей
+- **Repository Pattern** - абстракция доступа к данным
+- **Value Objects** - объекты-значения с валидацией (Inn, Bic)
+
+## 📝 Примеры использования
+
+### Через сервис
+
+```php
+use App\Geocoder\Application\Services\PartyService;
+
+$partyService = app(PartyService::class);
+
+// Получить данные организации
+$party = $partyService->findByInn('7707083893');
+
+// Проверить ИНН
+$isValid = $partyService->validateInn('7707083893');
+```
+
+### Через HTTP API
+
+```bash
+curl "http://localhost/api/dadata/party/by-inn?inn=7707083893"
+```
+
+## 🔧 Конфигурация
+
+Файл `config/geocoder.php`:
+
+```php
+return [
+    'api_key' => env('DADATA_API_KEY', ''),
+    'base_url' => env('DADATA_BASE_URL', 'https://suggestions.dadata.ru/suggestions/api/4_1/rs'),
+    'timeout' => env('DADATA_TIMEOUT', 30),
+    'retry_count' => env('DADATA_RETRY_COUNT', 3),
+];
+```
+
+## 📄 Лицензия
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

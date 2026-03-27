@@ -1,0 +1,59 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Geocoder\Infrastructure\Persistence;
+
+use App\Geocoder\Domain\Entities\Bank;
+use App\Geocoder\Domain\Exceptions\ExternalApiException;
+use App\Geocoder\Domain\Repositories\BankRepositoryInterface;
+use App\Geocoder\Domain\ValueObjects\Bic;
+use App\Geocoder\Domain\ValueObjects\Inn;
+use App\Geocoder\Infrastructure\Http\Dadata\DadataApiInterface;
+
+/**
+ * Реализация репозитория для работы с банками через DaData API.
+ */
+class DadataBankRepository implements BankRepositoryInterface
+{
+    public function __construct(
+        private DadataApiInterface $api,
+    ) {
+    }
+
+    public function findByBic(Bic $bic): ?Bank
+    {
+        $data = $this->api->findBankByBic($bic->value);
+
+        if ($data === null) {
+            return null;
+        }
+
+        return $this->mapToBank($data);
+    }
+
+    public function searchByName(string $name): array
+    {
+        // DaData не имеет прямого метода поиска банков по названию в рамках этого API
+        // Можно расширить в будущем
+        return [];
+    }
+
+    /**
+     * Маппинг данных API в сущность Bank.
+     *
+     * @param array<string, mixed> $data
+     */
+    private function mapToBank(array $data): Bank
+    {
+        return new Bank(
+            name: $data['name']['full_with_opf'] ?? $data['name']['short_with_opf'] ?? '',
+            shortName: $data['name']['short_with_opf'] ?? $data['name']['full_with_opf'] ?? '',
+            bic: Bic::fromString($data['bic'] ?? ''),
+            inn: Inn::fromString($data['inn'] ?? ''),
+            correspondentAccount: $data['correspondent_account'] ?? null,
+            address: $data['address']['value'] ?? null,
+            status: $data['state']['status'] ?? null,
+        );
+    }
+}
