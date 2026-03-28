@@ -11,7 +11,9 @@ use Illuminate\Support\Facades\Route;
 /**
  * Маршруты модуля Geocoder.
  */
-Route::get('/party/by-inn', PartyByInnController::class);
-Route::get('/bank/by-bic', BankByBicController::class);
-Route::get('/address/search', AddressSearchController::class);
-Route::get('/country/search', CountrySearchController::class);
+Route::prefix('api/dadata')->group(function () {
+    Route::get('/party/by-inn', PartyByInnController::class);
+    Route::get('/bank/by-bic', BankByBicController::class);
+    Route::get('/address/search', AddressSearchController::class);
+    Route::get('/country/search', CountrySearchController::class);
+});
