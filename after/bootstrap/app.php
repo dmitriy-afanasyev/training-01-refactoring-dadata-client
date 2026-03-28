@@ -1,6 +1,7 @@
 <?php
 
 use App\Geocoder\Providers\GeocoderServiceProvider;
+use App\Geocoder\UI\Http\Exceptions\GeocoderExceptionHandler;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -18,5 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+    $exceptions->render(function (\Throwable $e) {
+        return GeocoderExceptionHandler::handle($e);
+    });
     })->create();
