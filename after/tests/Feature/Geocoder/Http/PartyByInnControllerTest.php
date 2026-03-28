@@ -11,9 +11,9 @@ use Illuminate\Support\Facades\Config;
 use Tests\TestCase;
 
 /**
- * Feature-тесты для DadataController.
+ * Feature-тесты для PartyByInnController.
  */
-class DadataControllerTest extends TestCase
+class PartyByInnControllerTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -88,53 +88,6 @@ class DadataControllerTest extends TestCase
     public function test_get_party_by_inn_missing_inn(): void
     {
         $response = $this->getJson('/api/dadata/party/by-inn');
-
-        $response->assertStatus(422);
-    }
-
-    public function test_get_bank_by_bic_success(): void
-    {
-        // Тест успешного получения банка по БИК
-        $response = $this->getJson('/api/dadata/bank/by-bic?bic=044525225');
-
-        // Так как нет реального мока API, ожидаем ошибку API или успех
-        // В реальном тесте нужно мокировать HTTP-запросы
-        $response->assertStatus(502); // Ошибка API из-за отсутствия реального ключа
-    }
-
-    public function test_get_bank_by_bic_validation_error(): void
-    {
-        $response = $this->getJson('/api/dadata/bank/by-bic?bic=123');
-
-        $response->assertStatus(422);
-    }
-
-    public function test_search_address_success(): void
-    {
-        $response = $this->getJson('/api/dadata/address/search?query=Москва');
-
-        // Ожидаем ошибку API из-за отсутствия реального ключа
-        $response->assertStatus(502);
-    }
-
-    public function test_search_address_validation_error(): void
-    {
-        $response = $this->getJson('/api/dadata/address/search');
-
-        $response->assertStatus(422);
-    }
-
-    public function test_search_country_success(): void
-    {
-        $response = $this->getJson('/api/dadata/country/search?query=Россия');
-
-        // Ожидаем ошибку API из-за отсутствия реального ключа
-        $response->assertStatus(502);
-    }
-
-    public function test_search_country_validation_error(): void
-    {
-        $response = $this->getJson('/api/dadata/country/search');
 
         $response->assertStatus(422);
     }

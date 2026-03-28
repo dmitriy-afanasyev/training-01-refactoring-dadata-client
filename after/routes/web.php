@@ -1,6 +1,9 @@
 <?php
 
-use App\Geocoder\UI\Http\Controllers\DadataController;
+use App\Geocoder\UI\Http\Controllers\AddressSearchController;
+use App\Geocoder\UI\Http\Controllers\BankByBicController;
+use App\Geocoder\UI\Http\Controllers\CountrySearchController;
+use App\Geocoder\UI\Http\Controllers\PartyByInnController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -9,8 +12,8 @@ Route::get('/', function () {
 
 // DaData API Routes
 Route::prefix('api/dadata')->group(function () {
-    Route::get('/party/by-inn', [DadataController::class, 'getByInn']);
-    Route::get('/bank/by-bic', [DadataController::class, 'getBankByBic']);
-    Route::get('/address/search', [DadataController::class, 'searchAddress']);
-    Route::get('/country/search', [DadataController::class, 'searchCountry']);
+    Route::get('/party/by-inn', PartyByInnController::class);
+    Route::get('/bank/by-bic', BankByBicController::class);
+    Route::get('/address/search', AddressSearchController::class);
+    Route::get('/country/search', CountrySearchController::class);
 });
