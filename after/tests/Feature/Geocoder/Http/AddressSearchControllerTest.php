@@ -25,7 +25,7 @@ class AddressSearchControllerTest extends TestCase
 
     public function test_search_address_success(): void
     {
-        $response = $this->getJson('/api/dadata/address/search?query=Москва');
+        $response = $this->getJson('/api/geocoder/address/search?query=Москва');
 
         // Ожидаем ошибку API из-за отсутствия реального ключа
         $response->assertStatus(502);
@@ -33,7 +33,7 @@ class AddressSearchControllerTest extends TestCase
 
     public function test_search_address_validation_error(): void
     {
-        $response = $this->getJson('/api/dadata/address/search');
+        $response = $this->getJson('/api/geocoder/address/search');
 
         $response->assertStatus(422);
     }

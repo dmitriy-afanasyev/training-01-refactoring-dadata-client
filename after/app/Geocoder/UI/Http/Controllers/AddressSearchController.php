@@ -13,14 +13,9 @@ use Illuminate\Http\JsonResponse;
  */
 final readonly class AddressSearchController
 {
-    public function __construct(
-        private AddressService $addressService,
-    ) {
-    }
-
-    public function __invoke(AddressSearchRequest $request): JsonResponse
+    public function __invoke(AddressSearchRequest $request, AddressService $addressService): JsonResponse
     {
-        $addresses = $this->addressService->search(
+        $addresses = $addressService->search(
             $request->getQuery(),
             $request->getLocations()
         );

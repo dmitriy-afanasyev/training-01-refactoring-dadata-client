@@ -13,14 +13,9 @@ use Illuminate\Http\JsonResponse;
  */
 final readonly class CountrySearchController
 {
-    public function __construct(
-        private AddressService $addressService,
-    ) {
-    }
-
-    public function __invoke(CountrySearchRequest $request): JsonResponse
+    public function __invoke(CountrySearchRequest $request, AddressService $addressService): JsonResponse
     {
-        $countries = $this->addressService->searchCountry($request->getQuery());
+        $countries = $addressService->searchCountry($request->getQuery());
 
         return response()->json([
             'success' => true,

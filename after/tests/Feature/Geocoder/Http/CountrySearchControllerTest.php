@@ -25,7 +25,7 @@ class CountrySearchControllerTest extends TestCase
 
     public function test_search_country_success(): void
     {
-        $response = $this->getJson('/api/dadata/country/search?query=Россия');
+        $response = $this->getJson('/api/geocoder/country/search?query=Россия');
 
         // Ожидаем ошибку API из-за отсутствия реального ключа
         $response->assertStatus(502);
@@ -33,7 +33,7 @@ class CountrySearchControllerTest extends TestCase
 
     public function test_search_country_validation_error(): void
     {
-        $response = $this->getJson('/api/dadata/country/search');
+        $response = $this->getJson('/api/geocoder/country/search');
 
         $response->assertStatus(422);
     }

@@ -45,7 +45,7 @@ class PartyByInnControllerTest extends TestCase
 
         $this->app->instance(PartyService::class, $partyServiceMock);
 
-        $response = $this->getJson('/api/dadata/party/by-inn?inn=7707083893');
+        $response = $this->getJson('/api/geocoder/party/by-inn?inn=7707083893');
 
         $response
             ->assertStatus(200)
@@ -67,7 +67,7 @@ class PartyByInnControllerTest extends TestCase
 
         $this->app->instance(PartyService::class, $partyServiceMock);
 
-        $response = $this->getJson('/api/dadata/party/by-inn?inn=7707083893');
+        $response = $this->getJson('/api/geocoder/party/by-inn?inn=7707083893');
 
         $response
             ->assertStatus(404)
@@ -80,14 +80,14 @@ class PartyByInnControllerTest extends TestCase
     public function test_get_party_by_inn_validation_error(): void
     {
         // Тест с невалидным ИНН (не 10 символов)
-        $response = $this->getJson('/api/dadata/party/by-inn?inn=123');
+        $response = $this->getJson('/api/geocoder/party/by-inn?inn=123');
 
         $response->assertStatus(422);
     }
 
     public function test_get_party_by_inn_missing_inn(): void
     {
-        $response = $this->getJson('/api/dadata/party/by-inn');
+        $response = $this->getJson('/api/geocoder/party/by-inn');
 
         $response->assertStatus(422);
     }

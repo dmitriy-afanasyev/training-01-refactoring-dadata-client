@@ -25,7 +25,7 @@ class BankByBicControllerTest extends TestCase
 
     public function test_get_bank_by_bic_success(): void
     {
-        $response = $this->getJson('/api/dadata/bank/by-bic?bic=044525225');
+        $response = $this->getJson('/api/geocoder/bank/by-bic?bic=044525225');
 
         // Ожидаем ошибку API из-за отсутствия реального ключа
         $response->assertStatus(502);
@@ -33,7 +33,7 @@ class BankByBicControllerTest extends TestCase
 
     public function test_get_bank_by_bic_validation_error(): void
     {
-        $response = $this->getJson('/api/dadata/bank/by-bic?bic=123');
+        $response = $this->getJson('/api/geocoder/bank/by-bic?bic=123');
 
         $response->assertStatus(422);
     }

@@ -13,14 +13,9 @@ use Illuminate\Http\JsonResponse;
  */
 final readonly class BankByBicController
 {
-    public function __construct(
-        private BankService $bankService,
-    ) {
-    }
-
-    public function __invoke(BankByBicRequest $request): JsonResponse
+    public function __invoke(BankByBicRequest $request, BankService $bankService): JsonResponse
     {
-        $bank = $this->bankService->findByBic($request->getBic());
+        $bank = $bankService->findByBic($request->getBic());
 
         return response()->json([
             'success' => true,

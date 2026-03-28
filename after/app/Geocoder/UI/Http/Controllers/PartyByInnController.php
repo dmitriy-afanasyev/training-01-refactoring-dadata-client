@@ -13,14 +13,9 @@ use Illuminate\Http\JsonResponse;
  */
 final readonly class PartyByInnController
 {
-    public function __construct(
-        private PartyService $partyService,
-    ) {
-    }
-
-    public function __invoke(PartyByInnRequest $request): JsonResponse
+    public function __invoke(PartyByInnRequest $request, PartyService $partyService): JsonResponse
     {
-        $party = $this->partyService->findByInn($request->getInn());
+        $party = $partyService->findByInn($request->getInn());
 
         return response()->json([
             'success' => true,
