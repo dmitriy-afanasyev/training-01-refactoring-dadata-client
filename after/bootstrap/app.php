@@ -18,8 +18,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         //
     })
-    ->withExceptions(function (Exceptions $exceptions): void {
-    $exceptions->render(function (\Throwable $e) {
-        return GeocoderExceptionHandler::handle($e);
-    });
+    ->withExceptions(
+        function (Exceptions $exceptions): void {
+            $exceptions->render(function (\Throwable $e) {
+                return GeocoderExceptionHandler::handle($e);
+            });
     })->create();

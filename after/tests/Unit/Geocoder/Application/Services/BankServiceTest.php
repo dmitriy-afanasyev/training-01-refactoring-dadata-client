@@ -7,6 +7,7 @@ namespace Tests\Unit\Geocoder\Application\Services;
 use App\Geocoder\Application\DTO\BankData;
 use App\Geocoder\Application\Services\BankService;
 use App\Geocoder\Domain\Entities\Bank;
+use App\Geocoder\Domain\Exceptions\BankNotFoundException;
 use App\Geocoder\Domain\Exceptions\InvalidBicException;
 use App\Geocoder\Domain\Repositories\BankRepositoryInterface;
 use App\Geocoder\Domain\ValueObjects\Bic;
@@ -43,7 +44,7 @@ class BankServiceTest extends TestCase
 
         $this->repository
             ->expects($this->once())
-            ->method('findByBic')
+            ->method('findByBicOrFail')
             ->with($this->callback(fn(Bic $bicVO): bool => $bicVO->value === $bic))
             ->willReturn($bank);
 
@@ -61,12 +62,12 @@ class BankServiceTest extends TestCase
 
         $this->repository
             ->expects($this->once())
-            ->method('findByBic')
-            ->willReturn(null);
+            ->method('findByBicOrFail')
+            ->willThrowException(new BankNotFoundException('Банк не найден'));
 
-        $result = $this->service->findByBic($bic);
+        $this->expectException(BankNotFoundException::class);
 
-        $this->assertNull($result);
+        $this->service->findByBic($bic);
     }
 
     public function test_validate_bic_valid(): void

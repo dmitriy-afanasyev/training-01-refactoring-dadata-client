@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Geocoder\Infrastructure\Persistence;
 
 use App\Geocoder\Domain\Entities\Bank;
+use App\Geocoder\Domain\Exceptions\BankNotFoundException;
 use App\Geocoder\Domain\Exceptions\ExternalApiException;
 use App\Geocoder\Domain\Repositories\BankRepositoryInterface;
 use App\Geocoder\Domain\ValueObjects\Bic;
@@ -21,22 +22,15 @@ class DadataBankRepository implements BankRepositoryInterface
     ) {
     }
 
-    public function findByBic(Bic $bic): ?Bank
+    public function findByBicOrFail(Bic $bic): Bank
     {
         $data = $this->api->findBankByBic($bic->value);
 
         if ($data === null) {
-            return null;
+            throw new BankNotFoundException(sprintf('Банк с БИК %s не найден', $bic->value));
         }
 
         return $this->mapToBank($data);
-    }
-
-    public function searchByName(string $name): array
-    {
-        // DaData не имеет прямого метода поиска банков по названию в рамках этого API
-        // Можно расширить в будущем
-        return [];
     }
 
     /**

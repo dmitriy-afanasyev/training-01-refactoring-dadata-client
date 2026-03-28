@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Geocoder\UI\Http\Exceptions;
 
+use App\Geocoder\Domain\Exceptions\BankNotFoundException;
 use App\Geocoder\Domain\Exceptions\ExternalApiException;
 use App\Geocoder\Domain\Exceptions\GeocoderException;
 use App\Geocoder\Domain\Exceptions\InvalidBicException;
@@ -33,6 +34,10 @@ class GeocoderExceptionHandler
         PartyNotFoundException::class => [
             'status' => 404,
             'error' => 'Организация не найдена',
+        ],
+        BankNotFoundException::class => [
+            'status' => 404,
+            'error' => 'Банк не найден',
         ],
         ExternalApiException::class => [
             'status' => 502,

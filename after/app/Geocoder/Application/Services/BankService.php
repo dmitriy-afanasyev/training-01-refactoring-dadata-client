@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Geocoder\Application\Services;
 
 use App\Geocoder\Application\DTO\BankData;
+use App\Geocoder\Domain\Exceptions\BankNotFoundException;
 use App\Geocoder\Domain\Exceptions\ExternalApiException;
 use App\Geocoder\Domain\Exceptions\InvalidBicException;
 use App\Geocoder\Domain\Repositories\BankRepositoryInterface;
@@ -23,17 +24,14 @@ readonly class BankService
     /**
      * Найти банк по БИК.
      *
+     * @throws BankNotFoundException
      * @throws ExternalApiException
      */
-    public function findByBic(string $bic): ?BankData
+    public function findByBic(string $bic): BankData
     {
-        $bicVO = Bic::fromString($bic);
-
-        $bank = $this->repository->findByBic($bicVO);
-
-        if ($bank === null) {
-            return null;
-        }
+        $bank = $this->repository->findByBicOrFail(
+            Bic::fromString($bic)
+        );
 
         return BankData::fromArray($bank->toArray());
     }

@@ -22,13 +22,6 @@ final readonly class BankByBicController
     {
         $bank = $this->bankService->findByBic($request->getBic());
 
-        if ($bank === null) {
-            return response()->json([
-                'success' => false,
-                'error' => 'Банк не найден',
-            ], 404);
-        }
-
         return response()->json([
             'success' => true,
             'data' => $bank->toArray(),
