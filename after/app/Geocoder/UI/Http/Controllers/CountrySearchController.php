@@ -7,8 +7,8 @@ namespace App\Geocoder\UI\Http\Controllers;
 use App\Geocoder\Application\Services\AddressService;
 use App\Geocoder\Domain\Exceptions\ExternalApiException;
 use App\Geocoder\Domain\Exceptions\GeocoderException;
+use App\Geocoder\UI\Http\Requests\CountrySearchRequest;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 /**
  * Контроллер для поиска стран.
@@ -20,16 +20,10 @@ final readonly class CountrySearchController
     ) {
     }
 
-    public function __invoke(Request $request): JsonResponse
+    public function __invoke(CountrySearchRequest $request): JsonResponse
     {
-        $request->validate([
-            'query' => 'required|string|min:1|max:255',
-        ]);
-
-        $query = $request->input('query');
-
         try {
-            $countries = $this->addressService->searchCountry($query);
+            $countries = $this->addressService->searchCountry($request->getQuery());
 
             return response()->json([
                 'success' => true,

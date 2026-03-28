@@ -7,8 +7,8 @@ namespace App\Geocoder\UI\Http\Controllers;
 use App\Geocoder\Application\Services\AddressService;
 use App\Geocoder\Domain\Exceptions\ExternalApiException;
 use App\Geocoder\Domain\Exceptions\GeocoderException;
+use App\Geocoder\UI\Http\Requests\AddressSearchRequest;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 /**
  * Контроллер для поиска адресов.
@@ -20,18 +20,13 @@ final readonly class AddressSearchController
     ) {
     }
 
-    public function __invoke(Request $request): JsonResponse
+    public function __invoke(AddressSearchRequest $request): JsonResponse
     {
-        $request->validate([
-            'query' => 'required|string|min:1|max:255',
-            'locations' => 'nullable|array',
-        ]);
-
-        $query = $request->input('query');
-        $locations = $request->input('locations');
-
         try {
-            $addresses = $this->addressService->search($query, $locations);
+            $addresses = $this->addressService->search(
+                $request->getQuery(),
+                $request->getLocations()
+            );
 
             return response()->json([
                 'success' => true,

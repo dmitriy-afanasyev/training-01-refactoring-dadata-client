@@ -8,8 +8,8 @@ use App\Geocoder\Application\Services\BankService;
 use App\Geocoder\Domain\Exceptions\ExternalApiException;
 use App\Geocoder\Domain\Exceptions\GeocoderException;
 use App\Geocoder\Domain\Exceptions\InvalidBicException;
+use App\Geocoder\UI\Http\Requests\BankByBicRequest;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 /**
  * Контроллер для получения данных банка по БИК.
@@ -21,16 +21,10 @@ final readonly class BankByBicController
     ) {
     }
 
-    public function __invoke(Request $request): JsonResponse
+    public function __invoke(BankByBicRequest $request): JsonResponse
     {
-        $request->validate([
-            'bic' => 'required|string|size:9',
-        ]);
-
-        $bic = $request->input('bic');
-
         try {
-            $bank = $this->bankService->findByBic($bic);
+            $bank = $this->bankService->findByBic($request->getBic());
 
             if ($bank === null) {
                 return response()->json([

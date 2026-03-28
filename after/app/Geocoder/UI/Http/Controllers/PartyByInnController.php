@@ -9,8 +9,8 @@ use App\Geocoder\Domain\Exceptions\ExternalApiException;
 use App\Geocoder\Domain\Exceptions\GeocoderException;
 use App\Geocoder\Domain\Exceptions\InvalidInnException;
 use App\Geocoder\Domain\Exceptions\PartyNotFoundException;
+use App\Geocoder\UI\Http\Requests\PartyByInnRequest;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 /**
  * Контроллер для получения данных организации по ИНН.
@@ -22,16 +22,10 @@ final readonly class PartyByInnController
     ) {
     }
 
-    public function __invoke(Request $request): JsonResponse
+    public function __invoke(PartyByInnRequest $request): JsonResponse
     {
-        $request->validate([
-            'inn' => 'required|string|size:10',
-        ]);
-
-        $inn = $request->input('inn');
-
         try {
-            $party = $this->partyService->findByInn($inn);
+            $party = $this->partyService->findByInn($request->getInn());
 
             return response()->json([
                 'success' => true,
