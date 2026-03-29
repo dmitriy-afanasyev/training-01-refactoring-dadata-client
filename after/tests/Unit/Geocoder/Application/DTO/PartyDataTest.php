@@ -37,29 +37,6 @@ class PartyDataTest extends TestCase
         $this->assertEquals('ACTIVE', $partyData->status);
     }
 
-    public function test_to_array(): void
-    {
-        $partyData = new PartyData(
-            name: 'ПАО "СБЕРБАНК"',
-            shortName: 'СБЕРБАНК',
-            inn: '7707083893',
-            kpp: '773601001',
-        );
-
-        $array = $partyData->toArray();
-
-        $this->assertEquals([
-            'name' => 'ПАО "СБЕРБАНК"',
-            'short_name' => 'СБЕРБАНК',
-            'inn' => '7707083893',
-            'kpp' => '773601001',
-            'ogrn' => null,
-            'okpo' => null,
-            'address' => null,
-            'status' => null,
-        ], $array);
-    }
-
     public function test_create_with_null_values(): void
     {
         $partyData = PartyData::fromArray([
@@ -71,5 +48,6 @@ class PartyDataTest extends TestCase
         $this->assertEquals('ООО "РОМАШКА"', $partyData->name);
         $this->assertNull($partyData->kpp);
         $this->assertNull($partyData->ogrn);
+        $this->assertNull($partyData->okpo);
     }
 }

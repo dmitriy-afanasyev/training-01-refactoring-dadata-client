@@ -6,6 +6,7 @@ namespace Tests\Unit\Geocoder\Domain\Entities;
 
 use App\Geocoder\Domain\Entities\Party;
 use App\Geocoder\Domain\ValueObjects\Inn;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -36,28 +37,29 @@ class PartyTest extends TestCase
         $this->assertEquals('ACTIVE', $party->status);
     }
 
-    public function test_party_is_active(): void
+    #[DataProvider('partyStatusProvider')]
+    public function test_party_is_active(string $status, bool $expected): void
     {
         $party = new Party(
             name: 'ПАО "СБЕРБАНК"',
             shortName: 'СБЕРБАНК',
             inn: Inn::fromString('7707083893'),
-            status: 'ACTIVE',
+            status: $status,
         );
 
-        $this->assertTrue($party->isActive());
+        $this->assertEquals($expected, $party->isActive());
     }
 
-    public function test_party_is_not_active(): void
+    /**
+     * @return array<int, array{0: string, 1: bool}>
+     */
+    public static function partyStatusProvider(): array
     {
-        $party = new Party(
-            name: 'ООО "РОМашКА"',
-            shortName: 'РОМАШКА',
-            inn: Inn::fromString('7707083893'),
-            status: 'LIQUIDATED',
-        );
-
-        $this->assertFalse($party->isActive());
+        return [
+            ['ACTIVE', true],
+            ['LIQUIDATED', false],
+            ['CLOSED', false],
+        ];
     }
 
     public function test_party_to_array(): void

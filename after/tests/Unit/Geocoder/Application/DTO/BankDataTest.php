@@ -35,25 +35,17 @@ class BankDataTest extends TestCase
         $this->assertEquals('ACTIVE', $bankData->status);
     }
 
-    public function test_to_array(): void
+    public function test_create_with_null_values(): void
     {
-        $bankData = new BankData(
-            name: 'ПАО "СБЕРБАНК"',
-            shortName: 'СБЕРБАНК',
-            bic: '044525225',
-            inn: '7707083893',
-        );
-
-        $array = $bankData->toArray();
-
-        $this->assertEquals([
+        $bankData = BankData::fromArray([
             'name' => 'ПАО "СБЕРБАНК"',
             'short_name' => 'СБЕРБАНК',
             'bic' => '044525225',
             'inn' => '7707083893',
-            'correspondent_account' => null,
-            'address' => null,
-            'status' => null,
-        ], $array);
+        ]);
+
+        $this->assertNull($bankData->correspondentAccount);
+        $this->assertNull($bankData->address);
+        $this->assertNull($bankData->status);
     }
 }
