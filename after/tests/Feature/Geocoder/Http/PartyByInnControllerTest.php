@@ -8,6 +8,7 @@ use App\Geocoder\Application\Services\PartyService;
 use App\Geocoder\Domain\Exceptions\PartyNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 /**
@@ -21,34 +22,29 @@ class PartyByInnControllerTest extends TestCase
     {
         parent::setUp();
 
-        // Устанавливаем тестовый API ключ
         Config::set('geocoder.api_key', 'test_api_key');
         Config::set('geocoder.base_url', 'https://suggestions.dadata.ru/suggestions/api/4_1/rs');
     }
 
     public function test_get_party_by_inn_success(): void
     {
-        // Мокаем сервис для успешного ответа
-        $mockPartyData = new \App\Geocoder\Application\DTO\PartyData(
-            name: 'ПАО "СБЕРБАНК"',
-            shortName: 'СБЕРБАНК',
-            inn: '7707083893',
-            kpp: '773601001',
-            status: 'ACTIVE',
-        );
+        Http::fake([
+            '/findById/party' => Http::response([
+                'suggestions' => [
+                    [
+                        'data' => [
+                            'name' => ['full_with_opf' => 'ПАО "СБЕРБАНК"'],
+                            'inn' => '7707083893',
+                            'kpp' => '773601001',
+                        ],
+                    ],
+                ],
+            ], 200),
+        ]);
 
-        $partyServiceMock = $this->createMock(PartyService::class);
-        $partyServiceMock
-            ->method('findByInn')
-            ->with('7707083893')
-            ->willReturn($mockPartyData);
+        $response = $this->getJson('/api/dadata/party/by-inn?inn=7707083893');
 
-        $this->app->instance(PartyService::class, $partyServiceMock);
-
-        $response = $this->getJson('/api/geocoder/party/by-inn?inn=7707083893');
-
-        $response
-            ->assertStatus(200)
+        $response->assertStatus(200)
             ->assertJson([
                 'success' => true,
                 'data' => [
@@ -60,17 +56,15 @@ class PartyByInnControllerTest extends TestCase
 
     public function test_get_party_by_inn_not_found(): void
     {
-        $partyServiceMock = $this->createMock(PartyService::class);
-        $partyServiceMock
-            ->method('findByInn')
-            ->willThrowException(new PartyNotFoundException('Организация не найдена'));
+        Http::fake([
+            '/findById/party' => Http::response([
+                'suggestions' => [],
+            ], 200),
+        ]);
 
-        $this->app->instance(PartyService::class, $partyServiceMock);
+        $response = $this->getJson('/api/dadata/party/by-inn?inn=7707083893');
 
-        $response = $this->getJson('/api/geocoder/party/by-inn?inn=7707083893');
-
-        $response
-            ->assertStatus(404)
+        $response->assertStatus(404)
             ->assertJson([
                 'success' => false,
                 'error' => 'Организация не найдена',
@@ -79,15 +73,14 @@ class PartyByInnControllerTest extends TestCase
 
     public function test_get_party_by_inn_validation_error(): void
     {
-        // Тест с невалидным ИНН (не 10 символов)
-        $response = $this->getJson('/api/geocoder/party/by-inn?inn=123');
+        $response = $this->getJson('/api/dadata/party/by-inn?inn=123');
 
         $response->assertStatus(422);
     }
 
     public function test_get_party_by_inn_missing_inn(): void
     {
-        $response = $this->getJson('/api/geocoder/party/by-inn');
+        $response = $this->getJson('/api/dadata/party/by-inn');
 
         $response->assertStatus(422);
     }

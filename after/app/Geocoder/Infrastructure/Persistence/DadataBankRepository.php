@@ -15,7 +15,7 @@ use App\Geocoder\Infrastructure\Http\Dadata\DadataApiInterface;
 /**
  * Реализация репозитория для работы с банками через DaData API.
  */
-class DadataBankRepository implements BankRepositoryInterface
+readonly class DadataBankRepository implements BankRepositoryInterface
 {
     public function __construct(
         private DadataApiInterface $api,

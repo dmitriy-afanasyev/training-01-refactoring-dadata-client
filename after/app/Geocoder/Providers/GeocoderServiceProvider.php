@@ -36,6 +36,9 @@ class GeocoderServiceProvider extends ServiceProvider
                 apiKey: config('geocoder.api_key'),
                 baseUrl: config('geocoder.base_url'),
                 timeout: config('geocoder.timeout', 30),
+                connectTimeout: config('geocoder.connect_timeout', 10),
+                retryCount: config('geocoder.retry_count', 3),
+                retryDelay: config('geocoder.retry_delay', 100),
             );
         });
 

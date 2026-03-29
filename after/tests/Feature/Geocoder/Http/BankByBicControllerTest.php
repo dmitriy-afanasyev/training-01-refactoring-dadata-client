@@ -6,6 +6,7 @@ namespace Tests\Feature\Geocoder\Http;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 /**
@@ -25,15 +26,35 @@ class BankByBicControllerTest extends TestCase
 
     public function test_get_bank_by_bic_success(): void
     {
-        $response = $this->getJson('/api/geocoder/bank/by-bic?bic=044525225');
+        Http::fake([
+            '/suggest/bank' => Http::response([
+                'suggestions' => [
+                    [
+                        'data' => [
+                            'name' => ['full_with_opf' => 'ПАО "СБЕРБАНК"'],
+                            'bic' => '044525225',
+                            'inn' => '7707083893',
+                        ],
+                    ],
+                ],
+            ], 200),
+        ]);
 
-        // Ожидаем ошибку API из-за отсутствия реального ключа
-        $response->assertStatus(502);
+        $response = $this->getJson('/api/dadata/bank/by-bic?bic=044525225');
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+                'data' => [
+                    'bic' => '044525225',
+                    'inn' => '7707083893',
+                ],
+            ]);
     }
 
     public function test_get_bank_by_bic_validation_error(): void
     {
-        $response = $this->getJson('/api/geocoder/bank/by-bic?bic=123');
+        $response = $this->getJson('/api/dadata/bank/by-bic?bic=123');
 
         $response->assertStatus(422);
     }

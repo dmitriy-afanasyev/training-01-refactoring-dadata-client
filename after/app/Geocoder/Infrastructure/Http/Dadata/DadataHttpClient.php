@@ -18,11 +18,17 @@ readonly class DadataHttpClient implements DadataApiInterface
      * @param string $apiKey API ключ
      * @param string $baseUrl Базовый URL API
      * @param int $timeout Таймаут запроса в секундах
+     * @param int $connectTimeout Таймаут соединения в секундах
+     * @param int $retryCount Количество попыток повторного запроса
+     * @param int $retryDelay Задержка между попытками в миллисекундах
      */
     public function __construct(
         private string $apiKey,
         private string $baseUrl,
         private int $timeout = 30,
+        private int $connectTimeout = 10,
+        private int $retryCount = 3,
+        private int $retryDelay = 100,
     ) {
     }
 
@@ -37,6 +43,8 @@ readonly class DadataHttpClient implements DadataApiInterface
             'Accept' => 'application/json',
         ])
             ->timeout($this->timeout)
+            ->connectTimeout($this->connectTimeout)
+            ->retry($this->retryCount, $this->retryDelay)
             ->baseUrl($this->baseUrl);
     }
 

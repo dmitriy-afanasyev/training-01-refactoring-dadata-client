@@ -6,6 +6,7 @@ namespace App\Geocoder\Application\Services;
 
 use App\Geocoder\Domain\Exceptions\ExternalApiException;
 use App\Geocoder\Domain\Repositories\AddressRepositoryInterface;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * Сервис для работы с адресами.
@@ -28,11 +29,16 @@ readonly class AddressService
      */
     public function search(string $query, ?array $locations = null): array
     {
-        $addresses = $this->repository->search($query, $locations);
+        $cacheKey = sprintf(
+            'geocoder.address.%s.%s',
+            md5($query),
+            $locations ? md5(serialize($locations)) : 'all'
+        );
 
-        return array_map(
-            fn($address): string => $address->value,
-            $addresses
+        return Cache::remember(
+            $cacheKey,
+            now()->addHours(24),
+            fn() => $this->searchAddresses($query, $locations)
         );
     }
 
@@ -46,6 +52,26 @@ readonly class AddressService
      */
     public function searchCountry(string $query): array
     {
-        return $this->repository->searchCountry($query);
+        return Cache::remember(
+            "geocoder.country.{$query}",
+            now()->addHours(24),
+            fn() => $this->repository->searchCountry($query)
+        );
+    }
+
+    /**
+     * Поиск адресов.
+     *
+     * @param array<string, mixed>|null $locations
+     * @return array<int, string>
+     */
+    private function searchAddresses(string $query, ?array $locations): array
+    {
+        $addresses = $this->repository->search($query, $locations);
+
+        return array_map(
+            fn($address): string => $address->value,
+            $addresses
+        );
     }
 }

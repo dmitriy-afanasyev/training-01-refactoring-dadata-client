@@ -10,6 +10,7 @@ use App\Geocoder\Domain\Exceptions\ExternalApiException;
 use App\Geocoder\Domain\Exceptions\InvalidBicException;
 use App\Geocoder\Domain\Repositories\BankRepositoryInterface;
 use App\Geocoder\Domain\ValueObjects\Bic;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * Сервис для работы с данными банков.
@@ -29,11 +30,11 @@ readonly class BankService
      */
     public function findByBic(string $bic): BankData
     {
-        $bank = $this->repository->findByBicOrFail(
-            Bic::fromString($bic)
+        return Cache::remember(
+            "geocoder.bank.bic.{$bic}",
+            now()->addHours(24),
+            fn() => $this->findBankData($bic)
         );
-
-        return BankData::fromArray($bank->toArray());
     }
 
     /**
@@ -47,5 +48,17 @@ readonly class BankService
         } catch (InvalidBicException) {
             return false;
         }
+    }
+
+    /**
+     * Найти данные банка.
+     */
+    private function findBankData(string $bic): BankData
+    {
+        $bank = $this->repository->findByBicOrFail(
+            Bic::fromString($bic)
+        );
+
+        return BankData::fromArray($bank->toArray());
     }
 }

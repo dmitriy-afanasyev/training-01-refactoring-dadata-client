@@ -12,6 +12,7 @@ use App\Geocoder\Domain\Exceptions\InvalidBicException;
 use App\Geocoder\Domain\Repositories\BankRepositoryInterface;
 use App\Geocoder\Domain\ValueObjects\Bic;
 use App\Geocoder\Domain\ValueObjects\Inn;
+use Illuminate\Support\Facades\Cache;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 
@@ -42,6 +43,13 @@ class BankServiceTest extends TestCase
             inn: Inn::fromString('7707083893'),
         );
 
+        Cache::shouldReceive('remember')
+            ->once()
+            ->with("geocoder.bank.bic.{$bic}", \Mockery::type('object'), \Mockery::type('callable'))
+            ->andReturnUsing(function ($key, $ttl, $callback) {
+                return $callback();
+            });
+
         $this->repository
             ->expects($this->once())
             ->method('findByBicOrFail')
@@ -60,10 +68,10 @@ class BankServiceTest extends TestCase
     {
         $bic = '044525225';
 
-        $this->repository
-            ->expects($this->once())
-            ->method('findByBicOrFail')
-            ->willThrowException(new BankNotFoundException('Банк не найден'));
+        Cache::shouldReceive('remember')
+            ->once()
+            ->with("geocoder.bank.bic.{$bic}", \Mockery::type('object'), \Mockery::type('callable'))
+            ->andThrow(new BankNotFoundException('Банк не найден'));
 
         $this->expectException(BankNotFoundException::class);
 

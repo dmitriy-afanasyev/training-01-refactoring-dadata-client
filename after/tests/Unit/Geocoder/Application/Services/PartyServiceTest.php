@@ -11,6 +11,7 @@ use App\Geocoder\Domain\Exceptions\InvalidInnException;
 use App\Geocoder\Domain\Exceptions\PartyNotFoundException;
 use App\Geocoder\Domain\Repositories\PartyRepositoryInterface;
 use App\Geocoder\Domain\ValueObjects\Inn;
+use Illuminate\Support\Facades\Cache;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 
@@ -40,6 +41,13 @@ class PartyServiceTest extends TestCase
             inn: Inn::fromString($inn),
             status: 'ACTIVE',
         );
+
+        Cache::shouldReceive('remember')
+            ->once()
+            ->with("geocoder.party.inn.{$inn}", \Mockery::type('object'), \Mockery::type('callable'))
+            ->andReturnUsing(function ($key, $ttl, $callback) {
+                return $callback();
+            });
 
         $this->repository
             ->expects($this->once())
@@ -79,10 +87,10 @@ class PartyServiceTest extends TestCase
     {
         $inn = '7707083893';
 
-        $this->repository
-            ->expects($this->once())
-            ->method('findByInn')
-            ->willThrowException(new PartyNotFoundException('Организация не найдена'));
+        Cache::shouldReceive('remember')
+            ->once()
+            ->with("geocoder.party.inn.{$inn}", \Mockery::type('object'), \Mockery::type('callable'))
+            ->andThrow(new PartyNotFoundException('Организация не найдена'));
 
         $this->expectException(PartyNotFoundException::class);
 

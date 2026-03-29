@@ -6,6 +6,7 @@ namespace Tests\Feature\Geocoder\Http;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 /**
@@ -25,15 +26,27 @@ class CountrySearchControllerTest extends TestCase
 
     public function test_search_country_success(): void
     {
-        $response = $this->getJson('/api/geocoder/country/search?query=Россия');
+        Http::fake([
+            '/suggest/country' => Http::response([
+                'suggestions' => [
+                    ['value' => 'Россия'],
+                    ['value' => 'Казахстан'],
+                ],
+            ], 200),
+        ]);
 
-        // Ожидаем ошибку API из-за отсутствия реального ключа
-        $response->assertStatus(502);
+        $response = $this->getJson('/api/dadata/country/search?query=Россия');
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+                'data' => ['Россия', 'Казахстан'],
+            ]);
     }
 
     public function test_search_country_validation_error(): void
     {
-        $response = $this->getJson('/api/geocoder/country/search');
+        $response = $this->getJson('/api/dadata/country/search');
 
         $response->assertStatus(422);
     }

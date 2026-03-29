@@ -11,6 +11,7 @@ use App\Geocoder\Domain\Exceptions\InvalidInnException;
 use App\Geocoder\Domain\Exceptions\PartyNotFoundException;
 use App\Geocoder\Domain\Repositories\PartyRepositoryInterface;
 use App\Geocoder\Domain\ValueObjects\Inn;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * Сервис для работы с данными организаций.
@@ -32,11 +33,11 @@ readonly class PartyService
      */
     public function findByInn(string $inn): PartyData
     {
-        $innVO = Inn::fromString($inn);
-
-        $party = $this->repository->findByInn($innVO);
-
-        return PartyData::fromArray($party->toArray());
+        return Cache::remember(
+            "geocoder.party.inn.{$inn}",
+            now()->addHours(24),
+            fn() => $this->findPartyData($inn)
+        );
     }
 
     /**
@@ -63,5 +64,16 @@ readonly class PartyService
         } catch (InvalidInnException) {
             return false;
         }
+    }
+
+    /**
+     * Найти данные организации.
+     */
+    private function findPartyData(string $inn): PartyData
+    {
+        $innVO = Inn::fromString($inn);
+        $party = $this->repository->findByInn($innVO);
+
+        return PartyData::fromArray($party->toArray());
     }
 }

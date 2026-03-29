@@ -6,6 +6,7 @@ namespace Tests\Feature\Geocoder\Http;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 /**
@@ -25,15 +26,26 @@ class AddressSearchControllerTest extends TestCase
 
     public function test_search_address_success(): void
     {
-        $response = $this->getJson('/api/geocoder/address/search?query=Москва');
+        Http::fake([
+            '/suggest/address' => Http::response([
+                'suggestions' => [
+                    ['value' => 'г. Москва, ул. Вавилова, д. 19'],
+                ],
+            ], 200),
+        ]);
 
-        // Ожидаем ошибку API из-за отсутствия реального ключа
-        $response->assertStatus(502);
+        $response = $this->getJson('/api/dadata/address/search?query=Москва');
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+                'data' => ['г. Москва, ул. Вавилова, д. 19'],
+            ]);
     }
 
     public function test_search_address_validation_error(): void
     {
-        $response = $this->getJson('/api/geocoder/address/search');
+        $response = $this->getJson('/api/dadata/address/search');
 
         $response->assertStatus(422);
     }

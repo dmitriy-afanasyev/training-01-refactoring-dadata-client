@@ -7,6 +7,7 @@ namespace Tests\Unit\Geocoder\Application\Services;
 use App\Geocoder\Application\Services\AddressService;
 use App\Geocoder\Domain\Entities\Address;
 use App\Geocoder\Domain\Repositories\AddressRepositoryInterface;
+use Illuminate\Support\Facades\Cache;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 
@@ -33,6 +34,12 @@ class AddressServiceTest extends TestCase
             new Address(value: 'Московская область'),
         ];
 
+        Cache::shouldReceive('remember')
+            ->once()
+            ->andReturnUsing(function ($key, $ttl, $callback) {
+                return $callback();
+            });
+
         $this->repository
             ->expects($this->once())
             ->method('search')
@@ -52,6 +59,12 @@ class AddressServiceTest extends TestCase
             new Address(value: 'г. Москва'),
         ];
 
+        Cache::shouldReceive('remember')
+            ->once()
+            ->andReturnUsing(function ($key, $ttl, $callback) {
+                return $callback();
+            });
+
         $this->repository
             ->expects($this->once())
             ->method('search')
@@ -65,6 +78,12 @@ class AddressServiceTest extends TestCase
 
     public function test_search_country(): void
     {
+        Cache::shouldReceive('remember')
+            ->once()
+            ->andReturnUsing(function ($key, $ttl, $callback) {
+                return $callback();
+            });
+
         $this->repository
             ->expects($this->once())
             ->method('searchCountry')
