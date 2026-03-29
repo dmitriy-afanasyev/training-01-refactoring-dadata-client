@@ -21,13 +21,4 @@ interface PartyRepositoryInterface
      * @throws ExternalApiException
      */
     public function findByInn(Inn $inn): ?Party;
-
-    /**
-     * Найти организации по названию.
-     *
-     * @return array<int, Party>
-     *
-     * @throws ExternalApiException
-     */
-    public function searchByName(string $name): array;
 }

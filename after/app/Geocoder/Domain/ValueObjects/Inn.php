@@ -21,12 +21,10 @@ final class Inn
             set(string $value) {
                 $value = trim($value);
 
-                // ИНН должен содержать только цифры
                 if (!ctype_digit($value)) {
                     throw new InvalidInnException('ИНН должен содержать только цифры');
                 }
 
-                // ИНН юрлица - 10 знаков, ИП - 12 знаков
                 if (!in_array(strlen($value), [10, 12], true)) {
                     throw new InvalidInnException('ИНН должен содержать 10 или 12 цифр');
                 }

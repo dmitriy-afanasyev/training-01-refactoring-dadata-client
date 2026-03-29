@@ -16,12 +16,10 @@ final class Bic
             set(string $value) {
                 $value = trim($value);
 
-                // БИК должен содержать только цифры
                 if (!ctype_digit($value)) {
                     throw new InvalidBicException('БИК должен содержать только цифры');
                 }
 
-                // БИК должен содержать 9 цифр
                 if (strlen($value) !== 9) {
                     throw new InvalidBicException('БИК должен содержать 9 цифр');
                 }

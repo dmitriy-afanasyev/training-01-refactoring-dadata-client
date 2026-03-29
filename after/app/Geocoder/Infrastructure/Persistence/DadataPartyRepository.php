@@ -33,13 +33,6 @@ readonly class DadataPartyRepository implements PartyRepositoryInterface
         return $this->mapToParty($data);
     }
 
-    public function searchByName(string $name): array
-    {
-        // DaData не имеет прямого метода поиска по названию в рамках этого API
-        // Можно расширить в будущем
-        return [];
-    }
-
     /**
      * Маппинг данных API в сущность Party.
      *
