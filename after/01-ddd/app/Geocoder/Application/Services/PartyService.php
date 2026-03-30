@@ -33,11 +33,26 @@ readonly class PartyService
      */
     public function findByInn(string $inn): PartyData
     {
-        return Cache::remember(
+        $data = Cache::remember(
             "geocoder.party.inn.{$inn}",
             now()->addHours(24),
-            fn() => $this->findPartyData($inn)
+            fn() => $this->fetchPartyData($inn)
         );
+
+        return PartyData::fromArray($data);
+    }
+
+    /**
+     * Получить данные организации из репозитория.
+     *
+     * @return array<string, mixed>
+     */
+    private function fetchPartyData(string $inn): array
+    {
+        $innVO = Inn::fromString($inn);
+        $party = $this->repository->findByInn($innVO);
+
+        return $party->toArray();
     }
 
     /**

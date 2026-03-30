@@ -30,11 +30,27 @@ readonly class BankService
      */
     public function findByBic(string $bic): BankData
     {
-        return Cache::remember(
+        $data = Cache::remember(
             "geocoder.bank.bic.{$bic}",
             now()->addHours(24),
-            fn() => $this->findBankData($bic)
+            fn() => $this->fetchBankData($bic)
         );
+
+        return BankData::fromArray($data);
+    }
+
+    /**
+     * Получить данные банка из репозитория.
+     *
+     * @return array<string, mixed>
+     */
+    private function fetchBankData(string $bic): array
+    {
+        $bank = $this->repository->findByBicOrFail(
+            Bic::fromString($bic)
+        );
+
+        return $bank->toArray();
     }
 
     /**
@@ -48,17 +64,5 @@ readonly class BankService
         } catch (InvalidBicException) {
             return false;
         }
-    }
-
-    /**
-     * Найти данные банка.
-     */
-    private function findBankData(string $bic): BankData
-    {
-        $bank = $this->repository->findByBicOrFail(
-            Bic::fromString($bic)
-        );
-
-        return BankData::fromArray($bank->toArray());
     }
 }
