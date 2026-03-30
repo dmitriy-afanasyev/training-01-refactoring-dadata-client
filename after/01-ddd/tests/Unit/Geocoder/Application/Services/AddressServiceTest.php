@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Unit\Geocoder\Application\Services;
 
 use App\Geocoder\Application\Services\AddressService;
-use App\Geocoder\Domain\Entities\Address;
 use App\Geocoder\Domain\Repositories\AddressRepositoryInterface;
+use App\Geocoder\Domain\ValueObjects\Address;
 use Illuminate\Support\Facades\Cache;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -30,8 +30,8 @@ class AddressServiceTest extends TestCase
     public function test_search_addresses(): void
     {
         $addresses = [
-            new Address(value: 'г. Москва'),
-            new Address(value: 'Московская область'),
+            Address::fromString('г. Москва'),
+            Address::fromString('Московская область'),
         ];
 
         Cache::shouldReceive('remember')
@@ -56,7 +56,7 @@ class AddressServiceTest extends TestCase
         $locations = ['city_code' => '77'];
 
         $addresses = [
-            new Address(value: 'г. Москва'),
+            Address::fromString('г. Москва'),
         ];
 
         Cache::shouldReceive('remember')

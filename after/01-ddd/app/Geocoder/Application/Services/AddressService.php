@@ -6,6 +6,7 @@ namespace App\Geocoder\Application\Services;
 
 use App\Geocoder\Domain\Exceptions\ExternalApiException;
 use App\Geocoder\Domain\Repositories\AddressRepositoryInterface;
+use App\Geocoder\Domain\ValueObjects\Address;
 use Illuminate\Support\Facades\Cache;
 
 /**
@@ -70,7 +71,7 @@ readonly class AddressService
         $addresses = $this->repository->search($query, $locations);
 
         return array_map(
-            fn($address): string => $address->value,
+            fn(Address $address): string => $address->value,
             $addresses
         );
     }
