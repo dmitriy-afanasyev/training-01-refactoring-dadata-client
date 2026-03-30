@@ -9,6 +9,8 @@
 - Принцип чистого кода: если есть возможность не возвращать null — не возвращай. Использовать пустые коллекции вместо null, выбрасывать исключения или использовать паттерн Null Object.
 - В Laravel-проектах маршруты модуля должны находиться внутри модуля (например, app/Module/UI/Http/routes/web.php) и подключаться через сервис-провайдер модуля с помощью метода $this->loadRoutesFrom(). Не регистрировать маршруты модуля в общем routes/web.php.
 - В Laravel-проектах с установленным Sail запускать тесты через `./vendor/bin/sail test`, а не напрямую через `docker compose run laravel.test vendor/bin/phpunit`
+- Тесты можно запускать без спроса
+- В проекте training-01-refactoring-dadata-client есть план добавить альтернативные варианты решения в папке after/: 01-ddd (текущее), 02-layered (3-слойная архитектура), 03-clean-architecture (Чистая архитектура Uncle Bob), 04-modular-monolith (Модульный монолит), 05-service-layer (Service Layer паттерн), 06-active-record (Active Record вместо Repository), 07-transaction-script (Transaction Script - простое решение)
 
 ## Laravel Boost SKILLS
 - Использовать правила из `after/.cursor/skills/laravel-best-practices/` при написании Laravel-кода
