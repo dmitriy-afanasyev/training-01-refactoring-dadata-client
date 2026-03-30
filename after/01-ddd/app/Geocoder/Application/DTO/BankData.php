@@ -10,6 +10,7 @@ namespace App\Geocoder\Application\DTO;
 final readonly class BankData
 {
     /**
+     * @param string $id Идентификатор банка (БИК)
      * @param string $name Полное название банка
      * @param string $shortName Краткое название банка
      * @param string $bic БИК банка
@@ -19,6 +20,7 @@ final readonly class BankData
      * @param string|null $status Статус банка
      */
     public function __construct(
+        public string $id,
         public string $name,
         public string $shortName,
         public string $bic,
@@ -37,6 +39,7 @@ final readonly class BankData
     public static function fromArray(array $data): self
     {
         return new self(
+            id: $data['id'] ?? $data['bic'] ?? '',
             name: $data['name'] ?? '',
             shortName: $data['short_name'] ?? '',
             bic: $data['bic'] ?? '',
@@ -55,6 +58,7 @@ final readonly class BankData
     public function toArray(): array
     {
         return [
+            'id' => $this->id,
             'name' => $this->name,
             'short_name' => $this->shortName,
             'bic' => $this->bic,

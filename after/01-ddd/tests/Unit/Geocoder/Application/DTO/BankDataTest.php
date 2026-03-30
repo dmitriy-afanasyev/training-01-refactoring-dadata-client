@@ -15,6 +15,7 @@ class BankDataTest extends TestCase
     public function test_create_from_array(): void
     {
         $data = [
+            'id' => '044525225',
             'name' => 'ПАО "СБЕРБАНК"',
             'short_name' => 'СБЕРБАНК',
             'bic' => '044525225',
@@ -26,6 +27,7 @@ class BankDataTest extends TestCase
 
         $bankData = BankData::fromArray($data);
 
+        $this->assertEquals('044525225', $bankData->id);
         $this->assertEquals('ПАО "СБЕРБАНК"', $bankData->name);
         $this->assertEquals('СБЕРБАНК', $bankData->shortName);
         $this->assertEquals('044525225', $bankData->bic);
@@ -38,12 +40,14 @@ class BankDataTest extends TestCase
     public function test_create_with_null_values(): void
     {
         $bankData = BankData::fromArray([
+            'id' => '044525225',
             'name' => 'ПАО "СБЕРБАНК"',
             'short_name' => 'СБЕРБАНК',
             'bic' => '044525225',
             'inn' => '7707083893',
         ]);
 
+        $this->assertEquals('044525225', $bankData->id);
         $this->assertNull($bankData->correspondentAccount);
         $this->assertNull($bankData->address);
         $this->assertNull($bankData->status);

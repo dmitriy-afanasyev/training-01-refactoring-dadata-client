@@ -37,6 +37,7 @@ class BankServiceTest extends TestCase
         $bic = '044525225';
 
         $bank = new Bank(
+            id: Bic::fromString($bic),
             name: 'ПАО "СБЕРБАНК"',
             shortName: 'СБЕРБАНК',
             bic: Bic::fromString($bic),

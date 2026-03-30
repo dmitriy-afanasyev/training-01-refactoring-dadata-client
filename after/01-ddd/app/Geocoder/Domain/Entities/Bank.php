@@ -13,6 +13,7 @@ use App\Geocoder\Domain\ValueObjects\Inn;
 final class Bank
 {
     /**
+     * @param Bic $id Идентификатор банка (БИК)
      * @param string $name Полное название банка
      * @param string $shortName Краткое название банка
      * @param Bic $bic БИК банка
@@ -22,6 +23,7 @@ final class Bank
      * @param string|null $status Статус банка
      */
     public function __construct(
+        private(set) Bic $id,
         private(set) string $name,
         private(set) string $shortName,
         private(set) Bic $bic,
@@ -30,6 +32,14 @@ final class Bank
         private(set) ?string $address = null,
         private(set) ?string $status = null,
     ) {
+    }
+
+    /**
+     * Получить идентификатор банка.
+     */
+    public function getId(): Bic
+    {
+        return $this->id;
     }
 
     /**
@@ -48,6 +58,7 @@ final class Bank
     public function toArray(): array
     {
         return [
+            'id' => $this->id->value,
             'name' => $this->name,
             'short_name' => $this->shortName,
             'bic' => $this->bic->value,

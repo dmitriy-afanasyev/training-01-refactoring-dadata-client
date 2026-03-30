@@ -40,10 +40,13 @@ readonly class DadataBankRepository implements BankRepositoryInterface
      */
     private function mapToBank(array $data): Bank
     {
+        $bic = Bic::fromString($data['bic'] ?? '');
+
         return new Bank(
-            name: $data['name']['full_with_opf'] ?? $data['name']['short_with_opf'] ?? '',
-            shortName: $data['name']['short_with_opf'] ?? $data['name']['full_with_opf'] ?? '',
-            bic: Bic::fromString($data['bic'] ?? ''),
+            id: $bic,
+            name: $data['name']['full'] ?? '',
+            shortName: $data['name']['short'] ?? '',
+            bic: $bic,
             inn: Inn::fromString($data['inn'] ?? ''),
             correspondentAccount: $data['correspondent_account'] ?? null,
             address: $data['address']['value'] ?? null,
