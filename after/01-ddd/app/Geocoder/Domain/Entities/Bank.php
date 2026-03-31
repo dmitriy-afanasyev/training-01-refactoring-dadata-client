@@ -35,18 +35,11 @@ final class Bank
     }
 
     /**
-     * Получить идентификатор банка.
-     */
-    public function getId(): Bic
-    {
-        return $this->id;
-    }
-
-    /**
      * Проверить, активен ли банк.
      */
     public function isActive(): bool
     {
+        //TODO: магическая переменная
         return $this->status === 'ACTIVE';
     }
 

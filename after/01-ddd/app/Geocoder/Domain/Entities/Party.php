@@ -11,6 +11,7 @@ use App\Geocoder\Domain\ValueObjects\Inn;
  */
 final class Party
 {
+    //TODO: Нет ID у сущности Party
     /**
      * @param string $name Полное название компании
      * @param string $shortName Краткое название компании
@@ -38,6 +39,7 @@ final class Party
      */
     public function isActive(): bool
     {
+        //TODO: магическая переменная
         return $this->status === 'ACTIVE';
     }
 

@@ -49,6 +49,7 @@ final class Inn
      */
     public function isLegalEntity(): bool
     {
+        //TODO: магическое число?
         return strlen($this->value) === 10;
     }
 
@@ -57,6 +58,7 @@ final class Inn
      */
     public function isIndividualEntrepreneur(): bool
     {
+        //TODO: магическое число?
         return strlen($this->value) === 12;
     }
 }

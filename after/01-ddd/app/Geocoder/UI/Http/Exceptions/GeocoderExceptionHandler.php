@@ -10,6 +10,7 @@ use App\Geocoder\Domain\Exceptions\GeocoderException;
 use App\Geocoder\Domain\Exceptions\InvalidBicException;
 use App\Geocoder\Domain\Exceptions\InvalidInnException;
 use App\Geocoder\Domain\Exceptions\PartyNotFoundException;
+use App\Geocoder\UI\Http\DTO\ApiResponse;
 use Illuminate\Http\JsonResponse;
 
 /**
@@ -54,16 +55,14 @@ class GeocoderExceptionHandler
      */
     public static function handle(\Throwable $e): ?JsonResponse
     {
-        foreach (self::EXCEPTION_MAP as $exceptionClass => $config) {
-            if ($e instanceof $exceptionClass) {
-                return response()->json([
-                    'success' => false,
-                    'error' => $config['error'],
-                    'message' => $e->getMessage(),
-                ], $config['status']);
-            }
-        }
-
-        return null;
+        return match (true) {
+            $e instanceof InvalidInnException => ApiResponse::error('Неверный формат ИНН', $e->getMessage())->toResponse(),
+            $e instanceof InvalidBicException => ApiResponse::error('Неверный формат БИК', $e->getMessage())->toResponse(),
+            $e instanceof PartyNotFoundException => ApiResponse::notFound('Организация не найдена', $e->getMessage())->toResponse(),
+            $e instanceof BankNotFoundException => ApiResponse::notFound('Банк не найден', $e->getMessage())->toResponse(),
+            $e instanceof ExternalApiException => ApiResponse::badGateway('Ошибка внешнего API', $e->getMessage())->toResponse(),
+            $e instanceof GeocoderException => ApiResponse::internalError('Ошибка модуля Geocoder', $e->getMessage())->toResponse(),
+            default => null,
+        };
     }
 }

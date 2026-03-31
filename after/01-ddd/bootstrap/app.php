@@ -24,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
             //TODO: Улучшить хэндлер ошибок
             //  1) модульность + общий
             //  2) управление логированием в Exception
+            //  https://laravel.com/docs/13.x/errors
             return GeocoderExceptionHandler::handle($e);
             });
     })->create();

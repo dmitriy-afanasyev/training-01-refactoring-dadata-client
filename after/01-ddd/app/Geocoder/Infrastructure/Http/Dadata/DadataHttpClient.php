@@ -14,6 +14,7 @@ use Illuminate\Http\Client\PendingRequest;
  */
 readonly class DadataHttpClient implements DadataApiInterface
 {
+    //TODO: сверить настройки соединения с before
     /**
      * @param string $apiKey API ключ
      * @param string $baseUrl Базовый URL API

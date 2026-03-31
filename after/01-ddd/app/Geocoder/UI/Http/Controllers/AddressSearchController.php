@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace App\Geocoder\UI\Http\Controllers;
 
 use App\Geocoder\Application\Services\AddressService;
+use App\Geocoder\UI\Http\DTO\ApiResponse;
 use App\Geocoder\UI\Http\Requests\AddressSearchRequest;
 use Illuminate\Http\JsonResponse;
+
+//TODO: Общую папку Http переименовать в Api?
 
 /**
  * Контроллер для поиска адресов.
@@ -20,9 +23,6 @@ final readonly class AddressSearchController
             $request->getLocations()
         );
 
-        return response()->json([
-            'success' => true,
-            'data' => $addresses,
-        ]);
+        return ApiResponse::success($addresses)->toResponse();
     }
 }

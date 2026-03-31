@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Geocoder\UI\Http\Controllers;
 
 use App\Geocoder\Application\Services\BankService;
+use App\Geocoder\UI\Http\DTO\ApiResponse;
 use App\Geocoder\UI\Http\Requests\BankByBicRequest;
+use App\Geocoder\UI\Http\Transformers\BankTransformer;
 use Illuminate\Http\JsonResponse;
 
 /**
@@ -17,10 +19,6 @@ final readonly class BankByBicController
     {
         $bank = $bankService->findByBic($request->getBic());
 
-        //TODO: Унификация ответов
-        return response()->json([
-            'success' => true,
-            'data' => $bank->toArray(),
-        ]);
+        return ApiResponse::success($bank, BankTransformer::class)->toResponse();
     }
 }

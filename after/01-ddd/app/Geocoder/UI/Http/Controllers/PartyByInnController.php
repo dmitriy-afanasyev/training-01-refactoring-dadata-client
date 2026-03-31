@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Geocoder\UI\Http\Controllers;
 
 use App\Geocoder\Application\Services\PartyService;
+use App\Geocoder\UI\Http\DTO\ApiResponse;
 use App\Geocoder\UI\Http\Requests\PartyByInnRequest;
+use App\Geocoder\UI\Http\Transformers\PartyTransformer;
 use Illuminate\Http\JsonResponse;
 
 /**
@@ -17,9 +19,6 @@ final readonly class PartyByInnController
     {
         $party = $partyService->findByInn($request->getInn());
 
-        return response()->json([
-            'success' => true,
-            'data' => $party->toArray(),
-        ]);
+        return ApiResponse::success($party, PartyTransformer::class)->toResponse();
     }
 }
