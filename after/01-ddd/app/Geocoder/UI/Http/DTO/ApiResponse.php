@@ -94,7 +94,12 @@ final readonly class ApiResponse
      */
     public function toResponse(): JsonResponse
     {
-        return response()->json($this->toArray(), $this->statusCode, [], JSON_UNESCAPED_UNICODE);
+        return response()->json(
+            $this->toArray(),
+            $this->statusCode,
+            [],
+            JSON_UNESCAPED_UNICODE
+        );
     }
 
     /**
