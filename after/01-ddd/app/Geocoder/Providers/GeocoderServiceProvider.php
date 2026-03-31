@@ -26,7 +26,7 @@ class GeocoderServiceProvider extends ServiceProvider
     {
         // Регистрируем конфигурацию
         $this->mergeConfigFrom(
-            __DIR__ . '/../config/geocoder.php',
+            __DIR__ . '/../Config/geocoder.php',
             'geocoder'
         );
 
@@ -55,10 +55,10 @@ class GeocoderServiceProvider extends ServiceProvider
     {
         // Публикация конфигурации
         $this->publishes([
-            __DIR__ . '/../config/geocoder.php' => config_path('geocoder.php'),
+            __DIR__ . '/../Config/geocoder.php' => config_path('geocoder.php'),
         ], 'geocoder-config');
 
         // Загрузка маршрутов модуля
-        $this->loadRoutesFrom(__DIR__ . '/../Presentation/Http/routes/web.php');
+        $this->loadRoutesFrom(__DIR__ . '/../Presentation/Http/Routes/web.php');
     }
 }
