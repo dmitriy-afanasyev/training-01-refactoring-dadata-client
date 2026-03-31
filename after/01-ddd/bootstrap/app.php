@@ -21,6 +21,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(
         function (Exceptions $exceptions): void {
             $exceptions->render(function (\Throwable $e) {
-                return GeocoderExceptionHandler::handle($e);
+            //TODO: Улучшить хэндлер ошибок
+            //  1) модульность + общий
+            //  2) управление логированием в Exception
+            return GeocoderExceptionHandler::handle($e);
             });
     })->create();

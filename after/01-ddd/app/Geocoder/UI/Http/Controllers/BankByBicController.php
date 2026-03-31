@@ -17,6 +17,7 @@ final readonly class BankByBicController
     {
         $bank = $bankService->findByBic($request->getBic());
 
+        //TODO: Унификация ответов
         return response()->json([
             'success' => true,
             'data' => $bank->toArray(),
