@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Geocoder\UI\Http\Controllers;
+namespace App\Geocoder\Presentation\Http\Controllers;
 
 use App\Geocoder\Application\Services\AddressService;
-use App\Geocoder\UI\Http\DTO\ApiResponse;
-use App\Geocoder\UI\Http\Requests\AddressSearchRequest;
+use App\Geocoder\Presentation\Http\DTO\ApiResponse;
+use App\Geocoder\Presentation\Http\Requests\AddressSearchRequest;
 use Illuminate\Http\JsonResponse;
 
 //TODO: Общую папку Http переименовать в Api?

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Geocoder\UI\Http\Requests;
+namespace App\Geocoder\Presentation\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 

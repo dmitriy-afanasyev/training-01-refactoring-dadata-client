@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Geocoder\UI\Http\Exceptions;
+namespace App\Geocoder\Presentation\Http\Exceptions;
 
 use App\Geocoder\Domain\Exceptions\BankNotFoundException;
 use App\Geocoder\Domain\Exceptions\ExternalApiException;
@@ -10,7 +10,7 @@ use App\Geocoder\Domain\Exceptions\GeocoderException;
 use App\Geocoder\Domain\Exceptions\InvalidBicException;
 use App\Geocoder\Domain\Exceptions\InvalidInnException;
 use App\Geocoder\Domain\Exceptions\PartyNotFoundException;
-use App\Geocoder\UI\Http\DTO\ApiResponse;
+use App\Geocoder\Presentation\Http\DTO\ApiResponse;
 use Closure;
 use Illuminate\Http\JsonResponse;
 

@@ -1,7 +1,7 @@
 <?php
 
 use App\Geocoder\Providers\GeocoderServiceProvider;
-use App\Geocoder\UI\Http\Exceptions\GeocoderExceptionHandler;
+use App\Geocoder\Presentation\Http\Exceptions\GeocoderExceptionHandler;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;

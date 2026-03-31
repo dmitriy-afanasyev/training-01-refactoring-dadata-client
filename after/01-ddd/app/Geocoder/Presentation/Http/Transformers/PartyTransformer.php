@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Geocoder\UI\Http\Transformers;
+namespace App\Geocoder\Presentation\Http\Transformers;
 
 use App\Geocoder\Application\DTO\PartyData;
 use App\Geocoder\Domain\Entities\Party;

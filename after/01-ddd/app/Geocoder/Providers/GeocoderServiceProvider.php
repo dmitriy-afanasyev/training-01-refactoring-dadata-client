@@ -59,6 +59,6 @@ class GeocoderServiceProvider extends ServiceProvider
         ], 'geocoder-config');
 
         // Загрузка маршрутов модуля
-        $this->loadRoutesFrom(__DIR__ . '/../UI/Http/routes/web.php');
+        $this->loadRoutesFrom(__DIR__ . '/../Presentation/Http/routes/web.php');
     }
 }

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use App\Geocoder\UI\Http\Controllers\AddressSearchController;
-use App\Geocoder\UI\Http\Controllers\BankByBicController;
-use App\Geocoder\UI\Http\Controllers\CountrySearchController;
-use App\Geocoder\UI\Http\Controllers\PartyByInnController;
+use App\Geocoder\Presentation\Http\Controllers\AddressSearchController;
+use App\Geocoder\Presentation\Http\Controllers\BankByBicController;
+use App\Geocoder\Presentation\Http\Controllers\CountrySearchController;
+use App\Geocoder\Presentation\Http\Controllers\PartyByInnController;
 use Illuminate\Support\Facades\Route;
 
 /**

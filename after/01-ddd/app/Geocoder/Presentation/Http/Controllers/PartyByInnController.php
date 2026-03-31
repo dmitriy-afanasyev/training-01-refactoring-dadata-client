@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Geocoder\UI\Http\Controllers;
+namespace App\Geocoder\Presentation\Http\Controllers;
 
 use App\Geocoder\Application\Services\PartyService;
-use App\Geocoder\UI\Http\DTO\ApiResponse;
-use App\Geocoder\UI\Http\Requests\PartyByInnRequest;
-use App\Geocoder\UI\Http\Transformers\PartyTransformer;
+use App\Geocoder\Presentation\Http\DTO\ApiResponse;
+use App\Geocoder\Presentation\Http\Requests\PartyByInnRequest;
+use App\Geocoder\Presentation\Http\Transformers\PartyTransformer;
 use Illuminate\Http\JsonResponse;
 
 /**

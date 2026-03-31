@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Geocoder\UI\Http\Transformers;
+namespace App\Geocoder\Presentation\Http\Transformers;
 
 use App\Geocoder\Application\DTO\BankData;
 use App\Geocoder\Domain\Entities\Bank;

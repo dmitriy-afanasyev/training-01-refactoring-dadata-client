@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Geocoder\UI\Http\DTO;
+namespace App\Geocoder\Presentation\Http\DTO;
 
 use Illuminate\Http\JsonResponse;
 
