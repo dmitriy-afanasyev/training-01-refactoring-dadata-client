@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Geocoder\Presentation\Http\DTO;
+namespace App\Geocoder\Presentation\Api\DTO;
 
 use Illuminate\Http\JsonResponse;
 
@@ -16,6 +16,7 @@ final readonly class ApiResponse
         private mixed $data = null,
         private ?string $error = null,
         private ?string $message = null,
+        private array $context = [],
         private int $statusCode = 200,
     ) {}
 
@@ -40,12 +41,13 @@ final readonly class ApiResponse
     /**
      * Ответ с ошибкой (по умолчанию 400).
      */
-    public static function error(string $error, ?string $message = null): self
+    public static function error(string $error, ?string $message = null, array $context = []): self
     {
         return new self(
             success: false,
             error: $error,
             message: $message,
+            context: $context,
             statusCode: 400,
         );
     }
@@ -53,12 +55,13 @@ final readonly class ApiResponse
     /**
      * Ответ с ошибкой 404.
      */
-    public static function notFound(string $error, ?string $message = null): self
+    public static function notFound(string $error, ?string $message = null, array $context = []): self
     {
         return new self(
             success: false,
             error: $error,
             message: $message,
+            context: $context,
             statusCode: 404,
         );
     }
@@ -66,12 +69,13 @@ final readonly class ApiResponse
     /**
      * Ответ с ошибкой 502 (ошибка внешнего API).
      */
-    public static function badGateway(string $error, ?string $message = null): self
+    public static function badGateway(string $error, ?string $message = null, array $context = []): self
     {
         return new self(
             success: false,
             error: $error,
             message: $message,
+            context: $context,
             statusCode: 502,
         );
     }
@@ -79,12 +83,13 @@ final readonly class ApiResponse
     /**
      * Ответ с ошибкой 500 (внутренняя ошибка).
      */
-    public static function internalError(string $error, ?string $message = null): self
+    public static function internalError(string $error, ?string $message = null, array $context = []): self
     {
         return new self(
             success: false,
             error: $error,
             message: $message,
+            context: $context,
             statusCode: 500,
         );
     }
@@ -119,6 +124,9 @@ final readonly class ApiResponse
             $data['error'] = $this->error;
             if ($this->message !== null) {
                 $data['message'] = $this->message;
+            }
+            if (!empty($this->context)) {
+                $data['context'] = $this->context;
             }
         }
 

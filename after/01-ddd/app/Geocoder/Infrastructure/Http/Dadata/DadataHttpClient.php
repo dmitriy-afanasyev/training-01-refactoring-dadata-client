@@ -14,7 +14,6 @@ use Illuminate\Http\Client\PendingRequest;
  */
 readonly class DadataHttpClient implements DadataApiInterface
 {
-    //TODO: сверить настройки соединения с before
     /**
      * @param string $apiKey API ключ
      * @param string $baseUrl Базовый URL API
@@ -22,22 +21,36 @@ readonly class DadataHttpClient implements DadataApiInterface
      * @param int $connectTimeout Таймаут соединения в секундах
      * @param int $retryCount Количество попыток повторного запроса
      * @param int $retryDelay Задержка между попытками в миллисекундах
+     * @param int $maxRedirects Максимальное количество редиректов
+     * @param string|null $interface IP-интерфейс для запросов
      */
     public function __construct(
         private string $apiKey,
         private string $baseUrl,
-        private int $timeout = 30,
-        private int $connectTimeout = 10,
+        private int $timeout = 40,
+        private int $connectTimeout = 20,
         private int $retryCount = 3,
         private int $retryDelay = 100,
-    ) {
-    }
+        private int $maxRedirects = 10,
+        private ?string $interface = null,
+    ) {}
 
     /**
      * Создать HTTP-клиент с необходимыми заголовками.
      */
     private function httpClient(): PendingRequest
     {
+        $options = [
+            'max_redirects' => $this->maxRedirects,
+        ];
+
+        // Использовать статический IP если настроен
+        if ($this->interface !== null) {
+            $options['curl'] = [
+                CURLOPT_INTERFACE => $this->interface,
+            ];
+        }
+
         return Http::withHeaders([
             'Authorization' => 'Token ' . $this->apiKey,
             'Content-Type' => 'application/json',
@@ -45,7 +58,13 @@ readonly class DadataHttpClient implements DadataApiInterface
         ])
             ->timeout($this->timeout)
             ->connectTimeout($this->connectTimeout)
-            ->retry($this->retryCount, $this->retryDelay)
+            ->withOptions($options)
+            ->retry($this->retryCount, $this->retryDelay, function ($exception) {
+                // Повторять только при ошибках соединения или сервера (5xx)
+                return $exception instanceof ConnectionException
+                    || ($exception instanceof \Illuminate\Http\Client\RequestException
+                        && $exception->response->serverError());
+            })
             ->baseUrl($this->baseUrl);
     }
 
@@ -60,16 +79,17 @@ readonly class DadataHttpClient implements DadataApiInterface
      */
     private function request(string $endpoint, array $payload): array
     {
-        $response = $this->httpClient()->post($endpoint, $payload);
-
-        if ($response->failed()) {
+        try {
+            $response = $this->httpClient()->post($endpoint, $payload)->throw();
+        } catch (\Illuminate\Http\Client\RequestException $e) {
             throw new ExternalApiException(
                 sprintf(
                     'DaData API error: %d %s',
-                    $response->status(),
-                    $response->body()
+                    $e->response->status(),
+                    $e->response->body()
                 ),
-                $response->status()
+                $e->response->status(),
+                $e
             );
         }
 

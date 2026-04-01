@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Geocoder\Presentation\Http\Transformers;
+namespace App\Geocoder\Presentation\Api\Transformers;
 
 use App\Geocoder\Application\DTO\BankData;
 use App\Geocoder\Domain\Entities\Bank;
@@ -29,7 +29,7 @@ class BankTransformer extends Transformer
                 'inn' => $data->inn->value,
                 'correspondent_account' => $data->correspondentAccount,
                 'address' => $data->address,
-                'status' => $data->status,
+                'status' => $data->status?->value,
                 'is_active' => $data->isActive(),
             ];
         }
@@ -43,7 +43,8 @@ class BankTransformer extends Transformer
                 'inn' => $data->inn,
                 'correspondent_account' => $data->correspondentAccount,
                 'address' => $data->address,
-                'status' => $data->status,
+                'status' => $data->status?->value,
+                'is_active' => $data->status?->isActive() ?? false,
             ];
         }
 

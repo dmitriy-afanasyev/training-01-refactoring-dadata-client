@@ -6,6 +6,7 @@ namespace Tests\Unit\Geocoder\Application\Services;
 
 use App\Geocoder\Application\DTO\BankData;
 use App\Geocoder\Application\Services\BankService;
+use App\Geocoder\Domain\Enums\BankStatus;
 use App\Geocoder\Domain\Entities\Bank;
 use App\Geocoder\Domain\Exceptions\BankNotFoundException;
 use App\Geocoder\Domain\Exceptions\InvalidBicException;
@@ -42,6 +43,7 @@ class BankServiceTest extends TestCase
             shortName: 'СБЕРБАНК',
             bic: Bic::fromString($bic),
             inn: Inn::fromString('7707083893'),
+            status: BankStatus::ACTIVE,
         );
 
         Cache::shouldReceive('remember')

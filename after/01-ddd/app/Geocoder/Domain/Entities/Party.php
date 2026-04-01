@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Geocoder\Domain\Entities;
 
+use App\Geocoder\Domain\Enums\PartyStatus;
 use App\Geocoder\Domain\ValueObjects\Inn;
 
 /**
@@ -11,8 +12,8 @@ use App\Geocoder\Domain\ValueObjects\Inn;
  */
 final class Party
 {
-    //TODO: Нет ID у сущности Party
     /**
+     * @param Inn $id Идентификатор организации (ИНН)
      * @param string $name Полное название компании
      * @param string $shortName Краткое название компании
      * @param Inn $inn ИНН компании
@@ -20,9 +21,10 @@ final class Party
      * @param string|null $ogrn ОГРН компании
      * @param string|null $okpo ОКПО компании
      * @param string|null $address Адрес компании
-     * @param string|null $status Статус компании (ACTIVE, LIQUIDATED, и т.д.)
+     * @param PartyStatus|null $status Статус компании
      */
     public function __construct(
+        private(set) Inn $id,
         private(set) string $name,
         private(set) string $shortName,
         private(set) Inn $inn,
@@ -30,17 +32,15 @@ final class Party
         private(set) ?string $ogrn = null,
         private(set) ?string $okpo = null,
         private(set) ?string $address = null,
-        private(set) ?string $status = null,
-    ) {
-    }
+        private(set) ?PartyStatus $status = null,
+    ) {}
 
     /**
      * Проверить, активна ли компания.
      */
     public function isActive(): bool
     {
-        //TODO: магическая переменная
-        return $this->status === 'ACTIVE';
+        return $this->status?->isActive() ?? false;
     }
 
     /**
@@ -51,6 +51,7 @@ final class Party
     public function toArray(): array
     {
         return [
+            'id' => $this->id->value,
             'name' => $this->name,
             'short_name' => $this->shortName,
             'inn' => $this->inn->value,
@@ -58,7 +59,7 @@ final class Party
             'ogrn' => $this->ogrn,
             'okpo' => $this->okpo,
             'address' => $this->address,
-            'status' => $this->status,
+            'status' => $this->status?->value,
         ];
     }
 }

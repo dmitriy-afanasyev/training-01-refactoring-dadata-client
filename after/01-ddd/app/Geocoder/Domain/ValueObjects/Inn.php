@@ -12,6 +12,24 @@ use App\Geocoder\Domain\Exceptions\InvalidInnException;
 final class Inn
 {
     /**
+     * Количество знаков ИНН юридического лица.
+     */
+    private const LENGTH_LEGAL_ENTITY = 10;
+
+    /**
+     * Количество знаков ИНН индивидуального предпринимателя.
+     */
+    private const LENGTH_INDIVIDUAL_ENTREPRENEUR = 12;
+
+    /**
+     * Допустимые длины ИНН.
+     */
+    private const VALID_LENGTHS = [
+        self::LENGTH_LEGAL_ENTITY,
+        self::LENGTH_INDIVIDUAL_ENTREPRENEUR,
+    ];
+
+    /**
      * Конструктор с хуками для валидации и инкапсуляции.
      *
      * @param string $value Значение ИНН
@@ -25,7 +43,7 @@ final class Inn
                     throw new InvalidInnException('ИНН должен содержать только цифры');
                 }
 
-                if (!in_array(strlen($value), [10, 12], true)) {
+                if (!in_array(strlen($value), self::VALID_LENGTHS, true)) {
                     throw new InvalidInnException('ИНН должен содержать 10 или 12 цифр');
                 }
 
@@ -49,8 +67,7 @@ final class Inn
      */
     public function isLegalEntity(): bool
     {
-        //TODO: магическое число?
-        return strlen($this->value) === 10;
+        return strlen($this->value) === self::LENGTH_LEGAL_ENTITY;
     }
 
     /**
@@ -58,7 +75,6 @@ final class Inn
      */
     public function isIndividualEntrepreneur(): bool
     {
-        //TODO: магическое число?
-        return strlen($this->value) === 12;
+        return strlen($this->value) === self::LENGTH_INDIVIDUAL_ENTREPRENEUR;
     }
 }

@@ -1,7 +1,7 @@
 # 🏋️ Тренировочная задача: Refactoring Dadata API Client
 
-[![PHP Version](https://img.shields.io/badge/PHP-8.4-777BB4)](https://php.net)
-[![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20)](https://laravel.com)
+[![PHP Version](https://img.shields.io/badge/PHP-8.5-777BB4)](https://php.net)
+[![Laravel](https://img.shields.io/badge/Laravel-13.x-FF2D20)](https://laravel.com)
 
 ## 🎯 Что это
 

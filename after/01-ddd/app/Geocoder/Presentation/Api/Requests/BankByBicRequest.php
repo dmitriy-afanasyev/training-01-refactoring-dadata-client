@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Geocoder\Presentation\Http\Requests;
+namespace App\Geocoder\Presentation\Api\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -19,7 +19,7 @@ class BankByBicRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'bic' => ['required', 'string', 'size:9'],
+            'bic' => ['required', 'string', 'digits:9'],
         ];
     }
 

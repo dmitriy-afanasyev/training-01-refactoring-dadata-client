@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Geocoder\Presentation\Http\Transformers;
+namespace App\Geocoder\Presentation\Api\Transformers;
 
 use App\Geocoder\Application\DTO\PartyData;
 use App\Geocoder\Domain\Entities\Party;
@@ -22,21 +22,25 @@ class PartyTransformer extends Transformer
     {
         if ($data instanceof Party) {
             return [
+                'id' => $data->id->value,
                 'inn' => $data->inn->value,
                 'name' => $data->name,
                 'short_name' => $data->shortName,
                 'address' => $data->address,
+                'status' => $data->status?->value,
                 'is_active' => $data->isActive(),
             ];
         }
 
         if ($data instanceof PartyData) {
             return [
+                'id' => $data->id,
                 'inn' => $data->inn,
                 'name' => $data->name,
                 'short_name' => $data->shortName,
                 'address' => $data->address,
-                'is_active' => $data->status === 'ACTIVE',
+                'status' => $data->status?->value,
+                'is_active' => $data->status?->isActive() ?? false,
             ];
         }
 

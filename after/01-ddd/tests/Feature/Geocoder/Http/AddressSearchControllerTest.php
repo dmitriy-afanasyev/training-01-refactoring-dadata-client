@@ -16,6 +16,8 @@ class AddressSearchControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    private const ENDPOINT = '/api/geocoder/address/search';
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -34,7 +36,7 @@ class AddressSearchControllerTest extends TestCase
             ], 200),
         ]);
 
-        $response = $this->getJson('/api/dadata/address/search?query=Москва');
+        $response = $this->getJson(self::ENDPOINT . '?query=Москва');
 
         $response->assertStatus(200)
             ->assertJson([
@@ -45,7 +47,7 @@ class AddressSearchControllerTest extends TestCase
 
     public function test_search_address_validation_error(): void
     {
-        $response = $this->getJson('/api/dadata/address/search');
+        $response = $this->getJson(self::ENDPOINT);
 
         $response->assertStatus(422);
     }

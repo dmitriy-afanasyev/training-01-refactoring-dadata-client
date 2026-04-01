@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Geocoder\Presentation\Http\Transformers;
+namespace App\Geocoder\Presentation\Api\Transformers;
 
 /**
  * Базовый класс для трансформеров.

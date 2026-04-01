@@ -1,7 +1,14 @@
 {
   "permissions": {
     "allow": [
-      "Bash(./vendor/bin/sail *)"
+      "Bash(./vendor/bin/sail *)",
+      "Bash(docker compose up *)",
+      "Bash(sleep *)",
+      "Bash(git add *)",
+      "Bash(git mv *)",
+      "Bash(find *)",
+      "Bash(git commit *)"
     ]
-  }
+  },
+  "$version": 3
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Geocoder\Presentation\Http\Exceptions;
+namespace App\Geocoder\Presentation\Api\Exceptions;
 
 use App\Geocoder\Domain\Exceptions\BankNotFoundException;
 use App\Geocoder\Domain\Exceptions\ExternalApiException;
@@ -10,7 +10,7 @@ use App\Geocoder\Domain\Exceptions\GeocoderException;
 use App\Geocoder\Domain\Exceptions\InvalidBicException;
 use App\Geocoder\Domain\Exceptions\InvalidInnException;
 use App\Geocoder\Domain\Exceptions\PartyNotFoundException;
-use App\Geocoder\Presentation\Http\DTO\ApiResponse;
+use App\Geocoder\Presentation\Api\DTO\ApiResponse;
 use Closure;
 use Illuminate\Http\JsonResponse;
 
@@ -33,12 +33,12 @@ class GeocoderExceptionHandler
     {
         if (!isset(self::$exceptionHandlers)) {
             self::$exceptionHandlers = [
-                InvalidInnException::class => fn(\Throwable $e) => ApiResponse::error('Неверный формат ИНН', $e->getMessage())->toResponse(),
-                InvalidBicException::class => fn(\Throwable $e) => ApiResponse::error('Неверный формат БИК', $e->getMessage())->toResponse(),
-                PartyNotFoundException::class => fn(\Throwable $e) => ApiResponse::notFound('Организация не найдена', $e->getMessage())->toResponse(),
-                BankNotFoundException::class => fn(\Throwable $e) => ApiResponse::notFound('Банк не найден', $e->getMessage())->toResponse(),
-                ExternalApiException::class => fn(\Throwable $e) => ApiResponse::badGateway('Ошибка внешнего API', $e->getMessage())->toResponse(),
-                GeocoderException::class => fn(\Throwable $e) => ApiResponse::internalError('Ошибка модуля Geocoder', $e->getMessage())->toResponse(),
+                InvalidInnException::class => fn(\Throwable $e) => ApiResponse::error('Неверный формат ИНН', $e->getMessage(), $e->context())->toResponse(),
+                InvalidBicException::class => fn(\Throwable $e) => ApiResponse::error('Неверный формат БИК', $e->getMessage(), $e->context())->toResponse(),
+                PartyNotFoundException::class => fn(\Throwable $e) => ApiResponse::notFound('Организация не найдена', $e->getMessage(), $e->context())->toResponse(),
+                BankNotFoundException::class => fn(\Throwable $e) => ApiResponse::notFound('Банк не найден', $e->getMessage(), $e->context())->toResponse(),
+                ExternalApiException::class => fn(\Throwable $e) => ApiResponse::badGateway('Ошибка внешнего API', $e->getMessage(), $e->context())->toResponse(),
+                GeocoderException::class => fn(\Throwable $e) => ApiResponse::internalError('Ошибка модуля Geocoder', $e->getMessage(), $e->context())->toResponse(),
             ];
         }
     }

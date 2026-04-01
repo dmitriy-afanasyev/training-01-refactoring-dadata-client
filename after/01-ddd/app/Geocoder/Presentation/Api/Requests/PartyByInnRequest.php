@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Geocoder\Presentation\Http\Requests;
+namespace App\Geocoder\Presentation\Api\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -19,7 +19,7 @@ class PartyByInnRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'inn' => ['required', 'string', 'size:10'],
+            'inn' => ['required', 'string', 'digits_between:10,12'],
         ];
     }
 

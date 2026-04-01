@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Geocoder\Presentation\Http\Requests;
+namespace App\Geocoder\Presentation\Api\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * Запрос для поиска адресов.
+ * Запрос для поиска стран.
  */
-class AddressSearchRequest extends FormRequest
+class CountrySearchRequest extends FormRequest
 {
     /**
      * Определить правила валидации для запроса.
@@ -20,7 +20,6 @@ class AddressSearchRequest extends FormRequest
     {
         return [
             'query' => ['required', 'string', 'min:1', 'max:255'],
-            'locations' => ['nullable', 'array'],
         ];
     }
 
@@ -30,15 +29,5 @@ class AddressSearchRequest extends FormRequest
     public function getQuery(): string
     {
         return $this->validated('query');
-    }
-
-    /**
-     * Получить валидированные локации.
-     *
-     * @return array<string, mixed>|null
-     */
-    public function getLocations(): ?array
-    {
-        return $this->validated('locations');
     }
 }

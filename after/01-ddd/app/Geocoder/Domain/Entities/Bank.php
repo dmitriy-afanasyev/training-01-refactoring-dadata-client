@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Geocoder\Domain\Entities;
 
+use App\Geocoder\Domain\Enums\BankStatus;
 use App\Geocoder\Domain\ValueObjects\Bic;
 use App\Geocoder\Domain\ValueObjects\Inn;
 
@@ -20,7 +21,7 @@ final class Bank
      * @param Inn $inn ИНН банка
      * @param string|null $correspondentAccount Корреспондентский счёт
      * @param string|null $address Адрес банка
-     * @param string|null $status Статус банка
+     * @param BankStatus|null $status Статус банка
      */
     public function __construct(
         private(set) Bic $id,
@@ -30,17 +31,15 @@ final class Bank
         private(set) Inn $inn,
         private(set) ?string $correspondentAccount = null,
         private(set) ?string $address = null,
-        private(set) ?string $status = null,
-    ) {
-    }
+        private(set) ?BankStatus $status = null,
+    ) {}
 
     /**
      * Проверить, активен ли банк.
      */
     public function isActive(): bool
     {
-        //TODO: магическая переменная
-        return $this->status === 'ACTIVE';
+        return $this->status?->isActive() ?? false;
     }
 
     /**

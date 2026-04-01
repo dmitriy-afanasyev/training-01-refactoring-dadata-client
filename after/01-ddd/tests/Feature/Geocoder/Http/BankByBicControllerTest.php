@@ -16,6 +16,8 @@ class BankByBicControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    private const ENDPOINT = '/api/geocoder/bank/by-bic';
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -40,7 +42,7 @@ class BankByBicControllerTest extends TestCase
             ], 200),
         ]);
 
-        $response = $this->getJson('/api/dadata/bank/by-bic?bic=044525225');
+        $response = $this->getJson(self::ENDPOINT . '?bic=044525225');
 
         $response->assertStatus(200)
             ->assertJson([
@@ -54,7 +56,7 @@ class BankByBicControllerTest extends TestCase
 
     public function test_get_bank_by_bic_validation_error(): void
     {
-        $response = $this->getJson('/api/dadata/bank/by-bic?bic=123');
+        $response = $this->getJson(self::ENDPOINT . '?bic=123');
 
         $response->assertStatus(422);
     }

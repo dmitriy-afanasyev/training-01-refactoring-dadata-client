@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Geocoder\Domain\Entities;
 
+use App\Geocoder\Domain\Enums\PartyStatus;
 use App\Geocoder\Domain\Entities\Party;
 use App\Geocoder\Domain\ValueObjects\Inn;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -17,6 +18,7 @@ class PartyTest extends TestCase
     public function test_create_party(): void
     {
         $party = new Party(
+            id: Inn::fromString('7707083893'),
             name: 'ПАО "СБЕРБАНК"',
             shortName: 'СБЕРБАНК',
             inn: Inn::fromString('7707083893'),
@@ -24,7 +26,7 @@ class PartyTest extends TestCase
             ogrn: '1027700132195',
             okpo: '00032537',
             address: 'г. Москва, ул. Вавилова, д. 19',
-            status: 'ACTIVE',
+            status: PartyStatus::ACTIVE,
         );
 
         $this->assertEquals('ПАО "СБЕРБАНК"', $party->name);
@@ -34,17 +36,18 @@ class PartyTest extends TestCase
         $this->assertEquals('1027700132195', $party->ogrn);
         $this->assertEquals('00032537', $party->okpo);
         $this->assertEquals('г. Москва, ул. Вавилова, д. 19', $party->address);
-        $this->assertEquals('ACTIVE', $party->status);
+        $this->assertEquals(PartyStatus::ACTIVE, $party->status);
     }
 
     #[DataProvider('partyStatusProvider')]
     public function test_party_is_active(string $status, bool $expected): void
     {
         $party = new Party(
+            id: Inn::fromString('7707083893'),
             name: 'ПАО "СБЕРБАНК"',
             shortName: 'СБЕРБАНК',
             inn: Inn::fromString('7707083893'),
-            status: $status,
+            status: PartyStatus::fromString($status),
         );
 
         $this->assertEquals($expected, $party->isActive());
@@ -58,23 +61,26 @@ class PartyTest extends TestCase
         return [
             ['ACTIVE', true],
             ['LIQUIDATED', false],
-            ['CLOSED', false],
+            ['REORGANIZED', false],
+            ['CLOSING', false],
         ];
     }
 
     public function test_party_to_array(): void
     {
         $party = new Party(
+            id: Inn::fromString('7707083893'),
             name: 'ПАО "СБЕРБАНК"',
             shortName: 'СБЕРБАНК',
             inn: Inn::fromString('7707083893'),
             kpp: '773601001',
-            status: 'ACTIVE',
+            status: PartyStatus::ACTIVE,
         );
 
         $array = $party->toArray();
 
         $this->assertEquals([
+            'id' => '7707083893',
             'name' => 'ПАО "СБЕРБАНК"',
             'short_name' => 'СБЕРБАНК',
             'inn' => '7707083893',

@@ -35,10 +35,12 @@ class GeocoderServiceProvider extends ServiceProvider
             return new DadataHttpClient(
                 apiKey: config('geocoder.api_key'),
                 baseUrl: config('geocoder.base_url'),
-                timeout: config('geocoder.timeout', 30),
-                connectTimeout: config('geocoder.connect_timeout', 10),
+                timeout: config('geocoder.timeout', 40),
+                connectTimeout: config('geocoder.connect_timeout', 20),
                 retryCount: config('geocoder.retry_count', 3),
                 retryDelay: config('geocoder.retry_delay', 100),
+                maxRedirects: config('geocoder.max_redirects', 10),
+                interface: config('app.external_ip'),
             );
         });
 
@@ -59,6 +61,6 @@ class GeocoderServiceProvider extends ServiceProvider
         ], 'geocoder-config');
 
         // Загрузка маршрутов модуля
-        $this->loadRoutesFrom(__DIR__ . '/../Presentation/Http/Routes/web.php');
+        $this->loadRoutesFrom(__DIR__ . '/../Presentation/Api/Routes/api.php');
     }
 }

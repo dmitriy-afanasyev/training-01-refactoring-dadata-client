@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Geocoder\Application\DTO;
 
+use App\Geocoder\Domain\Enums\BankStatus;
+
 /**
  * DTO для данных банка.
  */
@@ -17,7 +19,7 @@ final readonly class BankData
      * @param string $inn ИНН банка
      * @param string|null $correspondentAccount Корреспондентский счёт
      * @param string|null $address Адрес банка
-     * @param string|null $status Статус банка
+     * @param BankStatus|null $status Статус банка
      */
     public function __construct(
         public string $id,
@@ -27,9 +29,8 @@ final readonly class BankData
         public string $inn,
         public ?string $correspondentAccount = null,
         public ?string $address = null,
-        public ?string $status = null,
-    ) {
-    }
+        public ?BankStatus $status = null,
+    ) {}
 
     /**
      * Создать DTO из массива данных.
@@ -46,7 +47,9 @@ final readonly class BankData
             inn: $data['inn'] ?? '',
             correspondentAccount: $data['correspondent_account'] ?? null,
             address: $data['address'] ?? null,
-            status: $data['status'] ?? null,
+            status: isset($data['status']) && is_string($data['status'])
+                ? BankStatus::fromString($data['status'])
+                : ($data['status'] ?? null),
         );
     }
 
@@ -65,7 +68,7 @@ final readonly class BankData
             'inn' => $this->inn,
             'correspondent_account' => $this->correspondentAccount,
             'address' => $this->address,
-            'status' => $this->status,
+            'status' => $this->status?->value,
         ];
     }
 }

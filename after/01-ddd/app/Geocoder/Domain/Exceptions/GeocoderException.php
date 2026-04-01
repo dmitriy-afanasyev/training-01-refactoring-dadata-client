@@ -11,4 +11,13 @@ use Exception;
  */
 class GeocoderException extends Exception
 {
+    /**
+     * Получить дополнительный контекст для логирования.
+     *
+     * @return array<string, mixed>
+     */
+    public function context(): array
+    {
+        return [];
+    }
 }

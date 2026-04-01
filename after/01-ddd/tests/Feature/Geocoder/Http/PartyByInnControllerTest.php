@@ -18,6 +18,8 @@ class PartyByInnControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    private const ENDPOINT = '/api/geocoder/party/by-inn';
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -42,7 +44,7 @@ class PartyByInnControllerTest extends TestCase
             ], 200),
         ]);
 
-        $response = $this->getJson('/api/dadata/party/by-inn?inn=7707083893');
+        $response = $this->getJson(self::ENDPOINT . '?inn=7707083893');
 
         $response->assertStatus(200)
             ->assertJson([
@@ -62,7 +64,7 @@ class PartyByInnControllerTest extends TestCase
             ], 200),
         ]);
 
-        $response = $this->getJson('/api/dadata/party/by-inn?inn=7707083893');
+        $response = $this->getJson(self::ENDPOINT . '?inn=7707083893');
 
         $response->assertStatus(404)
             ->assertJson([
@@ -73,14 +75,14 @@ class PartyByInnControllerTest extends TestCase
 
     public function test_get_party_by_inn_validation_error(): void
     {
-        $response = $this->getJson('/api/dadata/party/by-inn?inn=123');
+        $response = $this->getJson(self::ENDPOINT . '?inn=123');
 
         $response->assertStatus(422);
     }
 
     public function test_get_party_by_inn_missing_inn(): void
     {
-        $response = $this->getJson('/api/dadata/party/by-inn');
+        $response = $this->getJson(self::ENDPOINT);
 
         $response->assertStatus(422);
     }

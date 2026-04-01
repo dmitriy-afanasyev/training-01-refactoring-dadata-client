@@ -16,6 +16,8 @@ class CountrySearchControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    private const ENDPOINT = '/api/geocoder/country/search';
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -35,7 +37,7 @@ class CountrySearchControllerTest extends TestCase
             ], 200),
         ]);
 
-        $response = $this->getJson('/api/dadata/country/search?query=Россия');
+        $response = $this->getJson(self::ENDPOINT . '?query=Россия');
 
         $response->assertStatus(200)
             ->assertJson([
@@ -46,7 +48,7 @@ class CountrySearchControllerTest extends TestCase
 
     public function test_search_country_validation_error(): void
     {
-        $response = $this->getJson('/api/dadata/country/search');
+        $response = $this->getJson(self::ENDPOINT);
 
         $response->assertStatus(422);
     }

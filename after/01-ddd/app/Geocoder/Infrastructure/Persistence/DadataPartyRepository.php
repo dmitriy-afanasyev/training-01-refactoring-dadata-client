@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Geocoder\Infrastructure\Persistence;
 
+use App\Geocoder\Domain\Enums\PartyStatus;
 use App\Geocoder\Domain\Entities\Party;
 use App\Geocoder\Domain\Exceptions\PartyNotFoundException;
 use App\Geocoder\Domain\Repositories\PartyRepositoryInterface;
@@ -17,17 +18,14 @@ readonly class DadataPartyRepository implements PartyRepositoryInterface
 {
     public function __construct(
         private DadataApiInterface $api,
-    ) {
-    }
+    ) {}
 
     public function findByInn(Inn $inn): ?Party
     {
         $data = $this->api->findPartyByInn($inn->value);
 
         if ($data === null) {
-            throw new PartyNotFoundException(
-                sprintf('Организация с ИНН %s не найдена', $inn->value)
-            );
+            throw new PartyNotFoundException($inn->value);
         }
 
         return $this->mapToParty($data);
@@ -40,15 +38,18 @@ readonly class DadataPartyRepository implements PartyRepositoryInterface
      */
     private function mapToParty(array $data): Party
     {
+        $inn = Inn::fromString($data['inn'] ?? '');
+
         return new Party(
+            id: $inn,
             name: $data['name']['full_with_opf'] ?? $data['name']['short_with_opf'] ?? '',
             shortName: $data['name']['short_with_opf'] ?? $data['name']['full_with_opf'] ?? '',
-            inn: Inn::fromString($data['inn'] ?? ''),
+            inn: $inn,
             kpp: $data['kpp'] ?? null,
             ogrn: $data['ogrn'] ?? null,
             okpo: $data['okpo'] ?? null,
             address: $data['address']['value'] ?? null,
-            status: $data['state']['status'] ?? null,
+            status: PartyStatus::fromString($data['state']['status'] ?? null),
         );
     }
 }

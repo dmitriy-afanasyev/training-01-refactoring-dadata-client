@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Geocoder\Presentation\Http\Controllers;
+namespace App\Geocoder\Presentation\Api\Controllers;
 
 use App\Geocoder\Application\Services\BankService;
-use App\Geocoder\Presentation\Http\DTO\ApiResponse;
-use App\Geocoder\Presentation\Http\Requests\BankByBicRequest;
-use App\Geocoder\Presentation\Http\Transformers\BankTransformer;
+use App\Geocoder\Presentation\Api\DTO\ApiResponse;
+use App\Geocoder\Presentation\Api\Requests\BankByBicRequest;
+use App\Geocoder\Presentation\Api\Transformers\BankTransformer;
 use Illuminate\Http\JsonResponse;
 
 /**

@@ -20,8 +20,7 @@ readonly class PartyService
 {
     public function __construct(
         private PartyRepositoryInterface $repository,
-    ) {
-    }
+    ) {}
 
     /**
      * Найти организацию по ИНН.

@@ -11,6 +11,11 @@ use App\Geocoder\Domain\Exceptions\InvalidBicException;
  */
 final class Bic
 {
+    /**
+     * Количество знаков БИК.
+     */
+    private const LENGTH = 9;
+
     public function __construct(
         private(set) string $value {
             set(string $value) {
@@ -20,7 +25,7 @@ final class Bic
                     throw new InvalidBicException('БИК должен содержать только цифры');
                 }
 
-                if (strlen($value) !== 9) {
+                if (strlen($value) !== self::LENGTH) {
                     throw new InvalidBicException('БИК должен содержать 9 цифр');
                 }
 

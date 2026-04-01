@@ -6,6 +6,7 @@ namespace Tests\Unit\Geocoder\Application\Services;
 
 use App\Geocoder\Application\DTO\PartyData;
 use App\Geocoder\Application\Services\PartyService;
+use App\Geocoder\Domain\Enums\PartyStatus;
 use App\Geocoder\Domain\Entities\Party;
 use App\Geocoder\Domain\Exceptions\InvalidInnException;
 use App\Geocoder\Domain\Exceptions\PartyNotFoundException;
@@ -36,10 +37,11 @@ class PartyServiceTest extends TestCase
         $inn = '7707083893';
 
         $party = new Party(
+            id: Inn::fromString($inn),
             name: 'ПАО "СБЕРБАНК"',
             shortName: 'СБЕРБАНК',
             inn: Inn::fromString($inn),
-            status: 'ACTIVE',
+            status: PartyStatus::ACTIVE,
         );
 
         Cache::shouldReceive('remember')
@@ -67,6 +69,7 @@ class PartyServiceTest extends TestCase
         $inn = '7707083893';
 
         $party = new Party(
+            id: Inn::fromString($inn),
             name: 'ПАО "СБЕРБАНК"',
             shortName: 'СБЕРБАНК',
             inn: Inn::fromString($inn),
