@@ -156,6 +156,7 @@ readonly class DadataHttpClient implements DadataApiInterface
     /**
      * @throws ExternalApiException
      * @throws ConnectionException
+     * @see https://confluence.hflabs.ru/spaces/SGTDOC/pages/204669107/Подсказки+по+адресу+API
      */
     public function searchAddress(string $query, ?array $locations = null): array
     {
