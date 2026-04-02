@@ -12,11 +12,13 @@ use Illuminate\Http\JsonResponse;
 /**
  * Контроллер для поиска адресов.
  */
-final readonly class AddressSearchController
+final class AddressSearchController
 {
-    public function __invoke(AddressSearchRequest $request, AddressService $addressService): JsonResponse
+    public function __construct(private AddressService $addressService) {}
+
+    public function __invoke(AddressSearchRequest $request): JsonResponse
     {
-        $addresses = $addressService->search(
+        $addresses = $this->addressService->search(
             $request->getQuery(),
             $request->getLocations()
         );

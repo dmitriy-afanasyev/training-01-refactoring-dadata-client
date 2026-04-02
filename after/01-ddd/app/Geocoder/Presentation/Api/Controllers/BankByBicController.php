@@ -15,11 +15,14 @@ use Illuminate\Http\JsonResponse;
  */
 final class BankByBicController
 {
-    public function __construct(private BankTransformer $transformer) {}
+    public function __construct(
+        private BankService $bankService,
+        private BankTransformer $transformer,
+    ) {}
 
-    public function __invoke(BankByBicRequest $request, BankService $bankService): JsonResponse
+    public function __invoke(BankByBicRequest $request): JsonResponse
     {
-        $bank = $bankService->findByBic($request->getBic());
+        $bank = $this->bankService->findByBic($request->getBic());
 
         return ApiResponse::success($bank, $this->transformer)->toResponse();
     }

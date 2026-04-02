@@ -12,11 +12,13 @@ use Illuminate\Http\JsonResponse;
 /**
  * Контроллер для поиска стран.
  */
-final readonly class CountrySearchController
+final class CountrySearchController
 {
-    public function __invoke(CountrySearchRequest $request, AddressService $addressService): JsonResponse
+    public function __construct(private AddressService $addressService) {}
+
+    public function __invoke(CountrySearchRequest $request): JsonResponse
     {
-        $countries = $addressService->searchCountry($request->getQuery());
+        $countries = $this->addressService->searchCountry($request->getQuery());
 
         return ApiResponse::success($countries)->toResponse();
     }

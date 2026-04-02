@@ -15,11 +15,14 @@ use Illuminate\Http\JsonResponse;
  */
 final class PartyByInnController
 {
-    public function __construct(private PartyTransformer $transformer) {}
+    public function __construct(
+        private PartyService $partyService,
+        private PartyTransformer $transformer,
+    ) {}
 
-    public function __invoke(PartyByInnRequest $request, PartyService $partyService): JsonResponse
+    public function __invoke(PartyByInnRequest $request): JsonResponse
     {
-        $party = $partyService->findByInn($request->getInn());
+        $party = $this->partyService->findByInn($request->getInn());
 
         return ApiResponse::success($party, $this->transformer)->toResponse();
     }
