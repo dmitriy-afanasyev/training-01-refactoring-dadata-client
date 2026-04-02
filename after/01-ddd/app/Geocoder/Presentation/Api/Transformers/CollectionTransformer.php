@@ -9,19 +9,16 @@ use Illuminate\Support\Collection;
 /**
  * Трансформер для коллекций.
  */
-class CollectionTransformer extends Transformer
+final class CollectionTransformer extends Transformer
 {
     /**
      * Преобразовать коллекцию в массив.
      *
      * @param Collection|array $collection
-     * @param class-string $itemTransformer Класс трансформера для элементов
      * @return array<int, array<string, mixed>>
      */
-    public static function transform(
-        mixed $collection,
-        ?string $itemTransformer = null,
-    ): array {
+    public function transform(mixed $collection): array
+    {
         if ($collection instanceof Collection) {
             $collection = $collection->all();
         }
@@ -30,13 +27,29 @@ class CollectionTransformer extends Transformer
             throw new \InvalidArgumentException('Expected Collection or array');
         }
 
-        if ($itemTransformer !== null && is_a($itemTransformer, Transformer::class, true)) {
-            return array_map(
-                fn(mixed $item): array => $itemTransformer::transform($item),
-                $collection
-            );
+        return $collection;
+    }
+
+    /**
+     * Преобразовать коллекцию с применением трансформера к элементам.
+     *
+     * @param Collection|array $collection
+     * @param Transformer $itemTransformer Трансформер для элементов
+     * @return array<int, array<string, mixed>>
+     */
+    public function transformWith(mixed $collection, Transformer $itemTransformer): array
+    {
+        if ($collection instanceof Collection) {
+            $collection = $collection->all();
         }
 
-        return $collection;
+        if (!is_array($collection)) {
+            throw new \InvalidArgumentException('Expected Collection or array');
+        }
+
+        return array_map(
+            fn(mixed $item): array => $itemTransformer->transform($item),
+            $collection
+        );
     }
 }

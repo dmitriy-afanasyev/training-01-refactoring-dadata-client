@@ -55,24 +55,4 @@ final readonly class PartyData
                 : ($data['status'] ?? null),
         );
     }
-
-    /**
-     * Преобразовать в массив.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray(): array
-    {
-        return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'short_name' => $this->shortName,
-            'inn' => $this->inn,
-            'kpp' => $this->kpp,
-            'ogrn' => $this->ogrn,
-            'okpo' => $this->okpo,
-            'address' => $this->address,
-            'status' => $this->status?->value,
-        ];
-    }
 }

@@ -13,12 +13,14 @@ use Illuminate\Http\JsonResponse;
 /**
  * Контроллер для получения данных банка по БИК.
  */
-final readonly class BankByBicController
+final class BankByBicController
 {
+    public function __construct(private BankTransformer $transformer) {}
+
     public function __invoke(BankByBicRequest $request, BankService $bankService): JsonResponse
     {
         $bank = $bankService->findByBic($request->getBic());
 
-        return ApiResponse::success($bank, BankTransformer::class)->toResponse();
+        return ApiResponse::success($bank, $this->transformer)->toResponse();
     }
 }

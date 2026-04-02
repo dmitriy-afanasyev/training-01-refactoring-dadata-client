@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Geocoder\Presentation\Api\DTO;
 
+use App\Geocoder\Presentation\Api\Transformers\Transformer;
 use Illuminate\Http\JsonResponse;
 
 /**
@@ -24,12 +25,12 @@ final readonly class ApiResponse
      * Успешный ответ с данными.
      *
      * @param mixed $data Данные (сущность, DTO, коллекция)
-     * @param class-string|null $transformer Класс трансформера для преобразования данных
+     * @param Transformer|null $transformer Трансформер для преобразования данных
      */
-    public static function success(mixed $data, ?string $transformer = null): self
+    public static function success(mixed $data, ?Transformer $transformer = null): self
     {
         if ($transformer !== null) {
-            $data = $transformer::transform($data);
+            $data = $transformer->transform($data);
         }
 
         return new self(

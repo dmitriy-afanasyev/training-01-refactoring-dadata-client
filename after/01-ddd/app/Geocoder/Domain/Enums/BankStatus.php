@@ -31,6 +31,6 @@ enum BankStatus: string
             return null;
         }
 
-        return self::tryFrom($status) ?? self::ACTIVE; // По умолчанию ACTIVE
+        return self::tryFrom($status) ?? self::ACTIVE;
     }
 }

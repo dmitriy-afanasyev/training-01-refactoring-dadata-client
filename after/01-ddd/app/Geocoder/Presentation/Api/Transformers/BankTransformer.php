@@ -5,49 +5,32 @@ declare(strict_types=1);
 namespace App\Geocoder\Presentation\Api\Transformers;
 
 use App\Geocoder\Application\DTO\BankData;
-use App\Geocoder\Domain\Entities\Bank;
 
 /**
  * Трансформер для данных банка.
  */
-class BankTransformer extends Transformer
+final class BankTransformer extends Transformer
 {
     /**
-     * Преобразовать банк или BankData в массив.
+     * Преобразовать BankData в массив для API-ответа.
      *
-     * @param Bank|BankData $data
+     * @param mixed $data
      * @return array<string, mixed>
      */
-    public static function transform(mixed $data): array
+    public function transform(mixed $data): array
     {
-        if ($data instanceof Bank) {
-            return [
-                'id' => $data->getId()->value,
-                'name' => $data->name,
-                'short_name' => $data->shortName,
-                'bic' => $data->bic->value,
-                'inn' => $data->inn->value,
-                'correspondent_account' => $data->correspondentAccount,
-                'address' => $data->address,
-                'status' => $data->status?->value,
-                'is_active' => $data->isActive(),
-            ];
-        }
+        assert($data instanceof BankData);
 
-        if ($data instanceof BankData) {
-            return [
-                'id' => $data->id,
-                'name' => $data->name,
-                'short_name' => $data->shortName,
-                'bic' => $data->bic,
-                'inn' => $data->inn,
-                'correspondent_account' => $data->correspondentAccount,
-                'address' => $data->address,
-                'status' => $data->status?->value,
-                'is_active' => $data->status?->isActive() ?? false,
-            ];
-        }
-
-        throw new \InvalidArgumentException('Expected Bank or BankData');
+        return [
+            'id' => $data->id,
+            'name' => $data->name,
+            'short_name' => $data->shortName,
+            'bic' => $data->bic,
+            'inn' => $data->inn,
+            'correspondent_account' => $data->correspondentAccount,
+            'address' => $data->address,
+            'status' => $data->status?->value,
+            'is_active' => $data->status?->isActive() ?? false,
+        ];
     }
 }

@@ -40,7 +40,7 @@ final readonly class BankData
     public static function fromArray(array $data): self
     {
         return new self(
-            id: $data['id'] ?? $data['bic'] ?? '',
+            id: $data['id'],
             name: $data['name'] ?? '',
             shortName: $data['short_name'] ?? '',
             bic: $data['bic'] ?? '',
@@ -51,24 +51,5 @@ final readonly class BankData
                 ? BankStatus::fromString($data['status'])
                 : ($data['status'] ?? null),
         );
-    }
-
-    /**
-     * Преобразовать в массив.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray(): array
-    {
-        return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'short_name' => $this->shortName,
-            'bic' => $this->bic,
-            'inn' => $this->inn,
-            'correspondent_account' => $this->correspondentAccount,
-            'address' => $this->address,
-            'status' => $this->status?->value,
-        ];
     }
 }

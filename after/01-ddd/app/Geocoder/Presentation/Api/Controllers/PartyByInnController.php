@@ -13,12 +13,14 @@ use Illuminate\Http\JsonResponse;
 /**
  * Контроллер для получения данных организации по ИНН.
  */
-final readonly class PartyByInnController
+final class PartyByInnController
 {
+    public function __construct(private PartyTransformer $transformer) {}
+
     public function __invoke(PartyByInnRequest $request, PartyService $partyService): JsonResponse
     {
         $party = $partyService->findByInn($request->getInn());
 
-        return ApiResponse::success($party, PartyTransformer::class)->toResponse();
+        return ApiResponse::success($party, $this->transformer)->toResponse();
     }
 }
