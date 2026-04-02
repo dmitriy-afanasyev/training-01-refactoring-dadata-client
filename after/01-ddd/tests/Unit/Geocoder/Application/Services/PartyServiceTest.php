@@ -38,9 +38,13 @@ class PartyServiceTest extends TestCase
 
         $party = new Party(
             id: Inn::fromString($inn),
-            name: 'ПАО "СБЕРБАНК"',
-            shortName: 'СБЕРБАНК',
+            name: 'ПУБЛИЧНОЕ АКЦИОНЕРНОЕ ОБЩЕСТВО "СБЕРБАНК РОССИИ"',
+            shortName: 'ПАО СБЕРБАНК',
             inn: Inn::fromString($inn),
+            kpp: '773601001',
+            ogrn: '1027700132195',
+            okpo: '00032537',
+            address: 'г Москва, ул Вавилова, д 19',
             status: PartyStatus::ACTIVE,
         );
 
@@ -60,8 +64,16 @@ class PartyServiceTest extends TestCase
         $result = $this->service->findByInn($inn);
 
         $this->assertInstanceOf(PartyData::class, $result);
-        $this->assertEquals('ПАО "СБЕРБАНК"', $result->name);
-        $this->assertEquals('7707083893', $result->inn);
+
+        $this->assertEquals($inn, $result->id);
+        $this->assertEquals('ПУБЛИЧНОЕ АКЦИОНЕРНОЕ ОБЩЕСТВО "СБЕРБАНК РОССИИ"', $result->name);
+        $this->assertEquals('ПАО СБЕРБАНК', $result->shortName);
+        $this->assertEquals($inn, $result->inn);
+        $this->assertEquals('773601001', $result->kpp);
+        $this->assertEquals('1027700132195', $result->ogrn);
+        $this->assertEquals('00032537', $result->okpo);
+        $this->assertEquals('г Москва, ул Вавилова, д 19', $result->address);
+        $this->assertTrue($result->status->isActive());
     }
 
     public function test_find_entity_by_inn(): void
