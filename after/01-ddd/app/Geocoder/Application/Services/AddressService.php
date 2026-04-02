@@ -15,9 +15,10 @@ use Illuminate\Support\Facades\Cache;
 readonly class AddressService
 {
     public function __construct(
+        // DDD: Слой приложения может обращаться к возможностям слоя Инфраструктуры, 
+        //  но через интерфейсы Доменного слоя
         private AddressRepositoryInterface $repository,
-    ) {
-    }
+    ) {}
 
     /**
      * Поиск адресов по запросу.
@@ -36,6 +37,10 @@ readonly class AddressService
             $locations ? md5(serialize($locations)) : 'all'
         );
 
+        // DDD: Кэшировать (и на сколько) или нет - это логика уровня приложения, а не домена.
+        //  По этому кэшируем в этом слое и в сервисе, а не в слое домена.
+        //  Например поиск адреса можно делать для клиента магазина, и тогда можно кешировать на долго,
+        //  а можно искать адрес в админке, тогда надо кэшировать на пару минут.
         return Cache::remember(
             $cacheKey,
             now()->addHours(24),
@@ -70,6 +75,8 @@ readonly class AddressService
     {
         $addresses = $this->repository->search($query, $locations);
 
+        // DDD: данные будут переданы в слой Представления и там не должно быть зависимостей от слоя Домена.
+        //  По этому трансформируем ответ либо в DTO текущего слоя (приложения) либо в примитив.
         return array_map(
             fn(Address $address): string => $address->value,
             $addresses
