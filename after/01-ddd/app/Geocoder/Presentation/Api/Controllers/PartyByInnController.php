@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Geocoder\Presentation\Api\Controllers;
 
 use App\Geocoder\Application\Services\PartyService;
-use App\Geocoder\Presentation\Api\DTO\ApiResponse;
+use App\Geocoder\Presentation\Api\Responses\ApiResponseFactory;
 use App\Geocoder\Presentation\Api\Requests\PartyByInnRequest;
 use App\Geocoder\Presentation\Api\Transformers\PartyTransformer;
 use Illuminate\Http\JsonResponse;
@@ -24,6 +24,6 @@ final class PartyByInnController
     {
         $party = $this->partyService->findByInn($request->getInn());
 
-        return ApiResponse::success($party, $this->transformer)->toResponse();
+        return ApiResponseFactory::success($party, $this->transformer)->toResponse();
     }
 }

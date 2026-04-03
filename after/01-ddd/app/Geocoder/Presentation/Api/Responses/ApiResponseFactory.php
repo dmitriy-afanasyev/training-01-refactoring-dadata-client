@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Geocoder\Presentation\Api\DTO;
+namespace App\Geocoder\Presentation\Api\Responses;
 
 use App\Geocoder\Presentation\Api\Transformers\Transformer;
 use Illuminate\Http\JsonResponse;
 
 /**
- * DTO для унифицированного ответа API.
+ * Фабрика для унифицированных JSON-ответов API.
  */
-final readonly class ApiResponse
+final readonly class ApiResponseFactory
 {
     private function __construct(
         private bool $success,

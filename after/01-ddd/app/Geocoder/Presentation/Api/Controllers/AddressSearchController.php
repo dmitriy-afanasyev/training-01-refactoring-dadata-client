@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Geocoder\Presentation\Api\Controllers;
 
 use App\Geocoder\Application\Services\AddressService;
-use App\Geocoder\Presentation\Api\DTO\ApiResponse;
+use App\Geocoder\Presentation\Api\Responses\ApiResponseFactory;
 use App\Geocoder\Presentation\Api\Requests\AddressSearchRequest;
 use Illuminate\Http\JsonResponse;
 
@@ -23,6 +23,6 @@ final class AddressSearchController
             $request->getLocations()
         );
 
-        return ApiResponse::success($addresses)->toResponse();
+        return ApiResponseFactory::success($addresses)->toResponse();
     }
 }

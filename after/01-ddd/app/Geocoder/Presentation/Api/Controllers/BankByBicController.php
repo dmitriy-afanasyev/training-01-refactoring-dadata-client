@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Geocoder\Presentation\Api\Controllers;
 
 use App\Geocoder\Application\Services\BankService;
-use App\Geocoder\Presentation\Api\DTO\ApiResponse;
+use App\Geocoder\Presentation\Api\Responses\ApiResponseFactory;
 use App\Geocoder\Presentation\Api\Requests\BankByBicRequest;
 use App\Geocoder\Presentation\Api\Transformers\BankTransformer;
 use Illuminate\Http\JsonResponse;
@@ -24,6 +24,6 @@ final class BankByBicController
     {
         $bank = $this->bankService->findByBic($request->getBic());
 
-        return ApiResponse::success($bank, $this->transformer)->toResponse();
+        return ApiResponseFactory::success($bank, $this->transformer)->toResponse();
     }
 }
