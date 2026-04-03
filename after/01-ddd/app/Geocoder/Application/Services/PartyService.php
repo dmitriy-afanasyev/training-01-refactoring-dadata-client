@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Geocoder\Application\Services;
 
 use App\Geocoder\Application\DTO\PartyData;
-use App\Geocoder\Domain\Entities\Party;
 use App\Geocoder\Domain\Exceptions\ExternalApiException;
 use App\Geocoder\Domain\Exceptions\InvalidInnException;
 use App\Geocoder\Domain\Exceptions\PartyNotFoundException;
@@ -55,19 +54,6 @@ readonly class PartyService
     }
 
     /**
-     * Найти организацию по ИНН и вернуть сущность.
-     *
-     * @throws ExternalApiException
-     * @throws PartyNotFoundException
-     */
-    public function findEntityByInn(string $inn): Party
-    {
-        $innVO = Inn::fromString($inn);
-
-        return $this->repository->findByInn($innVO);
-    }
-
-    /**
      * Проверить валидность ИНН.
      */
     public function validateInn(string $inn): bool
@@ -78,16 +64,5 @@ readonly class PartyService
         } catch (InvalidInnException) {
             return false;
         }
-    }
-
-    /**
-     * Найти данные организации.
-     */
-    private function findPartyData(string $inn): PartyData
-    {
-        $innVO = Inn::fromString($inn);
-        $party = $this->repository->findByInn($innVO);
-
-        return PartyData::fromArray($party->toArray());
     }
 }

@@ -20,5 +20,5 @@ interface PartyRepositoryInterface
      * @throws PartyNotFoundException
      * @throws ExternalApiException
      */
-    public function findByInn(Inn $inn): ?Party;
+    public function findByInn(Inn $inn): Party;
 }

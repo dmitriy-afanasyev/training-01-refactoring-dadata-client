@@ -32,7 +32,7 @@ final class Inn
     /**
      * Конструктор с хуками для валидации и инкапсуляции.
      *
-     * @param string $value Значение ИНН
+     * @param string $inn Значение ИНН
      */
     public function __construct(
         private(set) string $value {
@@ -57,9 +57,9 @@ final class Inn
     /**
      * Создать INN из строки.
      */
-    public static function fromString(string $value): self
+    public static function fromString(string $inn): self
     {
-        return new self($value);
+        return new self($inn);
     }
 
     /**

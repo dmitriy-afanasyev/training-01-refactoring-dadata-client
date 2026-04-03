@@ -20,7 +20,7 @@ readonly class DadataPartyRepository implements PartyRepositoryInterface
         private DadataApiInterface $api,
     ) {}
 
-    public function findByInn(Inn $inn): ?Party
+    public function findByInn(Inn $inn): Party
     {
         $data = $this->api->findPartyByInn($inn->value);
 
