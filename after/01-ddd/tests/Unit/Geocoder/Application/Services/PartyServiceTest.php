@@ -70,13 +70,18 @@ class PartyServiceTest extends TestCase
         $inn = '7707083893';
         $party = $this->createParty($inn);
 
-        // Первый вызов — кэш пуст, вызывается репозиторий
+        // Первый вызов — кэш пуст, callback выполняется, репозиторий вызывается
         Cache::shouldReceive('remember')
             ->once()
-            ->andReturn($party->toArray());
+            ->andReturnUsing(fn($k, $t, $cb) => $cb());
+
+        // Репозиторий должен вызваться ровно 1 раз (при первом вызове, второй — из кэша)
+        $this->repository
+            ->expects($this->once())
+            ->method('findByInn')
+            ->willReturn($party);
 
         $result1 = $this->service->findByInn($inn);
-        $this->assertInstanceOf(PartyData::class, $result1);
 
         // Второй вызов — данные из кэша, репозиторий НЕ вызывается
         Cache::shouldReceive('remember')
@@ -84,6 +89,7 @@ class PartyServiceTest extends TestCase
             ->andReturn($party->toArray());
 
         $result2 = $this->service->findByInn($inn);
+
         $this->assertEquals($result1, $result2);
     }
 
