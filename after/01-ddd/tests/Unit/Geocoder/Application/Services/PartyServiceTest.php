@@ -57,6 +57,7 @@ class PartyServiceTest extends TestCase
         $this->repository
             ->expects($this->once())
             ->method('findByInn')
+            // Проверяем что сервис передал в репозиторий корректный Inn VO со значением $inn
             ->with($this->callback(fn(Inn $innVO): bool => $innVO->value === $inn))
             ->willReturn($party);
 
