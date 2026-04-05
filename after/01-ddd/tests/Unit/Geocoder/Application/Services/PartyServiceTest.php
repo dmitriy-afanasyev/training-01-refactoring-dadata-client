@@ -63,7 +63,19 @@ class PartyServiceTest extends TestCase
 
         $result = $this->service->findByInn($inn);
 
-        $this->assertPartyData($inn, $result);
+        $expected = new PartyData(
+            id: $inn,
+            name: 'ПУБЛИЧНОЕ АКЦИОНЕРНОЕ ОБЩЕСТВО "СБЕРБАНК РОССИИ"',
+            shortName: 'ПАО СБЕРБАНК',
+            inn: $inn,
+            kpp: '773601001',
+            ogrn: '1027700132195',
+            okpo: '00032537',
+            address: 'г Москва, ул Вавилова, д 19',
+            status: PartyStatus::ACTIVE,
+        );
+
+        $this->assertEquals($expected, $result);
     }
 
     public function test_find_by_inn_uses_cache(): void
@@ -170,15 +182,6 @@ class PartyServiceTest extends TestCase
             address: $attributes['address'] ?? null,
             status: $attributes['status'] ?? null,
         );
-    }
-
-    /**
-     * Проверить данные PartyData.
-     */
-    private function assertPartyData(string $inn, PartyData $result): void
-    {
-        $this->assertEquals($inn, $result->id);
-        $this->assertEquals($inn, $result->inn);
     }
 
     /**

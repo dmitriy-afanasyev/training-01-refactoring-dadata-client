@@ -23,7 +23,8 @@ readonly class PartyService
 
     /**
      * Найти организацию по ИНН.
-     *
+     * @see Dadata\DaDataRu::getCompanyDataByInn()
+     * 
      * @param string $inn
      * @return PartyData
      * @throws PartyNotFoundException
