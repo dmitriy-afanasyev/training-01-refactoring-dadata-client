@@ -15,6 +15,7 @@ use App\Geocoder\Domain\Repositories\PartyRepositoryInterface;
 use App\Geocoder\Domain\ValueObjects\Inn;
 use Illuminate\Support\Facades\Cache;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 
@@ -40,6 +41,7 @@ class PartyServiceTest extends TestCase
         parent::tearDown();
     }
 
+    #[TestDox('Возвращает все поля организации по ИНН')]
     public function test_find_by_inn_returns_party_data(): void
     {
         $inn = '7707083893';
@@ -78,6 +80,7 @@ class PartyServiceTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    #[TestDox('Использует кэширование при повторных запросах')]
     public function test_find_by_inn_uses_cache(): void
     {
         $inn = '7707083893';
@@ -106,6 +109,7 @@ class PartyServiceTest extends TestCase
         $this->assertEquals($result1, $result2);
     }
 
+    #[TestDox('Выбрасывает исключение если организация не найдена')]
     public function test_find_by_inn_throws_party_not_found(): void
     {
         $inn = '7707083893';
@@ -116,6 +120,7 @@ class PartyServiceTest extends TestCase
         $this->service->findByInn($inn);
     }
 
+    #[TestDox('Выбрасывает исключение при ошибке внешнего API')]
     public function test_find_by_inn_throws_external_api_exception(): void
     {
         $inn = '7707083893';
@@ -126,40 +131,23 @@ class PartyServiceTest extends TestCase
         $this->service->findByInn($inn);
     }
 
-    public function test_find_by_inn_throws_invalid_inn_exception(): void
+    #[TestDox('Выбрасывает исключение при невалидном ИНН')]
+    #[DataProvider('invalidInnProvider')]
+    public function test_find_by_inn_throws_invalid_inn_exception(string $inn): void
     {
         Cache::shouldReceive('remember')
             ->once()
             ->andReturnUsing(fn($key, $ttl, $callback) => $callback());
 
         $this->expectException(InvalidInnException::class);
-        $this->service->findByInn('invalid');
-    }
-
-    #[DataProvider('validInnProvider')]
-    public function test_validate_inn_valid(string $inn): void
-    {
-        $this->assertTrue($this->service->validateInn($inn));
-    }
-
-    #[DataProvider('invalidInnProvider')]
-    public function test_validate_inn_invalid(string $inn): void
-    {
-        $this->assertFalse($this->service->validateInn($inn));
-    }
-
-    public static function validInnProvider(): array
-    {
-        return [
-            'legal entity (10 digits)' => ['7707083893'],
-            'individual entrepreneur (12 digits)' => ['770708389312'],
-        ];
+        $this->service->findByInn($inn);
     }
 
     public static function invalidInnProvider(): array
     {
         return [
             'too short' => ['770708389'],
+            'too long' => ['7707083893123'],
             'contains letters' => ['770708389A'],
             'completely invalid' => ['invalid'],
             'empty string' => [''],

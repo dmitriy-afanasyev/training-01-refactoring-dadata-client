@@ -8,6 +8,7 @@ use App\Geocoder\Domain\Exceptions\ExternalApiException;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Http\Client\RequestException;
 
 /**
  * HTTP-клиент для работы с DaData API.
@@ -62,7 +63,7 @@ readonly class DadataHttpClient implements DadataApiInterface
             ->retry($this->retryCount, $this->retryDelay, function ($exception) {
                 // Повторять только при ошибках соединения или сервера (5xx)
                 return $exception instanceof ConnectionException
-                    || ($exception instanceof \Illuminate\Http\Client\RequestException
+                    || ($exception instanceof RequestException
                         && $exception->response->serverError());
             })
             ->baseUrl($this->baseUrl);
@@ -81,15 +82,14 @@ readonly class DadataHttpClient implements DadataApiInterface
     {
         try {
             $response = $this->httpClient()->post($endpoint, $payload)->throw();
-        } catch (\Illuminate\Http\Client\RequestException $e) {
+        } catch (RequestException $e) {
             throw new ExternalApiException(
                 sprintf(
                     'DaData API error: %d %s',
                     $e->response->status(),
                     $e->response->body()
                 ),
-                $e->response->status(),
-                $e
+                $e->response->status()
             );
         }
 

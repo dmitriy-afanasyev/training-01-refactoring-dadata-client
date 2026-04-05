@@ -13,7 +13,7 @@ class ExternalApiException extends GeocoderException
         string $message,
         private int $httpStatus = 0,
     ) {
-        parent::__construct($message, 0, null);
+        parent::__construct($message);
     }
 
     /**

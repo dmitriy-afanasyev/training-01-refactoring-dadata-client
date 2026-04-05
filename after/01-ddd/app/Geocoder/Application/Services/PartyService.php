@@ -6,7 +6,6 @@ namespace App\Geocoder\Application\Services;
 
 use App\Geocoder\Application\DTO\PartyData;
 use App\Geocoder\Domain\Exceptions\ExternalApiException;
-use App\Geocoder\Domain\Exceptions\InvalidInnException;
 use App\Geocoder\Domain\Exceptions\PartyNotFoundException;
 use App\Geocoder\Domain\Repositories\PartyRepositoryInterface;
 use App\Geocoder\Domain\ValueObjects\Inn;
@@ -52,18 +51,5 @@ readonly class PartyService
         $party = $this->repository->findByInn($innVO);
 
         return $party->toArray();
-    }
-
-    /**
-     * Проверить валидность ИНН.
-     */
-    public function validateInn(string $inn): bool
-    {
-        try {
-            Inn::fromString($inn);
-            return true;
-        } catch (InvalidInnException) {
-            return false;
-        }
     }
 }

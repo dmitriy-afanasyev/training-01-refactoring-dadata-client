@@ -129,28 +129,39 @@ GET /api/dadata/country/search?query=Россия
 
 ## 🧪 Тестирование
 
+> **Важно:** Вывод тестов использует `--testdox` по умолчанию (настроен в `phpunit.xml`),
+> поэтому названия тестов отображаются на русском языке.
+
 ### Запуск всех тестов
 
 ```bash
 ./vendor/bin/sail test
 ```
 
-### Запуск только Unit-тестов
+### Запуск отдельного testsuite
 
 ```bash
-./vendor/bin/sail php artisan test --testsuite=Unit
+./vendor/bin/sail test --testsuite=Unit
+./vendor/bin/sail test --testsuite=Feature
+./vendor/bin/sail test --testsuite=PartyService
 ```
 
-### Запуск только Feature-тестов
+### Запуск конкретного файла теста
 
 ```bash
-./vendor/bin/sail php artisan test --testsuite=Feature
+./vendor/bin/sail test tests/Unit/Geocoder/Application/Services/PartyServiceTest.php
+```
+
+### Запуск отдельного теста по имени
+
+```bash
+./vendor/bin/sail test --filter=find_by_inn_returns_party_data
 ```
 
 ### Запуск с покрытием
 
 ```bash
-./vendor/bin/sail php artisan test --coverage
+./vendor/bin/sail test --coverage
 ```
 
 ## 📦 Публикация конфигурации
@@ -188,9 +199,6 @@ $partyService = app(PartyService::class);
 
 // Получить данные организации
 $party = $partyService->findByInn('7707083893');
-
-// Проверить ИНН
-$isValid = $partyService->validateInn('7707083893');
 ```
 
 ### Через HTTP API
