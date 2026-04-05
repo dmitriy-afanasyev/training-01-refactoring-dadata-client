@@ -7,7 +7,6 @@ namespace App\Geocoder\Application\Services;
 use App\Geocoder\Application\DTO\BankData;
 use App\Geocoder\Domain\Exceptions\BankNotFoundException;
 use App\Geocoder\Domain\Exceptions\ExternalApiException;
-use App\Geocoder\Domain\Exceptions\InvalidBicException;
 use App\Geocoder\Domain\Repositories\BankRepositoryInterface;
 use App\Geocoder\Domain\ValueObjects\Bic;
 use Illuminate\Support\Facades\Cache;
@@ -19,8 +18,7 @@ readonly class BankService
 {
     public function __construct(
         private BankRepositoryInterface $repository,
-    ) {
-    }
+    ) {}
 
     /**
      * Найти банк по БИК.
@@ -51,18 +49,5 @@ readonly class BankService
         );
 
         return $bank->toArray();
-    }
-
-    /**
-     * Проверить валидность БИК.
-     */
-    public function validateBic(string $bic): bool
-    {
-        try {
-            Bic::fromString($bic);
-            return true;
-        } catch (InvalidBicException) {
-            return false;
-        }
     }
 }

@@ -14,6 +14,7 @@ use App\Geocoder\Domain\Exceptions\PartyNotFoundException;
 use App\Geocoder\Domain\Repositories\PartyRepositoryInterface;
 use App\Geocoder\Domain\ValueObjects\Inn;
 use Illuminate\Support\Facades\Cache;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
@@ -22,6 +23,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 /**
  * Тесты для PartyService.
  */
+#[CoversClass(PartyService::class)]
 class PartyServiceTest extends TestCase
 {
     private PartyRepositoryInterface|MockObject $repository;

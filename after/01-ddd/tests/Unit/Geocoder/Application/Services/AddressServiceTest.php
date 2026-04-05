@@ -10,10 +10,12 @@ use App\Geocoder\Domain\ValueObjects\Address;
 use Illuminate\Support\Facades\Cache;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
  * Тесты для AddressService.
  */
+#[CoversClass(AddressService::class)]
 class AddressServiceTest extends TestCase
 {
     private AddressRepositoryInterface|MockObject $repository;
