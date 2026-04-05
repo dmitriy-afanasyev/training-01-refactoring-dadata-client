@@ -1,7 +1,9 @@
 <?php
 
-class DaDataRu {
+namespace Dadata;
 
+class DaDataRu
+{
     protected $curl;
     protected $messages;
     protected $result;
@@ -10,12 +12,13 @@ class DaDataRu {
     protected $api_key = 'apikey';
     public $http_headers;
 
-    public function getCompanyDataByInn($inn) {
+    public function getCompanyDataByInn($inn)
+    {
         $url = 'https://suggestions.dadata.ru/suggestions/api/4_1/rs/findById/party';
         $headers = [
             'Content-Type: application/json',
             'Accept: application/json',
-            'Authorization: Token '.$this->api_key,
+            'Authorization: Token ' . $this->api_key,
         ];
         $post_data = json_encode(['query' => $inn, 'branch_type' => 'MAIN']);
         $result = json_decode(self::requestUrl($url, false, 'POST', $post_data, $headers));
@@ -25,12 +28,13 @@ class DaDataRu {
         return false;
     }
 
-    public function getBankDataByBic($bic) {
+    public function getBankDataByBic($bic)
+    {
         $url = 'https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/bank';
         $headers = [
             'Content-Type: application/json',
             'Accept: application/json',
-            'Authorization: Token '.$this->api_key,
+            'Authorization: Token ' . $this->api_key,
         ];
         $post_data = json_encode(['query' => $bic]);
         $result = json_decode(self::requestUrl($url, false, 'POST', $post_data, $headers));
@@ -40,27 +44,31 @@ class DaDataRu {
         return false;
     }
 
-    public function searchCountry($country) {
+    public function searchCountry($country)
+    {
         $url = 'https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/country';
         $headers = [
             'Content-Type: application/json',
             'Accept: application/json',
-            'Authorization: Token '.$this->api_key,
+            'Authorization: Token ' . $this->api_key,
         ];
         $post_data = json_encode(['query' => $country]);
         $result = json_decode(self::requestUrl($url, false, 'POST', $post_data, $headers));
         if (isset($result->suggestions) && count($result->suggestions) > 0) {
-            return array_map(function ($data) { return $data->value ?? null; }, $result->suggestions);
+            return array_map(function ($data) {
+                return $data->value ?? null;
+            }, $result->suggestions);
         }
         return false;
     }
 
-    public function searchAddress($search, $locations = null) {
+    public function searchAddress($search, $locations = null)
+    {
         $url = 'https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address';
         $headers = [
             'Content-Type: application/json',
             'Accept: application/json',
-            'Authorization: Token '.$this->api_key,
+            'Authorization: Token ' . $this->api_key,
         ];
         $post_data = json_encode(
             [
@@ -70,12 +78,15 @@ class DaDataRu {
         );
         $result = json_decode(self::requestUrl($url, false, 'POST', $post_data, $headers));
         if (isset($result->suggestions) && count($result->suggestions) > 0) {
-            return array_map(function ($data) { return $data->value ?? null; }, $result->suggestions);
+            return array_map(function ($data) {
+                return $data->value ?? null;
+            }, $result->suggestions);
         }
         return false;
     }
 
-    protected function curlStart() {
+    protected function curlStart()
+    {
         //Инициализируем cURL
         $this->curl = curl_init();
         if (filter_var(config('app.external_ip'), FILTER_VALIDATE_IP)) {
@@ -95,7 +106,8 @@ class DaDataRu {
         return true;
     }
 
-    protected function requestUrl($url, $referer = false, $method = 'POST', $post_data = false, $headers = [], $proxy = false) {
+    protected function requestUrl($url, $referer = false, $method = 'POST', $post_data = false, $headers = [], $proxy = false)
+    {
         //Проверяем есть ли сессия cUrl
         if (!$this->curl) {
             $this->curlStart();
@@ -145,7 +157,8 @@ class DaDataRu {
         return $html;
     }
 
-    protected function saveResponseHeaders($ch, $header_line){
+    protected function saveResponseHeaders($ch, $header_line)
+    {
         $this->http_headers .= $header_line;
         return strlen($header_line);
     }

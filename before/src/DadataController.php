@@ -1,6 +1,8 @@
 <?php
 
-use DaDataRu;
+namespace Dadata;
+
+use Dadata\DaDataRu;
 
 class DadataController
 {
