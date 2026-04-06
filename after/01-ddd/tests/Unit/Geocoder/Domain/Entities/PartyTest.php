@@ -7,12 +7,11 @@ namespace Tests\Unit\Geocoder\Domain\Entities;
 use App\Geocoder\Domain\Enums\PartyStatus;
 use App\Geocoder\Domain\Entities\Party;
 use App\Geocoder\Domain\ValueObjects\Inn;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Тесты для Entity Party.
- */
+#[CoversClass(Party::class)]
 class PartyTest extends TestCase
 {
     public function test_create_party(): void

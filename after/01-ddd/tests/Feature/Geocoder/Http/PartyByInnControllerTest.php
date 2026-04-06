@@ -6,11 +6,14 @@ namespace Tests\Feature\Geocoder\Http;
 
 use App\Geocoder\Application\Services\PartyService;
 use App\Geocoder\Domain\Exceptions\PartyNotFoundException;
+use App\Geocoder\Presentation\Api\Controllers\PartyByInnController;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 
+#[CoversClass(PartyByInnController::class)]
 class PartyByInnControllerTest extends TestCase
 {
     use RefreshDatabase;

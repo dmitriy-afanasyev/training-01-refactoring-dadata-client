@@ -6,11 +6,10 @@ namespace Tests\Unit\Geocoder\Application\DTO;
 
 use App\Geocoder\Application\DTO\PartyData;
 use App\Geocoder\Domain\Enums\PartyStatus;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Тесты для DTO PartyData.
- */
+#[CoversClass(PartyData::class)]
 class PartyDataTest extends TestCase
 {
     public function test_create_from_array(): void

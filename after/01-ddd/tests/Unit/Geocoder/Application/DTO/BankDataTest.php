@@ -7,10 +7,9 @@ namespace Tests\Unit\Geocoder\Application\DTO;
 use App\Geocoder\Application\DTO\BankData;
 use App\Geocoder\Domain\Enums\BankStatus;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * Тесты для DTO BankData.
- */
+#[CoversClass(BankData::class)]
 class BankDataTest extends TestCase
 {
     public function test_create_from_array(): void

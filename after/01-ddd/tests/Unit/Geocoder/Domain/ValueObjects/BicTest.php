@@ -7,11 +7,10 @@ namespace Tests\Unit\Geocoder\Domain\ValueObjects;
 use App\Geocoder\Domain\Exceptions\GeocoderException;
 use App\Geocoder\Domain\Exceptions\InvalidBicException;
 use App\Geocoder\Domain\ValueObjects\Bic;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Тесты для Value Object Bic.
- */
+#[CoversClass(Bic::class)]
 class BicTest extends TestCase
 {
     public function test_valid_bic(): void

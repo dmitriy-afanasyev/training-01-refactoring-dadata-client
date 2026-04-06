@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Geocoder\Http;
 
+use App\Geocoder\Presentation\Api\Controllers\BankByBicController;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 
+#[CoversClass(BankByBicController::class)]
 class BankByBicControllerTest extends TestCase
 {
     use RefreshDatabase;

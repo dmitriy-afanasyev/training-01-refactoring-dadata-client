@@ -7,11 +7,10 @@ namespace Tests\Unit\Geocoder\Domain\ValueObjects;
 use App\Geocoder\Domain\Exceptions\GeocoderException;
 use App\Geocoder\Domain\Exceptions\InvalidInnException;
 use App\Geocoder\Domain\ValueObjects\Inn;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Тесты для Value Object Inn.
- */
+#[CoversClass(Inn::class)]
 class InnTest extends TestCase
 {
     public function test_valid_legal_entity_inn(): void
