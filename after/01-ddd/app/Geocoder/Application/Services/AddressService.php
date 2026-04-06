@@ -73,7 +73,7 @@ readonly class AddressService
      */
     private function searchAddresses(string $query, ?array $locations): array
     {
-        $addresses = $this->repository->search($query, $locations);
+        $addresses = $this->repository->searchAddress($query, $locations);
 
         // DDD: данные будут переданы в слой Представления и там не должно быть зависимостей от слоя Домена.
         //  По этому трансформируем ответ либо в DTO текущего слоя (приложения) либо в примитив.

@@ -23,7 +23,7 @@ readonly class DadataAddressRepository implements AddressRepositoryInterface
         private DadataApiInterface $api,
     ) {}
 
-    public function search(string $query, ?array $locations = null): array
+    public function searchAddress(string $query, ?array $locations = null): array
     {
         $values = $this->api->searchAddress($query, $locations);
 

@@ -46,7 +46,7 @@ class AddressServiceTest extends TestCase
 
         $this->repository
             ->expects($this->once())
-            ->method('search')
+            ->method('searchAddress')
             ->with('Ботаническая', null)
             ->willReturn($addresses);
 
@@ -77,7 +77,7 @@ class AddressServiceTest extends TestCase
 
         $this->repository
             ->expects($this->once())
-            ->method('search')
+            ->method('searchAddress')
             ->with($query, $locations)
             ->willReturn($addresses);
 

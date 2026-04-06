@@ -22,7 +22,7 @@ interface AddressRepositoryInterface
      *
      * @throws ExternalApiException
      */
-    public function search(string $query, ?array $locations = null): array;
+    public function searchAddress(string $query, ?array $locations = null): array;
 
     /**
      * Поиск стран по запросу.
