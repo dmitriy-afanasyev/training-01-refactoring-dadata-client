@@ -178,4 +178,52 @@ class DadataHttpClientTest extends TestCase
 
         $this->client->findPartyByInn('7707083893');
     }
+
+    public function test_client_with_custom_interface(): void
+    {
+        $clientWithInterface = new DadataHttpClient(
+            apiKey: 'test-api-key',
+            baseUrl: 'https://suggestions.dadata.ru/suggestions/api/4_1/rs',
+            interface: '192.168.1.100',
+        );
+
+        Http::fake([
+            '/findById/party' => Http::response([
+                'suggestions' => [
+                    ['data' => ['inn' => '7707083893']],
+                ],
+            ], 200),
+        ]);
+
+        $result = $clientWithInterface->findPartyByInn('7707083893');
+
+        $this->assertNotNull($result);
+        $this->assertEquals('7707083893', $result['inn']);
+    }
+
+    public function test_find_party_returns_null_when_data_missing(): void
+    {
+        Http::fake([
+            '/findById/party' => Http::response([
+                'suggestions' => [['data' => null]],
+            ], 200),
+        ]);
+
+        $result = $this->client->findPartyByInn('7707083893');
+
+        $this->assertNull($result);
+    }
+
+    public function test_find_bank_returns_null_when_data_missing(): void
+    {
+        Http::fake([
+            '/suggest/bank' => Http::response([
+                'suggestions' => [['data' => null]],
+            ], 200),
+        ]);
+
+        $result = $this->client->findBankByBic('044525225');
+
+        $this->assertNull($result);
+    }
 }
