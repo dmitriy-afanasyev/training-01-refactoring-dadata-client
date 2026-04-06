@@ -9,9 +9,6 @@ use App\Geocoder\Presentation\Api\Responses\ApiResponseFactory;
 use App\Geocoder\Presentation\Api\Requests\AddressSearchRequest;
 use Illuminate\Http\JsonResponse;
 
-/**
- * Контроллер для поиска адресов.
- */
 final class AddressSearchController
 {
     public function __construct(private AddressService $addressService) {}

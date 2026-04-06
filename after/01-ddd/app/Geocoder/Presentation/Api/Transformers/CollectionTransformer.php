@@ -6,14 +6,9 @@ namespace App\Geocoder\Presentation\Api\Transformers;
 
 use Illuminate\Support\Collection;
 
-/**
- * Трансформер для коллекций.
- */
 final class CollectionTransformer extends Transformer
 {
     /**
-     * Преобразовать коллекцию в массив.
-     *
      * @param Collection|array $collection
      * @return array<int, array<string, mixed>>
      */

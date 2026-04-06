@@ -9,9 +9,6 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
-/**
- * Feature-тесты для BankByBicController.
- */
 class BankByBicControllerTest extends TestCase
 {
     use RefreshDatabase;

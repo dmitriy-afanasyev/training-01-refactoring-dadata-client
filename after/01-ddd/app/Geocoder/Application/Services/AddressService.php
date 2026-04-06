@@ -15,14 +15,12 @@ use Illuminate\Support\Facades\Cache;
 readonly class AddressService
 {
     public function __construct(
-        // DDD: Слой приложения может обращаться к возможностям слоя Инфраструктуры, 
+        // DDD: Слой приложения может обращаться к возможностям слоя Инфраструктуры,
         //  но через интерфейсы Доменного слоя
         private AddressRepositoryInterface $repository,
     ) {}
 
     /**
-     * Поиск адресов по запросу.
-     *
      * @param string $query Запрос для поиска
      * @param array<string, mixed>|null $locations Фильтр по локациям
      *
@@ -49,8 +47,6 @@ readonly class AddressService
     }
 
     /**
-     * Поиск стран по запросу.
-     *
      * @param string $query Запрос для поиска
      *
      * @return array<int, string>
@@ -66,8 +62,6 @@ readonly class AddressService
     }
 
     /**
-     * Поиск адресов.
-     *
      * @param array<string, mixed>|null $locations
      * @return array<int, string>
      */

@@ -9,9 +9,6 @@ use App\Geocoder\Presentation\Api\Responses\ApiResponseFactory;
 use App\Geocoder\Presentation\Api\Requests\CountrySearchRequest;
 use Illuminate\Http\JsonResponse;
 
-/**
- * Контроллер для поиска стран.
- */
 final class CountrySearchController
 {
     public function __construct(private AddressService $addressService) {}

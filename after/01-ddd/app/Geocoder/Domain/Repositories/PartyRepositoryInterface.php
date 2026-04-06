@@ -15,8 +15,6 @@ use App\Geocoder\Domain\ValueObjects\Inn;
 interface PartyRepositoryInterface
 {
     /**
-     * Найти организацию по ИНН.
-     *
      * @throws PartyNotFoundException
      * @throws ExternalApiException
      */

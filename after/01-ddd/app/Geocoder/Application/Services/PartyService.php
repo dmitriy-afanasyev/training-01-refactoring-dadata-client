@@ -21,9 +21,8 @@ readonly class PartyService
     ) {}
 
     /**
-     * Найти организацию по ИНН.
      * @see Dadata\DaDataRu::getCompanyDataByInn()
-     * 
+     *
      * @param string $inn
      * @return PartyData
      * @throws PartyNotFoundException
@@ -41,8 +40,6 @@ readonly class PartyService
     }
 
     /**
-     * Получить данные организации из репозитория.
-     *
      * @return array<string, mixed>
      */
     private function fetchPartyData(string $inn): array

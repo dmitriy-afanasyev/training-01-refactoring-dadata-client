@@ -33,8 +33,6 @@ readonly class DadataBankRepository implements BankRepositoryInterface
     }
 
     /**
-     * Маппинг данных API в сущность Bank.
-     *
      * @param array<string, mixed> $data
      */
     private function mapToBank(array $data): Bank

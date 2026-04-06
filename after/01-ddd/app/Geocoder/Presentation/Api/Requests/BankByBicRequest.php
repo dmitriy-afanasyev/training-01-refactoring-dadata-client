@@ -6,14 +6,9 @@ namespace App\Geocoder\Presentation\Api\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-/**
- * Запрос для поиска банка по БИК.
- */
 class BankByBicRequest extends FormRequest
 {
     /**
-     * Определить правила валидации для запроса.
-     *
      * @return array<string, mixed>
      */
     public function rules(): array
@@ -23,9 +18,6 @@ class BankByBicRequest extends FormRequest
         ];
     }
 
-    /**
-     * Получить валидированный БИК.
-     */
     public function getBic(): string
     {
         return $this->validated('bic');

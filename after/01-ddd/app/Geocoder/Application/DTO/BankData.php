@@ -6,9 +6,6 @@ namespace App\Geocoder\Application\DTO;
 
 use App\Geocoder\Domain\Enums\BankStatus;
 
-/**
- * DTO для данных банка.
- */
 final readonly class BankData
 {
     /**
@@ -33,8 +30,6 @@ final readonly class BankData
     ) {}
 
     /**
-     * Создать DTO из массива данных.
-     *
      * @param array<string, mixed> $data
      */
     public static function fromArray(array $data): self

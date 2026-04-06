@@ -6,14 +6,9 @@ namespace App\Geocoder\Presentation\Api\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-/**
- * Запрос для поиска адресов.
- */
 class AddressSearchRequest extends FormRequest
 {
     /**
-     * Определить правила валидации для запроса.
-     *
      * @return array<string, mixed>
      */
     public function rules(): array
@@ -24,17 +19,12 @@ class AddressSearchRequest extends FormRequest
         ];
     }
 
-    /**
-     * Получить валидированный поисковый запрос.
-     */
     public function getQuery(): string
     {
         return $this->validated('query');
     }
 
     /**
-     * Получить валидированные локации.
-     *
      * @return array<string, mixed>|null
      */
     public function getLocations(): ?array

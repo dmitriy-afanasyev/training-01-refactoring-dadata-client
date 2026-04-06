@@ -21,8 +21,6 @@ readonly class BankService
     ) {}
 
     /**
-     * Найти банк по БИК.
-     *
      * @throws BankNotFoundException
      * @throws ExternalApiException
      */
@@ -38,8 +36,6 @@ readonly class BankService
     }
 
     /**
-     * Получить данные банка из репозитория.
-     *
      * @return array<string, mixed>
      */
     private function fetchBankData(string $bic): array

@@ -13,8 +13,6 @@ use Illuminate\Http\Client\ConnectionException;
 interface DadataApiInterface
 {
     /**
-     * Найти организацию по ИНН.
-     *
      * @param string $inn ИНН организации
      *
      * @return array<string, mixed>|null
@@ -22,8 +20,6 @@ interface DadataApiInterface
     public function findPartyByInn(string $inn): ?array;
 
     /**
-     * Найти банк по БИК.
-     *
      * @param string $bic БИК банка
      *
      * @return array<string, mixed>|null
@@ -31,18 +27,11 @@ interface DadataApiInterface
     public function findBankByBic(string $bic): ?array;
 
     /**
-     * Поиск страны.
-     *
-     * @param string $query Запрос для поиска
-     *
      * @return array<int, string>
      */
     public function searchCountry(string $query): array;
 
     /**
-     * Поиск адреса.
-     *
-     * @param string $query Запрос для поиска
      * @param array<string, mixed>|null $locations Фильтр по локациям
      *
      * @return array<int, string>

@@ -6,14 +6,9 @@ namespace App\Geocoder\Presentation\Api\Transformers;
 
 use App\Geocoder\Application\DTO\PartyData;
 
-/**
- * Трансформер для данных организации.
- */
 final class PartyTransformer extends Transformer
 {
     /**
-     * Преобразовать PartyData в массив для API-ответа.
-     *
      * @param mixed $data
      * @return array<string, mixed>
      */

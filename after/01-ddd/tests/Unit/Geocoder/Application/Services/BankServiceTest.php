@@ -21,9 +21,6 @@ use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 
-/**
- * Тесты для BankService.
- */
 #[CoversClass(BankService::class)]
 class BankServiceTest extends TestCase
 {
@@ -158,9 +155,6 @@ class BankServiceTest extends TestCase
         ];
     }
 
-    /**
-     * Создать тестовую сущность Bank.
-     */
     private function createBank(string $bic, array $attributes = []): Bank
     {
         return new Bank(
@@ -173,9 +167,6 @@ class BankServiceTest extends TestCase
         );
     }
 
-    /**
-     * Замокать Cache::remember с выбросом исключения.
-     */
     private function mockCacheRememberThrows(string $bic, \Throwable $exception): void
     {
         Cache::shouldReceive('remember')

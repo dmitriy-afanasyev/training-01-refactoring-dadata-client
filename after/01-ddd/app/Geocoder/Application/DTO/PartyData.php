@@ -6,9 +6,6 @@ namespace App\Geocoder\Application\DTO;
 
 use App\Geocoder\Domain\Enums\PartyStatus;
 
-/**
- * DTO для данных организации.
- */
 final readonly class PartyData
 {
     /**
@@ -35,8 +32,6 @@ final readonly class PartyData
     ) {}
 
     /**
-     * Создать DTO из массива данных.
-     *
      * @param array<string, mixed> $data
      */
     public static function fromArray(array $data): self

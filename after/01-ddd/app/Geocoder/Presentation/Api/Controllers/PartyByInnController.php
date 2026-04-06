@@ -10,9 +10,6 @@ use App\Geocoder\Presentation\Api\Requests\PartyByInnRequest;
 use App\Geocoder\Presentation\Api\Transformers\PartyTransformer;
 use Illuminate\Http\JsonResponse;
 
-/**
- * Контроллер для получения данных организации по ИНН.
- */
 final class PartyByInnController
 {
     public function __construct(

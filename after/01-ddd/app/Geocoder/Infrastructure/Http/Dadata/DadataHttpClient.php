@@ -11,20 +11,17 @@ use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\RequestException;
 
 /**
- * HTTP-клиент для работы с DaData API.
+ * @property-read string $apiKey API ключ
+ * @property-read string $baseUrl Базовый URL API
+ * @property-read int $timeout Таймаут запроса в секундах
+ * @property-read int $connectTimeout Таймаут соединения в секундах
+ * @property-read int $retryCount Количество попыток повторного запроса
+ * @property-read int $retryDelay Задержка между попытками в миллисекундах
+ * @property-read int $maxRedirects Максимальное количество редиректов
+ * @property-read string|null $interface IP-интерфейс для запросов
  */
 readonly class DadataHttpClient implements DadataApiInterface
 {
-    /**
-     * @param string $apiKey API ключ
-     * @param string $baseUrl Базовый URL API
-     * @param int $timeout Таймаут запроса в секундах
-     * @param int $connectTimeout Таймаут соединения в секундах
-     * @param int $retryCount Количество попыток повторного запроса
-     * @param int $retryDelay Задержка между попытками в миллисекундах
-     * @param int $maxRedirects Максимальное количество редиректов
-     * @param string|null $interface IP-интерфейс для запросов
-     */
     public function __construct(
         private string $apiKey,
         private string $baseUrl,
@@ -36,9 +33,6 @@ readonly class DadataHttpClient implements DadataApiInterface
         private ?string $interface = null,
     ) {}
 
-    /**
-     * Создать HTTP-клиент с необходимыми заголовками.
-     */
     private function httpClient(): PendingRequest
     {
         $options = [
@@ -70,8 +64,6 @@ readonly class DadataHttpClient implements DadataApiInterface
     }
 
     /**
-     * Выполнить POST-запрос к API.
-     *
      * @param string $endpoint Эндпоинт относительно base_url
      * @param array<string, mixed> $payload Данные запроса
      *

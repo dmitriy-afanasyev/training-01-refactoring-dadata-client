@@ -9,9 +9,6 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
-/**
- * Feature-тесты для AddressSearchController.
- */
 class AddressSearchControllerTest extends TestCase
 {
     use RefreshDatabase;

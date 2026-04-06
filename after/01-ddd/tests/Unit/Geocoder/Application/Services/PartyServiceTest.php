@@ -20,9 +20,6 @@ use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 
-/**
- * Тесты для PartyService.
- */
 #[CoversClass(PartyService::class)]
 class PartyServiceTest extends TestCase
 {
@@ -156,9 +153,6 @@ class PartyServiceTest extends TestCase
         ];
     }
 
-    /**
-     * Создать тестовую сущность Party.
-     */
     private function createParty(string $inn, array $attributes = []): Party
     {
         return new Party(
@@ -174,9 +168,6 @@ class PartyServiceTest extends TestCase
         );
     }
 
-    /**
-     * Замокать Cache::remember с выполнением callback.
-     */
     private function mockCacheRemember(string $inn): void
     {
         Cache::shouldReceive('remember')
@@ -185,9 +176,6 @@ class PartyServiceTest extends TestCase
             ->andReturnUsing(fn($key, $ttl, $callback) => $callback());
     }
 
-    /**
-     * Замокать Cache::remember с выбросом исключения.
-     */
     private function mockCacheRememberThrows(string $inn, \Throwable $exception): void
     {
         Cache::shouldReceive('remember')

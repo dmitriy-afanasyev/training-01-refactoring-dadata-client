@@ -6,14 +6,9 @@ namespace App\Geocoder\Presentation\Api\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-/**
- * Запрос для поиска стран.
- */
 class CountrySearchRequest extends FormRequest
 {
     /**
-     * Определить правила валидации для запроса.
-     *
      * @return array<string, mixed>
      */
     public function rules(): array
@@ -23,9 +18,6 @@ class CountrySearchRequest extends FormRequest
         ];
     }
 
-    /**
-     * Получить валидированный поисковый запрос.
-     */
     public function getQuery(): string
     {
         return $this->validated('query');

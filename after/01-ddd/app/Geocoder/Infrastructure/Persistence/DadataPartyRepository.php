@@ -32,8 +32,6 @@ readonly class DadataPartyRepository implements PartyRepositoryInterface
     }
 
     /**
-     * Маппинг данных API в сущность Party.
-     *
      * @param array<string, mixed> $data
      */
     private function mapToParty(array $data): Party

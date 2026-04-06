@@ -15,8 +15,6 @@ use App\Geocoder\Domain\ValueObjects\Bic;
 interface BankRepositoryInterface
 {
     /**
-     * Найти банк по БИК.
-     *
      * @throws BankNotFoundException
      * @throws ExternalApiException
      */

@@ -9,9 +9,6 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
-/**
- * Feature-тесты для CountrySearchController.
- */
 class CountrySearchControllerTest extends TestCase
 {
     use RefreshDatabase;

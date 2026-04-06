@@ -10,9 +10,6 @@ use App\Geocoder\Presentation\Api\Requests\BankByBicRequest;
 use App\Geocoder\Presentation\Api\Transformers\BankTransformer;
 use Illuminate\Http\JsonResponse;
 
-/**
- * Контроллер для получения данных банка по БИК.
- */
 final class BankByBicController
 {
     public function __construct(

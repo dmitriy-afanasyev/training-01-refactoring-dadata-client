@@ -11,9 +11,6 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
-/**
- * Feature-тесты для PartyByInnController.
- */
 class PartyByInnControllerTest extends TestCase
 {
     use RefreshDatabase;

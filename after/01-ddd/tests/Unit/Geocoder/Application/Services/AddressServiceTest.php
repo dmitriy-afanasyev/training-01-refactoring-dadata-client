@@ -13,9 +13,6 @@ use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * Тесты для AddressService.
- */
 #[CoversClass(AddressService::class)]
 class AddressServiceTest extends TestCase
 {

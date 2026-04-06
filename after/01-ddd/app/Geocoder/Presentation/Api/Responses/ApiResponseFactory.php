@@ -7,9 +7,6 @@ namespace App\Geocoder\Presentation\Api\Responses;
 use App\Geocoder\Presentation\Api\Transformers\Transformer;
 use Illuminate\Http\JsonResponse;
 
-/**
- * Фабрика для унифицированных JSON-ответов API.
- */
 final readonly class ApiResponseFactory
 {
     private function __construct(
@@ -22,8 +19,6 @@ final readonly class ApiResponseFactory
     ) {}
 
     /**
-     * Успешный ответ с данными.
-     *
      * @param mixed $data Данные (сущность, DTO, коллекция)
      * @param Transformer|null $transformer Трансформер для преобразования данных
      */
@@ -39,9 +34,6 @@ final readonly class ApiResponseFactory
         );
     }
 
-    /**
-     * Ответ с ошибкой (по умолчанию 400).
-     */
     public static function error(string $error, ?string $message = null, array $context = []): self
     {
         return new self(
@@ -53,9 +45,6 @@ final readonly class ApiResponseFactory
         );
     }
 
-    /**
-     * Ответ с ошибкой 404.
-     */
     public static function notFound(string $error, ?string $message = null, array $context = []): self
     {
         return new self(
@@ -68,7 +57,9 @@ final readonly class ApiResponseFactory
     }
 
     /**
-     * Ответ с ошибкой 502 (ошибка внешнего API).
+     * @param string $error Сообщение об ошибке
+     * @param string|null $message Дополнительное сообщение
+     * @param array<string, mixed> $context Контекст ошибки
      */
     public static function badGateway(string $error, ?string $message = null, array $context = []): self
     {
@@ -82,7 +73,9 @@ final readonly class ApiResponseFactory
     }
 
     /**
-     * Ответ с ошибкой 500 (внутренняя ошибка).
+     * @param string $error Сообщение об ошибке
+     * @param string|null $message Дополнительное сообщение
+     * @param array<string, mixed> $context Контекст ошибки
      */
     public static function internalError(string $error, ?string $message = null, array $context = []): self
     {
@@ -95,9 +88,6 @@ final readonly class ApiResponseFactory
         );
     }
 
-    /**
-     * Преобразовать в JSON-ответ.
-     */
     public function toResponse(): JsonResponse
     {
         return response()->json(
@@ -109,8 +99,6 @@ final readonly class ApiResponseFactory
     }
 
     /**
-     * Преобразовать в массив.
-     *
      * @return array<string, mixed>
      */
     public function toArray(): array
