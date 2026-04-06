@@ -7,11 +7,10 @@ namespace Tests\Unit\Geocoder\Infrastructure\Http\Dadata;
 use App\Geocoder\Domain\Exceptions\ExternalApiException;
 use App\Geocoder\Infrastructure\Http\Dadata\DadataHttpClient;
 use Illuminate\Support\Facades\Http;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 
-/**
- * Тесты для DadataHttpClient.
- */
+#[CoversClass(DadataHttpClient::class)]
 class DadataHttpClientTest extends TestCase
 {
     private DadataHttpClient $client;
