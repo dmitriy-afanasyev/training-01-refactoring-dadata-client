@@ -8,9 +8,6 @@ use App\Geocoder\Domain\Enums\BankStatus;
 use App\Geocoder\Domain\ValueObjects\Bic;
 use App\Geocoder\Domain\ValueObjects\Inn;
 
-/**
- * Сущность: Банк.
- */
 final class Bank
 {
     /**
@@ -35,16 +32,6 @@ final class Bank
     ) {}
 
     /**
-     * Проверить, активен ли банк.
-     */
-    public function isActive(): bool
-    {
-        return $this->status?->isActive() ?? false;
-    }
-
-    /**
-     * Получить массив данных сущности.
-     *
      * @return array<string, mixed>
      */
     public function toArray(): array
