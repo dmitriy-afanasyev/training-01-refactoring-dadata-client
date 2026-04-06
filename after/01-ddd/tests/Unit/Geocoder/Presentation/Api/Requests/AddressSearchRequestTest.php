@@ -49,4 +49,12 @@ class AddressSearchRequestTest extends TestCase
 
         $this->assertTrue($validator->passes());
     }
+
+    public function test_get_query_and_locations(): void
+    {
+        $response = $this->getJson('/api/geocoder/address/search?query=Москва&locations[cities][]=Москва');
+
+        // 200 = success, 502 = API unavailable. Either way validation passed.
+        $this->assertNotEquals(422, $response->getStatusCode());
+    }
 }

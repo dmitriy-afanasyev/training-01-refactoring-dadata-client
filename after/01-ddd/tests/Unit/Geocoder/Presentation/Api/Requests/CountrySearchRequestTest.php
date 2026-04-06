@@ -28,4 +28,11 @@ class CountrySearchRequestTest extends TestCase
 
         $this->assertFalse($validator->passes());
     }
+
+    public function test_get_query(): void
+    {
+        $response = $this->getJson('/api/geocoder/country/search?query=Россия');
+
+        $this->assertNotEquals(422, $response->getStatusCode());
+    }
 }

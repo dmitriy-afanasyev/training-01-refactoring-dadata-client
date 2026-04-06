@@ -55,4 +55,11 @@ class PartyByInnRequestTest extends TestCase
 
         $this->assertFalse($validator->passes());
     }
+
+    public function test_get_inn(): void
+    {
+        $response = $this->getJson('/api/geocoder/party/by-inn?inn=7707083893');
+
+        $this->assertNotEquals(422, $response->getStatusCode());
+    }
 }

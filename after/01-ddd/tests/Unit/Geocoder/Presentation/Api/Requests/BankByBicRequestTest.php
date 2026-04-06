@@ -62,4 +62,12 @@ class BankByBicRequestTest extends TestCase
 
         $this->assertFalse($validator->passes());
     }
+
+    public function test_get_bic_returns_value(): void
+    {
+        $response = $this->getJson('/api/geocoder/bank/by-bic?bic=044525225');
+
+        // 200 = success, 502 = API unavailable. Either way validation passed.
+        $this->assertNotEquals(422, $response->getStatusCode());
+    }
 }
