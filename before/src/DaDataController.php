@@ -4,7 +4,7 @@ namespace Dadata;
 
 use Dadata\DaDataRu;
 
-class DadataController
+class DaDataController
 {
     public function inn($request)
     {
