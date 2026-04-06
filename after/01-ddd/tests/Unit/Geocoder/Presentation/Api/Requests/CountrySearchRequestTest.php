@@ -31,8 +31,12 @@ class CountrySearchRequestTest extends TestCase
 
     public function test_get_query(): void
     {
-        $response = $this->getJson('/api/geocoder/country/search?query=Россия');
+        $request = CountrySearchRequest::create('/test', 'GET', ['query' => 'Россия']);
 
-        $this->assertNotEquals(422, $response->getStatusCode());
+        $request->setContainer($this->app);
+        $request->setRedirector($this->app['redirect']);
+        $request->validateResolved();
+
+        $this->assertSame('Россия', $request->getQuery());
     }
 }

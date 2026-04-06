@@ -50,11 +50,40 @@ class AddressSearchRequestTest extends TestCase
         $this->assertTrue($validator->passes());
     }
 
-    public function test_get_query_and_locations(): void
+    public function test_get_query(): void
     {
-        $response = $this->getJson('/api/geocoder/address/search?query=Москва&locations[cities][]=Москва');
+        $request = AddressSearchRequest::create('/test', 'GET', ['query' => 'Москва']);
 
-        // 200 = success, 502 = API unavailable. Either way validation passed.
-        $this->assertNotEquals(422, $response->getStatusCode());
+        $request->setContainer($this->app);
+        $request->setRedirector($this->app['redirect']);
+        $request->validateResolved();
+
+        $this->assertSame('Москва', $request->getQuery());
+    }
+
+    public function test_get_locations(): void
+    {
+        $locations = ['cities' => ['Москва']];
+        $request = AddressSearchRequest::create('/test', 'GET', [
+            'query' => 'Ленина',
+            'locations' => $locations,
+        ]);
+
+        $request->setContainer($this->app);
+        $request->setRedirector($this->app['redirect']);
+        $request->validateResolved();
+
+        $this->assertSame($locations, $request->getLocations());
+    }
+
+    public function test_get_locations_returns_null(): void
+    {
+        $request = AddressSearchRequest::create('/test', 'GET', ['query' => 'Москва']);
+
+        $request->setContainer($this->app);
+        $request->setRedirector($this->app['redirect']);
+        $request->validateResolved();
+
+        $this->assertNull($request->getLocations());
     }
 }

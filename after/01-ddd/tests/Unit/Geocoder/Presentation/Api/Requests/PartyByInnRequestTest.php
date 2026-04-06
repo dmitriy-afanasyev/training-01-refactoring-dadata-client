@@ -58,8 +58,12 @@ class PartyByInnRequestTest extends TestCase
 
     public function test_get_inn(): void
     {
-        $response = $this->getJson('/api/geocoder/party/by-inn?inn=7707083893');
+        $request = PartyByInnRequest::create('/test', 'GET', ['inn' => '7707083893']);
 
-        $this->assertNotEquals(422, $response->getStatusCode());
+        $request->setContainer($this->app);
+        $request->setRedirector($this->app['redirect']);
+        $request->validateResolved();
+
+        $this->assertSame('7707083893', $request->getInn());
     }
 }
