@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Geocoder\Application\Services;
 
 use App\Geocoder\Application\Services\AddressService;
+use App\Geocoder\Domain\Exceptions\ExternalApiException;
 use App\Geocoder\Domain\Repositories\AddressRepositoryInterface;
 use App\Geocoder\Domain\ValueObjects\Address;
 use Illuminate\Support\Facades\Cache;
@@ -106,5 +107,49 @@ class AddressServiceTest extends TestCase
         $result = $this->service->searchCountry('Россия');
 
         $this->assertEquals(['Россия', 'Российская Федерация'], $result);
+    }
+
+    public function test_search_address_throws_external_api_exception(): void
+    {
+        Cache::shouldReceive('remember')
+            ->once()
+            ->andReturnUsing(function ($key, $ttl, $callback) {
+                return $callback();
+            });
+
+        $exception = new ExternalApiException('External API error', 500);
+
+        $this->repository
+            ->expects($this->once())
+            ->method('searchAddress')
+            ->with('Неизвестный адрес', null)
+            ->willThrowException($exception);
+
+        $this->expectException(ExternalApiException::class);
+        $this->expectExceptionMessage('External API error');
+
+        $this->service->searchAddress('Неизвестный адрес');
+    }
+
+    public function test_search_country_throws_external_api_exception(): void
+    {
+        Cache::shouldReceive('remember')
+            ->once()
+            ->andReturnUsing(function ($key, $ttl, $callback) {
+                return $callback();
+            });
+
+        $exception = new ExternalApiException('External API error', 503);
+
+        $this->repository
+            ->expects($this->once())
+            ->method('searchCountry')
+            ->with('Неизвестная страна')
+            ->willThrowException($exception);
+
+        $this->expectException(ExternalApiException::class);
+        $this->expectExceptionMessage('External API error');
+
+        $this->service->searchCountry('Неизвестная страна');
     }
 }
