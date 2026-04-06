@@ -61,7 +61,7 @@ readonly class DadataHttpClient implements DadataApiInterface
             ->connectTimeout($this->connectTimeout)
             ->withOptions($options)
             ->retry($this->retryCount, $this->retryDelay, function ($exception) {
-                // Повторять только при ошибках соединения или сервера (5xx)
+                // Boost-rule: Повторять только при ошибках соединения или сервера (5xx)
                 return $exception instanceof ConnectionException
                     || ($exception instanceof RequestException
                         && $exception->response->serverError());
@@ -81,6 +81,7 @@ readonly class DadataHttpClient implements DadataApiInterface
     private function request(string $endpoint, array $payload): array
     {
         try {
+            // Boost-rule
             $response = $this->httpClient()->post($endpoint, $payload)->throw();
         } catch (RequestException $e) {
             throw new ExternalApiException(

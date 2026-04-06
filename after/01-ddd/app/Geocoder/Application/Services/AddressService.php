@@ -29,7 +29,7 @@ readonly class AddressService
      * @return array<int, string>
      * @throws ExternalApiException
      */
-    public function search(string $query, ?array $locations = null): array
+    public function searchAddress(string $query, ?array $locations = null): array
     {
         $cacheKey = sprintf(
             'geocoder.address.%s.%s',

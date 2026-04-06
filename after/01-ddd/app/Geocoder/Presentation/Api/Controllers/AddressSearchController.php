@@ -18,7 +18,7 @@ final class AddressSearchController
 
     public function __invoke(AddressSearchRequest $request): JsonResponse
     {
-        $addresses = $this->addressService->search(
+        $addresses = $this->addressService->searchAddress(
             $request->getQuery(),
             $request->getLocations()
         );

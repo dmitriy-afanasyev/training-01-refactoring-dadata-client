@@ -50,7 +50,7 @@ class AddressServiceTest extends TestCase
             ->with('Ботаническая', null)
             ->willReturn($addresses);
 
-        $result = $this->service->search('Ботаническая');
+        $result = $this->service->searchAddress('Ботаническая');
 
         $this->assertEquals([
             "г Москва, ул Ботаническая",
@@ -81,7 +81,7 @@ class AddressServiceTest extends TestCase
             ->with($query, $locations)
             ->willReturn($addresses);
 
-        $result = $this->service->search($query, $locations);
+        $result = $this->service->searchAddress($query, $locations);
 
         $this->assertEquals([
             "г Москва, ул Ботаническая",
