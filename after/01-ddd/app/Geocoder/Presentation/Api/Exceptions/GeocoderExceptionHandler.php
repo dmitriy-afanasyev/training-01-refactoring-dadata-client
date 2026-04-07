@@ -22,6 +22,8 @@ use Illuminate\Validation\ValidationException;
  */
 class GeocoderExceptionHandler
 {
+    public const LOG_CHANNEL = 'geocoder';
+
     /**
      * Маппинг исключений на фабрики ответов.
      *
@@ -91,7 +93,8 @@ class GeocoderExceptionHandler
             $context['validation_errors'] = $e->errors();
         }
 
-        Log::error($e->getMessage(), $context);
+        $channel = $e instanceof GeocoderException ? self::LOG_CHANNEL : null;
+        Log::channel($channel)->error($e->getMessage(), $context);
 
         return $response->toResponse();
     }

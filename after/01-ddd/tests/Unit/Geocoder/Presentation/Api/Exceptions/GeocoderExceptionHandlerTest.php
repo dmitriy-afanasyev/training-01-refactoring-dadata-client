@@ -113,11 +113,13 @@ class GeocoderExceptionHandlerTest extends TestCase
         $this->assertArrayHasKey('inn', $data['context']['errors']);
     }
 
-    public function test_handle_logs_exception_before_responding(): void
+    public function test_handle_logs_exception_to_geocoder_channel(): void
     {
         $exception = new GeocoderException('Test error');
 
-        Log::shouldReceive('error')
+        $geocoderLog = \Mockery::mock(\Illuminate\Log\Logger::class);
+        Log::shouldReceive('channel')->with(GeocoderExceptionHandler::LOG_CHANNEL)->once()->andReturn($geocoderLog);
+        $geocoderLog->shouldReceive('error')
             ->once()
             ->with(\Mockery::type('string'), \Mockery::on(function (array $data) {
                 return $data['request']['method'] === 'GET'
@@ -134,6 +136,7 @@ class GeocoderExceptionHandlerTest extends TestCase
         $validator = validator(['inn' => 'invalid'], ['inn' => ['required', 'string']]);
         $exception = ValidationException::withMessages($validator->errors()->getMessages());
 
+        Log::shouldReceive('channel')->with(null)->once()->andReturnSelf();
         Log::shouldReceive('error')
             ->once()
             ->with(\Mockery::type('string'), \Mockery::on(function (array $data) {
@@ -150,7 +153,9 @@ class GeocoderExceptionHandlerTest extends TestCase
     {
         $exception = new ExternalApiException('API timeout', 504);
 
-        Log::shouldReceive('error')
+        $geocoderLog = \Mockery::mock(\Illuminate\Log\Logger::class);
+        Log::shouldReceive('channel')->with(GeocoderExceptionHandler::LOG_CHANNEL)->once()->andReturn($geocoderLog);
+        $geocoderLog->shouldReceive('error')
             ->once()
             ->with('API timeout', \Mockery::on(function (array $data) {
                 return $data['exception']['class'] === ExternalApiException::class
