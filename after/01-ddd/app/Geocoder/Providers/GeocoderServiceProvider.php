@@ -16,23 +16,15 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
-/**
- * Service Provider для модуля Geocoder.
- */
 class GeocoderServiceProvider extends ServiceProvider
 {
-    /**
-     * Регистрация сервисов.
-     */
     public function register(): void
     {
-        // Регистрируем конфигурацию
         $this->mergeConfigFrom(
             __DIR__ . '/../Config/geocoder.php',
             'geocoder'
         );
 
-        // Регистрируем HTTP-клиент DaData
         $this->app->bind(DadataApiInterface::class, function ($app) {
             return new DadataHttpClient(
                 apiKey: config('geocoder.api_key'),
@@ -46,7 +38,6 @@ class GeocoderServiceProvider extends ServiceProvider
             );
         });
 
-        // Регистрируем репозитории
         $this->app->bind(PartyRepositoryInterface::class, DadataPartyRepository::class);
         $this->app->bind(BankRepositoryInterface::class, DadataBankRepository::class);
         $this->app->bind(AddressRepositoryInterface::class, DadataAddressRepository::class);

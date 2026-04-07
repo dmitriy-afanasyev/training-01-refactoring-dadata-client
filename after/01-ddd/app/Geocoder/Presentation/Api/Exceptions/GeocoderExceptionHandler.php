@@ -61,8 +61,6 @@ class GeocoderExceptionHandler
 
     private static function logAndRespond(\Throwable $e, ApiResponseFactory $response): JsonResponse
     {
-        $sourceClass = self::findSourceClass($e);
-
         $context = [
             'request' => [
                 'url' => Request::fullUrl(),
@@ -72,7 +70,6 @@ class GeocoderExceptionHandler
                 'user_agent' => Request::userAgent(),
             ],
             'source' => [
-                'class' => $sourceClass,
                 'route_action' => Request::route()?->getActionName(),
             ],
             'exception' => [
@@ -96,26 +93,6 @@ class GeocoderExceptionHandler
         Log::channel($channel)->error($e->getMessage(), $context);
 
         return $response->toResponse();
-    }
-
-    /**
-     * Найти первый кадр из нашего кода в трейсе исключения.
-     */
-    private static function findSourceClass(\Throwable $e): ?string
-    {
-        foreach ($e->getTrace() as $frame) {
-            if (!isset($frame['class'])) {
-                continue;
-            }
-
-            $class = $frame['class'];
-
-            if (str_starts_with($class, 'App\\') && !str_starts_with($class, 'App\\Providers\\')) {
-                return $class;
-            }
-        }
-
-        return null;
     }
 
     public static function handle(\Throwable $e): ?JsonResponse
