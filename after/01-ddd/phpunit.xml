@@ -35,5 +35,7 @@
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="NIGHTWATCH_ENABLED" value="false"/>
+        <env name="LOG_CHANNEL" value="null"/>
+        <env name="LOG_STACK" value="null"/>
     </php>
 </phpunit>
