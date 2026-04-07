@@ -1,5 +1,5 @@
 ## Критичные правила (всегда соблюдать)
-- ❗ Перед Laravel кодом читать `after/.cursor/skills/laravel-best-practices/SKILL.md`. Перед применением правила проверять Consistency First — следовать существующим паттернам в кодовой базе
+- ❗ Перед Laravel кодом читать `after/01-ddd/.cursor/skills/laravel-best-practices/SKILL.md`. Перед применением правила проверять Consistency First — следовать существующим паттернам в кодовой базе
 - ❗ Skills применяются только к релевантным задачам.
 
 ## Контекст и память
@@ -8,7 +8,7 @@
 
 ## Когда применять Skills
 
-Применять `after/.cursor/skills/laravel-best-practices/SKILL.md` автоматически когда:
+Применять `after/01-ddd/.cursor/skills/laravel-best-practices/SKILL.md` автоматически когда:
 - ✅ Создаю новый Laravel контроллер
 - ✅ Создаю FormRequest
 - ✅ Пишу тесты для Laravel кода
