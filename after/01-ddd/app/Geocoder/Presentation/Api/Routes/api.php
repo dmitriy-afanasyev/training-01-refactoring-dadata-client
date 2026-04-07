@@ -12,11 +12,7 @@ use Illuminate\Support\Facades\Route;
  * Маршруты модуля Geocoder.
  */
 Route::prefix('api/geocoder')
-    ->middleware(sprintf(
-        'throttle:%d,%d',
-        config('geocoder.throttle.max_attempts', 100),
-        config('geocoder.throttle.decay_minutes', 1)
-    ))
+    ->middleware('geocoder.throttle')
     ->group(function () {
         Route::get('/party/by-inn', PartyByInnController::class);
         Route::get('/bank/by-bic', BankByBicController::class);

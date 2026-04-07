@@ -16,7 +16,13 @@ return Application::configure(basePath: dirname(__DIR__))
         GeocoderServiceProvider::class,
     ])
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->appendToGroup('geocoder.throttle', [
+            sprintf(
+                'throttle:%d,%d',
+                config('geocoder.throttle.max_attempts', 100),
+                config('geocoder.throttle.decay_minutes', 1)
+            ),
+        ]);
     })
     ->withExceptions(
         function (Exceptions $exceptions): void {
