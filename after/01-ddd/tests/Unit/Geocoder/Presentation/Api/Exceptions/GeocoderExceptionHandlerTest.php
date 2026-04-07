@@ -11,6 +11,7 @@ use App\Geocoder\Domain\Exceptions\InvalidBicException;
 use App\Geocoder\Domain\Exceptions\InvalidInnException;
 use App\Geocoder\Domain\Exceptions\PartyNotFoundException;
 use App\Geocoder\Presentation\Api\Exceptions\GeocoderExceptionHandler;
+use Illuminate\Validation\ValidationException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 
@@ -94,5 +95,20 @@ class GeocoderExceptionHandlerTest extends TestCase
         $exception = new \RuntimeException('Some error');
 
         $this->assertNull(GeocoderExceptionHandler::handle($exception));
+    }
+
+    public function test_handle_validation_exception(): void
+    {
+        $validator = validator(['inn' => '7707083d'], ['inn' => ['required', 'string', 'digits_between:10,12']]);
+        $exception = ValidationException::withMessages($validator->errors()->getMessages());
+
+        $response = GeocoderExceptionHandler::handle($exception);
+
+        $this->assertNotNull($response);
+        $this->assertEquals(422, $response->getStatusCode());
+        $data = $response->getData(true);
+        $this->assertEquals('Ошибка валидации', $data['error']);
+        $this->assertArrayHasKey('errors', $data['context']);
+        $this->assertArrayHasKey('inn', $data['context']['errors']);
     }
 }

@@ -13,6 +13,7 @@ use App\Geocoder\Domain\Exceptions\PartyNotFoundException;
 use App\Geocoder\Presentation\Api\Responses\ApiResponseFactory;
 use Closure;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\ValidationException;
 
 /**
  * Обработчик исключений для модуля Geocoder.
@@ -33,6 +34,7 @@ class GeocoderExceptionHandler
     {
         if (!isset(self::$exceptionHandlers)) {
             self::$exceptionHandlers = [
+                ValidationException::class => fn(\Throwable $e) => ApiResponseFactory::validationError('Ошибка валидации', $e->errors())->toResponse(),
                 InvalidInnException::class => fn(\Throwable $e) => ApiResponseFactory::error('Неверный формат ИНН', $e->getMessage(), $e->context())->toResponse(),
                 InvalidBicException::class => fn(\Throwable $e) => ApiResponseFactory::error('Неверный формат БИК', $e->getMessage(), $e->context())->toResponse(),
                 PartyNotFoundException::class => fn(\Throwable $e) => ApiResponseFactory::notFound('Организация не найдена', $e->getMessage(), $e->context())->toResponse(),

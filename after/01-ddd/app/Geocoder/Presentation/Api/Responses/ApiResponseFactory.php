@@ -45,6 +45,20 @@ final readonly class ApiResponseFactory
         );
     }
 
+    /**
+     * @param string $error Сообщение об ошибке
+     * @param array<string, mixed> $errors Детали ошибок валидации
+     */
+    public static function validationError(string $error, array $errors = []): self
+    {
+        return new self(
+            success: false,
+            error: $error,
+            context: ['errors' => $errors],
+            statusCode: 422,
+        );
+    }
+
     public static function notFound(string $error, ?string $message = null, array $context = []): self
     {
         return new self(
