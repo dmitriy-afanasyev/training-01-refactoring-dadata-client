@@ -1,6 +1,5 @@
 <?php
 
-use App\Geocoder\Presentation\Api\Exceptions\GeocoderExceptionHandler;
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
@@ -128,7 +127,7 @@ return [
             'path' => storage_path('logs/laravel.log'),
         ],
 
-        GeocoderExceptionHandler::LOG_CHANNEL => [
+        'geocoder' => [
             'driver' => 'daily',
             'path' => storage_path('logs/geocoder.log'),
             'level' => env('LOG_LEVEL', 'debug'),
