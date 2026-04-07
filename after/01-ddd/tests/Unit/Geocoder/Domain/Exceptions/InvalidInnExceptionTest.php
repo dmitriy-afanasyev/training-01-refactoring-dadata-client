@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace Tests\Unit\Geocoder\Domain\Exceptions;
 
 use App\Geocoder\Domain\Exceptions\InvalidInnException;
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(InvalidInnException::class)]
 class InvalidInnExceptionTest extends TestCase
 {
     public function test_message_contains_inn(): void

@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace Tests\Unit\Geocoder\Domain\Exceptions;
 
 use App\Geocoder\Domain\Exceptions\GeocoderException;
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(GeocoderException::class)]
 class GeocoderExceptionTest extends TestCase
 {
     public function test_message(): void

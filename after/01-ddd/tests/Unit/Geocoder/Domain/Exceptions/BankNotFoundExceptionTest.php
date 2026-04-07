@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace Tests\Unit\Geocoder\Domain\Exceptions;
 
 use App\Geocoder\Domain\Exceptions\BankNotFoundException;
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(BankNotFoundException::class)]
 class BankNotFoundExceptionTest extends TestCase
 {
     public function test_message_contains_bic(): void
