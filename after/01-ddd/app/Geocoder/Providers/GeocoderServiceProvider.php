@@ -12,6 +12,8 @@ use App\Geocoder\Infrastructure\Http\Dadata\DadataHttpClient;
 use App\Geocoder\Infrastructure\Persistence\DadataAddressRepository;
 use App\Geocoder\Infrastructure\Persistence\DadataBankRepository;
 use App\Geocoder\Infrastructure\Persistence\DadataPartyRepository;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -52,6 +54,17 @@ class GeocoderServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        $this->registerRateLimiter();
         $this->loadRoutesFrom(__DIR__ . '/../Presentation/Api/Routes/api.php');
+    }
+
+    private function registerRateLimiter(): void
+    {
+        RateLimiter::for('geocoder', function () {
+            return Limit::perMinutes(
+                config('geocoder.throttle.decay_minutes', 1),
+                config('geocoder.throttle.max_attempts', 100)
+            );
+        });
     }
 }
