@@ -90,4 +90,30 @@ class ApiResponseFactoryTest extends TestCase
         $this->assertEquals('application/json', $jsonResponse->headers->get('Content-Type'));
         $this->assertEquals(['success' => true, 'data' => ['key' => 'значение']], $jsonResponse->getData(true));
     }
+
+    public function test_validation_error(): void
+    {
+        $errors = ['inn' => ['The inn field must be between 10 and 12 digits.']];
+
+        $response = ApiResponseFactory::validationError('Ошибка валидации', $errors);
+
+        $this->assertFalse($response->toArray()['success']);
+        $this->assertEquals('Ошибка валидации', $response->toArray()['error']);
+        $this->assertEquals($errors, $response->toArray()['context']['errors']);
+
+        $jsonResponse = $response->toResponse();
+        $this->assertEquals(422, $jsonResponse->getStatusCode());
+    }
+
+    public function test_validation_error_without_errors(): void
+    {
+        $response = ApiResponseFactory::validationError('Ошибка валидации');
+
+        $array = $response->toArray();
+
+        $this->assertFalse($array['success']);
+        $this->assertEquals('Ошибка валидации', $array['error']);
+        $this->assertEquals([], $array['context']['errors']);
+        $this->assertEquals(422, $response->toResponse()->getStatusCode());
+    }
 }
