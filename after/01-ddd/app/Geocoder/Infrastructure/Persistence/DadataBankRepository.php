@@ -12,9 +12,6 @@ use App\Geocoder\Domain\ValueObjects\Bic;
 use App\Geocoder\Domain\ValueObjects\Inn;
 use App\Geocoder\Infrastructure\Http\Dadata\DadataApiInterface;
 
-/**
- * Реализация репозитория для работы с банками через DaData API.
- */
 readonly class DadataBankRepository implements BankRepositoryInterface
 {
     public function __construct(

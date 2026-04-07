@@ -11,9 +11,6 @@ use App\Geocoder\Domain\Repositories\PartyRepositoryInterface;
 use App\Geocoder\Domain\ValueObjects\Inn;
 use App\Geocoder\Infrastructure\Http\Dadata\DadataApiInterface;
 
-/**
- * Реализация репозитория для работы с организациями через DaData API.
- */
 readonly class DadataPartyRepository implements PartyRepositoryInterface
 {
     public function __construct(
