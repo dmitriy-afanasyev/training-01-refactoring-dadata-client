@@ -10,10 +10,7 @@
         </testsuite>
         <testsuite name="Feature">
             <directory>tests/Feature</directory>
-        </testsuite>
-        <testsuite name="PartyService">
-            <file>tests/Unit/Geocoder/Application/Services/PartyServiceTest.php</file>
-        </testsuite>
+        </testsuite>        
     </testsuites>
     <source>
         <include>
