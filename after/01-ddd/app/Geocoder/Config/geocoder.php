@@ -78,4 +78,19 @@ return [
     */
 
     'max_redirects' => env('DADATA_MAX_REDIRECTS', 10),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Rate Limiting
+    |--------------------------------------------------------------------------
+    |
+    | Максимальное количество запросов в минуту для маршрутов модуля.
+    | Формат: [max_attempts, decay_minutes]
+    |
+    */
+
+    'throttle' => [
+        'max_attempts' => (int) env('DADATA_THROTTLE_MAX_ATTEMPTS', 100),
+        'decay_minutes' => (int) env('DADATA_THROTTLE_DECAY_MINUTES', 1),
+    ],
 ];

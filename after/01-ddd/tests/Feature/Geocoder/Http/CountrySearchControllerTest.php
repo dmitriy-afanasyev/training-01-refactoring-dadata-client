@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Feature\Geocoder\Http;
 
 use App\Geocoder\Presentation\Api\Controllers\CountrySearchController;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -14,8 +13,6 @@ use Tests\TestCase;
 #[CoversClass(CountrySearchController::class)]
 class CountrySearchControllerTest extends TestCase
 {
-    use RefreshDatabase;
-
     private const ENDPOINT = '/api/geocoder/country/search';
 
     protected function setUp(): void
