@@ -50,17 +50,8 @@ class GeocoderServiceProvider extends ServiceProvider
         $this->app->bind(AddressRepositoryInterface::class, DadataAddressRepository::class);
     }
 
-    /**
-     * Загрузка сервисов.
-     */
     public function boot(): void
     {
-        // Публикация конфигурации
-        $this->publishes([
-            __DIR__ . '/../Config/geocoder.php' => config_path('geocoder.php'),
-        ], 'geocoder-config');
-
-        // Загрузка маршрутов модуля
         $this->loadRoutesFrom(__DIR__ . '/../Presentation/Api/Routes/api.php');
     }
 }

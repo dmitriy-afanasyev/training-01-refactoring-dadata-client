@@ -11,7 +11,6 @@ use App\Geocoder\Domain\Exceptions\InvalidBicException;
 use App\Geocoder\Domain\Exceptions\InvalidInnException;
 use App\Geocoder\Domain\Exceptions\PartyNotFoundException;
 use App\Geocoder\Presentation\Api\Responses\ApiResponseFactory;
-use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
@@ -68,7 +67,7 @@ class GeocoderExceptionHandler
             'request' => [
                 'url' => Request::fullUrl(),
                 'method' => Request::method(),
-                'input' => Request::all(),
+                'input' => Request::except(['password', 'token', 'api_key']),
                 'ip' => Request::ip(),
                 'user_agent' => Request::userAgent(),
             ],
