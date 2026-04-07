@@ -1,10 +1,14 @@
-name: Tests
+name: Tests (01-ddd)
 
 on:
   push:
     branches: [main, master]
+    paths:
+      - "after/01-ddd/**"
   pull_request:
     branches: [main, master]
+    paths:
+      - "after/01-ddd/**"
 
 jobs:
   test:
@@ -22,13 +26,17 @@ jobs:
           coverage: none
 
       - name: Copy .env
+        working-directory: after/01-ddd
         run: cp .env.example .env
 
       - name: Install dependencies
+        working-directory: after/01-ddd
         run: composer install --prefer-dist --no-interaction --no-progress
 
       - name: Generate app key
+        working-directory: after/01-ddd
         run: php artisan key:generate
 
       - name: Run tests
+        working-directory: after/01-ddd
         run: composer test
