@@ -11,6 +11,7 @@ use App\Geocoder\Domain\Exceptions\InvalidBicException;
 use App\Geocoder\Domain\Exceptions\InvalidInnException;
 use App\Geocoder\Domain\Exceptions\PartyNotFoundException;
 use App\Geocoder\Presentation\Api\Exceptions\GeocoderExceptionHandler;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
@@ -110,5 +111,48 @@ class GeocoderExceptionHandlerTest extends TestCase
         $this->assertEquals('Ошибка валидации', $data['error']);
         $this->assertArrayHasKey('errors', $data['context']);
         $this->assertArrayHasKey('inn', $data['context']['errors']);
+    }
+
+    public function test_handle_logs_exception_before_responding(): void
+    {
+        $exception = new GeocoderException('Test error');
+
+        Log::shouldReceive('error')
+            ->once()
+            ->with('Test error', \Mockery::on(function (array $data) {
+                return $data['exception'] === GeocoderException::class
+                    && $data['context'] === [];
+            }));
+
+        GeocoderExceptionHandler::handle($exception);
+    }
+
+    public function test_handle_logs_validation_exception(): void
+    {
+        $validator = validator(['inn' => 'invalid'], ['inn' => ['required', 'string']]);
+        $exception = ValidationException::withMessages($validator->errors()->getMessages());
+
+        Log::shouldReceive('error')
+            ->once()
+            ->with(\Mockery::type('string'), \Mockery::on(function (array $data) {
+                return $data['exception'] === ValidationException::class
+                    && $data['context'] === [];
+            }));
+
+        GeocoderExceptionHandler::handle($exception);
+    }
+
+    public function test_handle_logs_external_api_exception(): void
+    {
+        $exception = new ExternalApiException('API timeout', 504);
+
+        Log::shouldReceive('error')
+            ->once()
+            ->with('API timeout', \Mockery::on(function (array $data) {
+                return $data['exception'] === ExternalApiException::class
+                    && $data['context'] === ['http_status' => 504];
+            }));
+
+        GeocoderExceptionHandler::handle($exception);
     }
 }
