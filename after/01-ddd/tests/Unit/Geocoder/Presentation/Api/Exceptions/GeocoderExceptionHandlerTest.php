@@ -119,9 +119,11 @@ class GeocoderExceptionHandlerTest extends TestCase
 
         Log::shouldReceive('error')
             ->once()
-            ->with('Test error', \Mockery::on(function (array $data) {
-                return $data['exception'] === GeocoderException::class
-                    && $data['context'] === [];
+            ->with(\Mockery::type('string'), \Mockery::on(function (array $data) {
+                return $data['request']['method'] === 'GET'
+                    && $data['exception']['class'] === GeocoderException::class
+                    && $data['exception']['message'] === 'Test error'
+                    && $data['exception']['context'] === [];
             }));
 
         GeocoderExceptionHandler::handle($exception);
@@ -135,8 +137,10 @@ class GeocoderExceptionHandlerTest extends TestCase
         Log::shouldReceive('error')
             ->once()
             ->with(\Mockery::type('string'), \Mockery::on(function (array $data) {
-                return $data['exception'] === ValidationException::class
-                    && $data['context'] === [];
+                return $data['request']['method'] === 'GET'
+                    && $data['exception']['class'] === ValidationException::class
+                    && isset($data['validation_errors'])
+                    && is_array($data['validation_errors']);
             }));
 
         GeocoderExceptionHandler::handle($exception);
@@ -149,8 +153,9 @@ class GeocoderExceptionHandlerTest extends TestCase
         Log::shouldReceive('error')
             ->once()
             ->with('API timeout', \Mockery::on(function (array $data) {
-                return $data['exception'] === ExternalApiException::class
-                    && $data['context'] === ['http_status' => 504];
+                return $data['exception']['class'] === ExternalApiException::class
+                    && $data['exception']['context'] === ['http_status' => 504]
+                    && isset($data['request']['url']);
             }));
 
         GeocoderExceptionHandler::handle($exception);
