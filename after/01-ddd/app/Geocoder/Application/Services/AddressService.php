@@ -57,7 +57,7 @@ readonly class AddressService
     public function searchCountry(string $query): array
     {
         return Cache::remember(
-            "geocoder.country.{$query}",
+            'geocoder.country.' . md5($query),
             now()->addMinutes($this->countryCacheTtlMinutes),
             fn() => $this->repository->searchCountry($query)
         );
