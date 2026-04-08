@@ -51,8 +51,8 @@ class CollectionTransformerTest extends TestCase
     public function test_transform_with_array(): void
     {
         $items = [
-            new BankData(id: '001', name: 'Bank A', shortName: 'A', bic: '001', inn: '111'),
-            new BankData(id: '002', name: 'Bank B', shortName: 'B', bic: '002', inn: '222'),
+            new BankData(id: '001', name: 'Bank A', shortName: 'A', bic: '001', inn: '111', isActive: true),
+            new BankData(id: '002', name: 'Bank B', shortName: 'B', bic: '002', inn: '222', isActive: true),
         ];
 
         $itemTransformer = new BankTransformer();
@@ -66,7 +66,7 @@ class CollectionTransformerTest extends TestCase
     public function test_transform_with_collection(): void
     {
         $items = collect([
-            new BankData(id: '001', name: 'Bank A', shortName: 'A', bic: '001', inn: '111'),
+            new BankData(id: '001', name: 'Bank A', shortName: 'A', bic: '001', inn: '111', isActive: true),
         ]);
 
         $itemTransformer = new BankTransformer();

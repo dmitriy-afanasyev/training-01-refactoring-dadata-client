@@ -24,9 +24,11 @@ final readonly class BankData
         public string $shortName,
         public string $bic,
         public string $inn,
+        public bool $isActive,
         public ?string $correspondentAccount = null,
         public ?string $address = null,
         public ?BankStatus $status = null,
+
     ) {}
 
     /**
@@ -40,6 +42,7 @@ final readonly class BankData
             shortName: $data['short_name'] ?? '',
             bic: $data['bic'] ?? '',
             inn: $data['inn'] ?? '',
+            isActive: $data['is_active'],
             correspondentAccount: $data['correspondent_account'] ?? null,
             address: $data['address'] ?? null,
             status: isset($data['status']) && is_string($data['status'])

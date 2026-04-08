@@ -31,6 +31,11 @@ final class Bank
         private(set) ?BankStatus $status = null,
     ) {}
 
+    public function isActive(): bool
+    {
+        return $this->status?->isActive() ?? false;
+    }
+
     /**
      * @return array<string, mixed>
      */
@@ -45,6 +50,7 @@ final class Bank
             'correspondent_account' => $this->correspondentAccount,
             'address' => $this->address,
             'status' => $this->status,
+            'is_active' => $this->isActive(),
         ];
     }
 }

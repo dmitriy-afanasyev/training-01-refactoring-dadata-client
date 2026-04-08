@@ -21,6 +21,7 @@ class BankTransformerTest extends TestCase
             shortName: 'СБЕРБАНК',
             bic: '044525225',
             inn: '7707083893',
+            isActive: true,
             correspondentAccount: '30101810400000000225',
             address: 'г. Москва, ул. Вавилова, д. 19',
             status: BankStatus::ACTIVE,
@@ -50,6 +51,7 @@ class BankTransformerTest extends TestCase
             shortName: 'Б',
             bic: '044525225',
             inn: '7707083893',
+            isActive: false,
         );
 
         $transformer = new BankTransformer();

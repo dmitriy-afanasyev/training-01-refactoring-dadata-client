@@ -75,6 +75,7 @@ class BankServiceTest extends TestCase
             shortName: 'СБЕРБАНК',
             bic: $bic,
             inn: '7707083893',
+            isActive: true,
             status: BankStatus::ACTIVE,
         );
 

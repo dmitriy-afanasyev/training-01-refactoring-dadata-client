@@ -20,6 +20,7 @@ class BankDataTest extends TestCase
             'short_name' => 'СБЕРБАНК',
             'bic' => '044525225',
             'inn' => '7707083893',
+            'is_active' => true,
             'correspondent_account' => '30101810400000000225',
             'address' => 'г. Москва, ул. Вавилова, д. 19',
             'status' => 'ACTIVE',
@@ -45,6 +46,7 @@ class BankDataTest extends TestCase
             'short_name' => 'СБЕРБАНК',
             'bic' => '044525225',
             'inn' => '7707083893',
+            'is_active' => false,
         ]);
 
         $this->assertEquals('044525225', $bankData->id);

@@ -10,16 +10,6 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\RequestException;
 
-/**
- * @property-read string $apiKey API ключ
- * @property-read string $baseUrl Базовый URL API
- * @property-read int $timeout Таймаут запроса в секундах
- * @property-read int $connectTimeout Таймаут соединения в секундах
- * @property-read int $retryCount Количество попыток повторного запроса
- * @property-read int $retryDelay Задержка между попытками в миллисекундах
- * @property-read int $maxRedirects Максимальное количество редиректов
- * @property-read string|null $interface IP-интерфейс для запросов
- */
 readonly class DadataHttpClient implements DadataApiInterface
 {
     public function __construct(
