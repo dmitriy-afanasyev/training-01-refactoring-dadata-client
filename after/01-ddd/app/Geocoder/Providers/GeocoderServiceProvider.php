@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Geocoder\Providers;
 
+use App\Geocoder\Application\Services\AddressService;
+use App\Geocoder\Application\Services\BankService;
+use App\Geocoder\Application\Services\PartyService;
 use App\Geocoder\Domain\Repositories\AddressRepositoryInterface;
 use App\Geocoder\Domain\Repositories\BankRepositoryInterface;
 use App\Geocoder\Domain\Repositories\PartyRepositoryInterface;
@@ -41,6 +44,28 @@ class GeocoderServiceProvider extends ServiceProvider
         $this->app->bind(PartyRepositoryInterface::class, DadataPartyRepository::class);
         $this->app->bind(BankRepositoryInterface::class, DadataBankRepository::class);
         $this->app->bind(AddressRepositoryInterface::class, DadataAddressRepository::class);
+
+        $this->app->singleton(BankService::class, function ($app) {
+            return new BankService(
+                $app->make(BankRepositoryInterface::class),
+                config('geocoder.cache.bank_ttl_minutes', 1440)
+            );
+        });
+
+        $this->app->singleton(PartyService::class, function ($app) {
+            return new PartyService(
+                $app->make(PartyRepositoryInterface::class),
+                config('geocoder.cache.party_ttl_minutes', 1440)
+            );
+        });
+
+        $this->app->singleton(AddressService::class, function ($app) {
+            return new AddressService(
+                $app->make(AddressRepositoryInterface::class),
+                config('geocoder.cache.address_ttl_minutes', 1440),
+                config('geocoder.cache.country_ttl_minutes', 1440)
+            );
+        });
     }
 
     public function boot(): void
