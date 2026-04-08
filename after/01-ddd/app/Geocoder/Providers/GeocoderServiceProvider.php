@@ -45,10 +45,10 @@ class GeocoderServiceProvider extends ServiceProvider
         $this->app->bind(BankRepositoryInterface::class, DadataBankRepository::class);
         $this->app->bind(AddressRepositoryInterface::class, DadataAddressRepository::class);
 
-        $this->app->when(BankService::class)->needs('$cacheTtlMinutes')->give(fn() => config('geocoder.cache.bank_ttl_minutes'));
-        $this->app->when(PartyService::class)->needs('$cacheTtlMinutes')->give(fn() => config('geocoder.cache.party_ttl_minutes'));
-        $this->app->when(AddressService::class)->needs('$addressCacheTtlMinutes')->give(fn() => config('geocoder.cache.address_ttl_minutes'));
-        $this->app->when(AddressService::class)->needs('$countryCacheTtlMinutes')->give(fn() => config('geocoder.cache.country_ttl_minutes'));
+        $this->app->when('App\Geocoder\Application\Services\BankService')->needs('$cacheTtlMinutes')->give(fn() => config('geocoder.cache.bank_ttl_minutes'));
+        $this->app->when('App\Geocoder\Application\Services\PartyService')->needs('$cacheTtlMinutes')->give(fn() => config('geocoder.cache.party_ttl_minutes'));
+        $this->app->when('App\Geocoder\Application\Services\AddressService')->needs('$addressCacheTtlMinutes')->give(fn() => config('geocoder.cache.address_ttl_minutes'));
+        $this->app->when('App\Geocoder\Application\Services\AddressService')->needs('$countryCacheTtlMinutes')->give(fn() => config('geocoder.cache.country_ttl_minutes'));
     }
 
     public function boot(): void
