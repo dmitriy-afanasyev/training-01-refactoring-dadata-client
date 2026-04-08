@@ -48,6 +48,7 @@ readonly class DadataHttpClient implements DadataApiInterface
                 // Boost-rule: Повторять только при ошибках соединения или сервера (5xx)
                 return $exception instanceof ConnectionException
                     || ($exception instanceof RequestException
+                        && $exception->response !== null
                         && $exception->response->serverError());
             })
             ->baseUrl($this->baseUrl);
