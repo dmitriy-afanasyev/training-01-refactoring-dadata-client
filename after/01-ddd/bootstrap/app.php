@@ -1,5 +1,6 @@
 <?php
 
+use App\Geocoder\Domain\Exceptions\GeocoderException;
 use App\Geocoder\Providers\GeocoderServiceProvider;
 use App\Geocoder\Presentation\Api\Exceptions\GeocoderExceptionHandler;
 use Illuminate\Foundation\Application;
@@ -34,9 +35,13 @@ return Application::configure(basePath: dirname(__DIR__))
                 ], 422);
             });
 
-            // Domain-исключения Geocoder
+            // Domain-исключения Geocoder (все наследуются от GeocoderException)
             $exceptions->render(function (\Throwable $e) {
-                return GeocoderExceptionHandler::handle($e);
+                if ($e instanceof GeocoderException) {
+                    return GeocoderExceptionHandler::handle($e);
+                }
+
+                return null;
             });
         }
     )->create();
