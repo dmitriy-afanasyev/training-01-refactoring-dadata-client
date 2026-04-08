@@ -14,7 +14,9 @@ final class PartyTransformer extends Transformer
      */
     public function transform(mixed $data): array
     {
-        assert($data instanceof PartyData);
+        if (!$data instanceof PartyData) {
+            throw new \InvalidArgumentException('Expected PartyData');
+        }
 
         return [
             'id' => $data->id,

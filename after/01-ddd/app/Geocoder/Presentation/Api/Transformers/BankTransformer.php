@@ -14,7 +14,9 @@ final class BankTransformer extends Transformer
      */
     public function transform(mixed $data): array
     {
-        assert($data instanceof BankData);
+        if (!$data instanceof BankData) {
+            throw new \InvalidArgumentException('Expected BankData');
+        }
 
         return [
             'id' => $data->id,
