@@ -114,7 +114,7 @@ class AddressServiceTest extends TestCase
                 return $callback();
             });
 
-        $exception = new ExternalApiException('External API error', 500);
+        $exception = new ExternalApiException('External API error', httpStatus: 500);
 
         $this->repository
             ->expects($this->once())
@@ -136,7 +136,7 @@ class AddressServiceTest extends TestCase
                 return $callback();
             });
 
-        $exception = new ExternalApiException('External API error', 503);
+        $exception = new ExternalApiException('External API error', httpStatus: 503);
 
         $this->repository
             ->expects($this->once())

@@ -11,6 +11,7 @@ class ExternalApiException extends GeocoderException
 {
     public function __construct(
         string $message,
+        private array $response = [],
         private int $httpStatus = 0,
     ) {
         parent::__construct($message);
@@ -23,6 +24,7 @@ class ExternalApiException extends GeocoderException
     {
         return [
             'http_status' => $this->httpStatus,
+            'response' => $this->response,
         ];
     }
 }

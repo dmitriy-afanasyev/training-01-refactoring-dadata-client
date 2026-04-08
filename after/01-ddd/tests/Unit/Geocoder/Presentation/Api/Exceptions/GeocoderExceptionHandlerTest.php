@@ -29,7 +29,6 @@ class GeocoderExceptionHandlerTest extends TestCase
         $data = $response->getData(true);
         $this->assertEquals('Неверный формат ИНН', $data['error']);
         $this->assertStringContainsString('12345', $data['message']);
-        $this->assertEquals(['inn' => '12345'], $data['context']);
     }
 
     public function test_handle_invalid_bic_exception(): void
@@ -69,14 +68,13 @@ class GeocoderExceptionHandlerTest extends TestCase
 
     public function test_handle_external_api_exception(): void
     {
-        $exception = new ExternalApiException('API timeout', 504);
+        $exception = new ExternalApiException('API timeout', httpStatus: 504);
 
         $response = GeocoderExceptionHandler::handle($exception);
 
         $this->assertNotNull($response);
         $this->assertEquals(502, $response->getStatusCode());
         $this->assertEquals('Ошибка внешнего API', $response->getData(true)['error']);
-        $this->assertEquals(['http_status' => 504], $response->getData(true)['context']);
     }
 
     public function test_handle_geocoder_exception(): void

@@ -34,22 +34,34 @@ class GeocoderExceptionHandler
         if (!isset(self::$exceptionHandlers)) {
             self::$exceptionHandlers = [
                 InvalidInnException::class => function (InvalidInnException $e): JsonResponse {
-                    return self::logAndRespond($e, ApiResponseFactory::error('Неверный формат ИНН', $e->getMessage(), $e->context()));
+                    $context = config('app.debug') ? $e->context() : [];
+
+                    return self::logAndRespond($e, ApiResponseFactory::error('Неверный формат ИНН', $e->getMessage(), $context));
                 },
                 InvalidBicException::class => function (InvalidBicException $e): JsonResponse {
-                    return self::logAndRespond($e, ApiResponseFactory::error('Неверный формат БИК', $e->getMessage(), $e->context()));
+                    $context = config('app.debug') ? $e->context() : [];
+
+                    return self::logAndRespond($e, ApiResponseFactory::error('Неверный формат БИК', $e->getMessage(), $context));
                 },
                 PartyNotFoundException::class => function (PartyNotFoundException $e): JsonResponse {
-                    return self::logAndRespond($e, ApiResponseFactory::notFound('Организация не найдена', $e->getMessage(), $e->context()));
+                    $context = config('app.debug') ? $e->context() : [];
+
+                    return self::logAndRespond($e, ApiResponseFactory::notFound('Организация не найдена', $e->getMessage(), $context));
                 },
                 BankNotFoundException::class => function (BankNotFoundException $e): JsonResponse {
-                    return self::logAndRespond($e, ApiResponseFactory::notFound('Банк не найден', $e->getMessage(), $e->context()));
+                    $context = config('app.debug') ? $e->context() : [];
+
+                    return self::logAndRespond($e, ApiResponseFactory::notFound('Банк не найден', $e->getMessage(), $context));
                 },
                 ExternalApiException::class => function (ExternalApiException $e): JsonResponse {
-                    return self::logAndRespond($e, ApiResponseFactory::badGateway('Ошибка внешнего API', $e->getMessage(), $e->context()));
+                    $context = config('app.debug') ? $e->context() : [];
+
+                    return self::logAndRespond($e, ApiResponseFactory::badGateway('Ошибка внешнего API', $e->getMessage(), $context));
                 },
                 GeocoderException::class => function (GeocoderException $e): JsonResponse {
-                    return self::logAndRespond($e, ApiResponseFactory::internalError('Ошибка модуля Geocoder', $e->getMessage(), $e->context()));
+                    $context = config('app.debug') ? $e->context() : [];
+
+                    return self::logAndRespond($e, ApiResponseFactory::internalError('Ошибка модуля Geocoder', $e->getMessage(), $context));
                 },
             ];
         }
@@ -78,7 +90,9 @@ class GeocoderExceptionHandler
             ] : []),
         ];
 
-        if ($e instanceof GeocoderException) {
+        // Логировать контекст исключения только в debug-режиме
+        // В production чувствительные данные (raw API response) не попадают в логи
+        if ($e instanceof GeocoderException && config('app.debug')) {
             $context['exception']['context'] = $e->context();
         }
 

@@ -75,7 +75,7 @@ readonly class DadataHttpClient implements DadataApiInterface
                     $e->response->status(),
                     $e->response->body()
                 ),
-                $e->response->status()
+                httpStatus: $e->response->status()
             );
         }
 

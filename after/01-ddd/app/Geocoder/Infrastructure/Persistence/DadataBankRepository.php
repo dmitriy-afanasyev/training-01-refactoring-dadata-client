@@ -36,11 +36,14 @@ readonly class DadataBankRepository implements BankRepositoryInterface
     private function mapToBank(array $data): Bank
     {
         $nameData = $data['name'] ?? [];
-        $fullName = $nameData['full'] ?? $nameData['full_with_opf'] ?? '';
+        $fullName = $nameData['full'] ?? $nameData['full_with_opf'] ?? $nameData['short'] ?? '';
         $shortName = $nameData['short'] ?? $nameData['short_with_opf'] ?? $fullName;
 
         if ($fullName === '') {
-            throw new ExternalApiException('DaData API returned bank without a name');
+            throw new ExternalApiException(
+                'DaData API returned bank without a name',
+                response: $data
+            );
         }
 
         $bic = Bic::fromString($data['bic'] ?? '');
