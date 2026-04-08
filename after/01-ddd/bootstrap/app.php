@@ -26,6 +26,10 @@ return Application::configure(basePath: dirname(__DIR__))
             // Не логировать ValidationException — это ожидаемое поведение клиента
             $exceptions->dontReport(ValidationException::class);
 
+            // GeocoderException логируется только через GeocoderExceptionHandler в geocoder.log
+            // Без этого Laravel дублирует исключение в laravel.log
+            $exceptions->dontReport(GeocoderException::class);
+
             // Force JSON для ValidationException — без Accept: application/json
             // Laravel рендерит HTML (редирект). Это общая логика, не привязанная к модулю.
             $exceptions->render(function (ValidationException $e): JsonResponse {
