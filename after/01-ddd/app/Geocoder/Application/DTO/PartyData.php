@@ -37,7 +37,7 @@ final readonly class PartyData
     public static function fromArray(array $data): self
     {
         return new self(
-            id: $data['id'],
+            id: $data['id'] ?? throw new \InvalidArgumentException('Party id is required'),
             name: $data['name'] ?? '',
             shortName: $data['short_name'] ?? '',
             inn: $data['inn'] ?? '',

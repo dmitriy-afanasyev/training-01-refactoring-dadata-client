@@ -37,12 +37,12 @@ final readonly class BankData
     public static function fromArray(array $data): self
     {
         return new self(
-            id: $data['id'],
+            id: $data['id'] ?? throw new \InvalidArgumentException('Bank id is required'),
             name: $data['name'] ?? '',
             shortName: $data['short_name'] ?? '',
             bic: $data['bic'] ?? '',
             inn: $data['inn'] ?? '',
-            isActive: $data['is_active'],
+            isActive: $data['is_active'] ?? throw new \InvalidArgumentException('Bank is_active is required'),
             correspondentAccount: $data['correspondent_account'] ?? null,
             address: $data['address'] ?? null,
             status: isset($data['status']) && is_string($data['status'])
