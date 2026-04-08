@@ -34,7 +34,7 @@ readonly class AddressService
         $cacheKey = sprintf(
             'geocoder.address.%s.%s',
             md5($query),
-            $locations ? md5(serialize($locations)) : 'all'
+            $locations ? md5(json_encode($locations, JSON_THROW_ON_ERROR)) : 'all'
         );
 
         // DDD: Кэшировать (и на сколько) или нет - это логика уровня приложения, а не домена.
