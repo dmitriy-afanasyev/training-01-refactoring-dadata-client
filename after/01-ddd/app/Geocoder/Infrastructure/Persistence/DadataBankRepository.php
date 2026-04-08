@@ -37,10 +37,10 @@ readonly class DadataBankRepository implements BankRepositoryInterface
         $nameData = $data['name'] ?? [];
 
         return new Bank(
-            id: Bic::fromString($data['bic'] ?? ''),
+            id: Bic::fromString($data['bic']),
             name: $nameData['full'] ?? null,
             shortName: $nameData['short'] ?? null,
-            bic: Bic::fromString($data['bic'] ?? ''),
+            bic: Bic::fromString($data['bic']),
             inn: Inn::fromString($data['inn'] ?? ''),
             correspondentAccount: $data['correspondent_account'] ?? null,
             address: $data['address']['value'] ?? null,
