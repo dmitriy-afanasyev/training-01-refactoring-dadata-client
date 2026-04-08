@@ -36,12 +36,8 @@ return Application::configure(basePath: dirname(__DIR__))
             });
 
             // Domain-исключения Geocoder (все наследуются от GeocoderException)
-            $exceptions->render(function (\Throwable $e) {
-                if ($e instanceof GeocoderException) {
-                    return GeocoderExceptionHandler::handle($e);
-                }
-
-                return null;
+            $exceptions->render(function (GeocoderException $e) {
+                return GeocoderExceptionHandler::handle($e);
             });
         }
     )->create();
