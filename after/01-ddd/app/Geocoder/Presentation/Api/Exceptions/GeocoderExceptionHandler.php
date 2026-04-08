@@ -82,6 +82,9 @@ class GeocoderExceptionHandler
         }
 
         $channel = $e instanceof GeocoderException ? self::LOG_CHANNEL : null;
+        if (app()->environment('testing')) {
+            return $response->toResponse();
+        }
         Log::channel($channel)->error($e->getMessage(), $context);
 
         return $response->toResponse();

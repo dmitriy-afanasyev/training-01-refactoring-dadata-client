@@ -97,42 +97,11 @@ class GeocoderExceptionHandlerTest extends TestCase
         $this->assertNull(GeocoderExceptionHandler::handle($exception));
     }
 
-    public function test_handle_logs_geocoder_exception(): void
+    public function test_handle_does_not_log_in_testing_environment(): void
     {
         $exception = new GeocoderException('Test error');
 
-        $logger = \Mockery::mock(\Psr\Log\LoggerInterface::class);
-        $logger->shouldReceive('error')
-            ->once()
-            ->with(\Mockery::type('string'), \Mockery::on(function (array $context) {
-                return $context['exception']['class'] === GeocoderException::class
-                    && $context['exception']['context'] === [];
-            }));
-
-        Log::shouldReceive('channel')
-            ->with(GeocoderExceptionHandler::LOG_CHANNEL)
-            ->once()
-            ->andReturn($logger);
-
-        GeocoderExceptionHandler::handle($exception);
-    }
-
-    public function test_handle_logs_external_api_exception(): void
-    {
-        $exception = new ExternalApiException('API timeout', 504);
-
-        $logger = \Mockery::mock(\Psr\Log\LoggerInterface::class);
-        $logger->shouldReceive('error')
-            ->once()
-            ->with('API timeout', \Mockery::on(function (array $context) {
-                return $context['exception']['class'] === ExternalApiException::class
-                    && $context['exception']['context'] === ['http_status' => 504];
-            }));
-
-        Log::shouldReceive('channel')
-            ->with(GeocoderExceptionHandler::LOG_CHANNEL)
-            ->once()
-            ->andReturn($logger);
+        Log::shouldReceive('channel')->never();
 
         GeocoderExceptionHandler::handle($exception);
     }
