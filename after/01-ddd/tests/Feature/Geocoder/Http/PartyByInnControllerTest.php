@@ -75,11 +75,7 @@ class PartyByInnControllerTest extends TestCase
         $response = $this->getJson(self::ENDPOINT . '?inn=123');
 
         $response->assertStatus(422)
-            ->assertJson([
-                'success' => false,
-                'error' => 'Ошибка валидации',
-            ])
-            ->assertJsonPath('context.errors', ['inn' => ['The inn field must be between 10 and 12 digits.']]);
+            ->assertJsonPath('errors.inn', ['The inn field must be between 10 and 12 digits.']);
     }
 
     public function test_get_party_by_inn_external_api_error(): void
@@ -102,10 +98,6 @@ class PartyByInnControllerTest extends TestCase
         $response = $this->getJson(self::ENDPOINT);
 
         $response->assertStatus(422)
-            ->assertJson([
-                'success' => false,
-                'error' => 'Ошибка валидации',
-            ])
-            ->assertJsonPath('context.errors', ['inn' => ['The inn field is required.']]);
+            ->assertJsonPath('errors.inn', ['The inn field is required.']);
     }
 }

@@ -14,7 +14,6 @@ use App\Geocoder\Presentation\Api\Responses\ApiResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
-use Illuminate\Validation\ValidationException;
 
 /**
  * Обработчик исключений для модуля Geocoder.
@@ -34,9 +33,6 @@ class GeocoderExceptionHandler
     {
         if (!isset(self::$exceptionHandlers)) {
             self::$exceptionHandlers = [
-                ValidationException::class => function (ValidationException $e): JsonResponse {
-                    return self::logAndRespond($e, ApiResponseFactory::validationError('Ошибка валидации', $e->errors()));
-                },
                 InvalidInnException::class => function (InvalidInnException $e): JsonResponse {
                     return self::logAndRespond($e, ApiResponseFactory::error('Неверный формат ИНН', $e->getMessage(), $e->context()));
                 },
@@ -83,10 +79,6 @@ class GeocoderExceptionHandler
 
         if ($e instanceof GeocoderException) {
             $context['exception']['context'] = $e->context();
-        }
-
-        if ($e instanceof ValidationException) {
-            $context['validation_errors'] = $e->errors();
         }
 
         $channel = $e instanceof GeocoderException ? self::LOG_CHANNEL : null;

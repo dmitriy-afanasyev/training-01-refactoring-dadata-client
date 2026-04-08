@@ -47,11 +47,7 @@ class AddressSearchControllerTest extends TestCase
         $response = $this->getJson(self::ENDPOINT);
 
         $response->assertStatus(422)
-            ->assertJson([
-                'success' => false,
-                'error' => 'Ошибка валидации',
-            ])
-            ->assertJsonPath('context.errors', ['query' => ['The query field is required.']]);
+            ->assertJsonPath('errors.query', ['The query field is required.']);
     }
 
     public function test_search_address_external_api_error(): void
