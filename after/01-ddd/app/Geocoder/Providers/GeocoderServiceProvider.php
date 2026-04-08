@@ -45,7 +45,12 @@ class GeocoderServiceProvider extends ServiceProvider
         $this->app->bind(BankRepositoryInterface::class, DadataBankRepository::class);
         $this->app->bind(AddressRepositoryInterface::class, DadataAddressRepository::class);
 
-        $this->app->singleton(BankService::class, function ($app) {
+        $this->app->when(BankService::class)->needs('$cacheTtlMinutes')->give(fn() => config('geocoder.cache.bank_ttl_minutes'));
+        $this->app->when(PartyService::class)->needs('$cacheTtlMinutes')->give(fn() => config('geocoder.cache.party_ttl_minutes'));
+        $this->app->when(AddressService::class)->needs('$addressCacheTtlMinutes')->give(fn() => config('geocoder.cache.address_ttl_minutes'));
+        $this->app->when(AddressService::class)->needs('$countryCacheTtlMinutes')->give(fn() => config('geocoder.cache.country_ttl_minutes'));
+
+        /*$this->app->singleton(BankService::class, function ($app) {
             return new BankService(
                 $app->make(BankRepositoryInterface::class),
                 config('geocoder.cache.bank_ttl_minutes', 1440)
@@ -65,7 +70,7 @@ class GeocoderServiceProvider extends ServiceProvider
                 config('geocoder.cache.address_ttl_minutes', 1440),
                 config('geocoder.cache.country_ttl_minutes', 1440)
             );
-        });
+        });*/
     }
 
     public function boot(): void
