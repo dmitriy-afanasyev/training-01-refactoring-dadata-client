@@ -45,10 +45,6 @@ class GeocoderExceptionHandler
 
     private static function respond(\Throwable $e, ApiResponseFactory $response): JsonResponse
     {
-        $debugContext = config('app.debug') && $e instanceof GeocoderException
-            ? $e->context()
-            : [];
-
         $context = [
             'request' => [
                 'url' => Request::fullUrl(),
@@ -63,12 +59,7 @@ class GeocoderExceptionHandler
             'exception' => [
                 'class' => get_class($e),
                 'message' => $e->getMessage(),
-            ] + (config('app.debug') ? [
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString(),
-                'context' => $debugContext,
-            ] : []),
+            ] + self::getDebugExceptionData($e),
         ];
 
         if (app()->environment('testing')) {
@@ -79,6 +70,24 @@ class GeocoderExceptionHandler
         Log::channel($channel)->error($e->getMessage(), $context);
 
         return $response->toResponse();
+    }
+
+    private static function getDebugExceptionData(\Throwable $e): array
+    {
+        if (!config('app.debug')) {
+            return [];
+        }
+
+        $debugContext = $e instanceof GeocoderException
+            ? $e->context()
+            : [];
+
+        return [
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'trace' => $e->getTraceAsString(),
+            'context' => $debugContext,
+        ];
     }
 
     public static function handle(\Throwable $e): ?JsonResponse
