@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace App\Geocoder\Providers;
 
-use App\Geocoder\Application\Services\AddressService;
-use App\Geocoder\Application\Services\BankService;
-use App\Geocoder\Application\Services\PartyService;
 use App\Geocoder\Domain\Repositories\AddressRepositoryInterface;
 use App\Geocoder\Domain\Repositories\BankRepositoryInterface;
 use App\Geocoder\Domain\Repositories\PartyRepositoryInterface;
@@ -44,11 +41,6 @@ class GeocoderServiceProvider extends ServiceProvider
         $this->app->bind(PartyRepositoryInterface::class, DadataPartyRepository::class);
         $this->app->bind(BankRepositoryInterface::class, DadataBankRepository::class);
         $this->app->bind(AddressRepositoryInterface::class, DadataAddressRepository::class);
-
-        $this->app->when('App\Geocoder\Application\Services\BankService')->needs('$cacheTtlMinutes')->give(fn() => config('geocoder.cache.bank_ttl_minutes'));
-        $this->app->when('App\Geocoder\Application\Services\PartyService')->needs('$cacheTtlMinutes')->give(fn() => config('geocoder.cache.party_ttl_minutes'));
-        $this->app->when('App\Geocoder\Application\Services\AddressService')->needs('$addressCacheTtlMinutes')->give(fn() => config('geocoder.cache.address_ttl_minutes'));
-        $this->app->when('App\Geocoder\Application\Services\AddressService')->needs('$countryCacheTtlMinutes')->give(fn() => config('geocoder.cache.country_ttl_minutes'));
     }
 
     public function boot(): void
