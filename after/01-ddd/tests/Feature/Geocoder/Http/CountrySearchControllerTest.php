@@ -48,7 +48,7 @@ class CountrySearchControllerTest extends TestCase
         $response = $this->getJson(self::ENDPOINT);
 
         $response->assertStatus(422)
-            ->assertJsonPath('errors.query', ['The query field is required.']);
+            ->assertJsonPath('context.errors.query', ['The query field is required.']);
     }
 
     public function test_search_country_external_api_error(): void
@@ -64,5 +64,15 @@ class CountrySearchControllerTest extends TestCase
                 'success' => false,
                 'error' => 'Ошибка внешнего API',
             ]);
+    }
+
+    public function test_search_country_validation_error_returns_json_without_accept_header(): void
+    {
+        $response = $this->withHeaders(['Accept' => 'text/html'])
+            ->get(self::ENDPOINT);
+
+        $response->assertStatus(422)
+            ->assertHeader('Content-Type', 'application/json')
+            ->assertJsonPath('context.errors.query', ['The query field is required.']);
     }
 }

@@ -56,7 +56,7 @@ class BankByBicControllerTest extends TestCase
         $response = $this->getJson(self::ENDPOINT . '?bic=123');
 
         $response->assertStatus(422)
-            ->assertJsonPath('errors.bic', ['The bic field must be 9 digits.']);
+            ->assertJsonPath('context.errors.bic', ['The bic field must be 9 digits.']);
     }
 
     public function test_get_bank_by_bic_external_api_error(): void
@@ -72,5 +72,15 @@ class BankByBicControllerTest extends TestCase
                 'success' => false,
                 'error' => 'Ошибка внешнего API',
             ]);
+    }
+
+    public function test_get_bank_by_bic_validation_error_returns_json_without_accept_header(): void
+    {
+        $response = $this->withHeaders(['Accept' => 'text/html'])
+            ->get(self::ENDPOINT . '?bic=123');
+
+        $response->assertStatus(422)
+            ->assertHeader('Content-Type', 'application/json')
+            ->assertJsonPath('context.errors.bic', ['The bic field must be 9 digits.']);
     }
 }
