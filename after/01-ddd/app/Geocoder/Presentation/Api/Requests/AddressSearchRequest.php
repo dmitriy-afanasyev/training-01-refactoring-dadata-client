@@ -16,6 +16,7 @@ class AddressSearchRequest extends FormRequest
         return [
             'query' => ['required', 'string', 'min:1', 'max:255'],
             'locations' => ['nullable', 'array'],
+            'locations.*' => ['array'],
         ];
     }
 

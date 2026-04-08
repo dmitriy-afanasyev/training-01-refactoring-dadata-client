@@ -49,28 +49,6 @@ class GeocoderServiceProvider extends ServiceProvider
         $this->app->when(PartyService::class)->needs('$cacheTtlMinutes')->give(fn() => config('geocoder.cache.party_ttl_minutes'));
         $this->app->when(AddressService::class)->needs('$addressCacheTtlMinutes')->give(fn() => config('geocoder.cache.address_ttl_minutes'));
         $this->app->when(AddressService::class)->needs('$countryCacheTtlMinutes')->give(fn() => config('geocoder.cache.country_ttl_minutes'));
-
-        /*$this->app->singleton(BankService::class, function ($app) {
-            return new BankService(
-                $app->make(BankRepositoryInterface::class),
-                config('geocoder.cache.bank_ttl_minutes', 1440)
-            );
-        });
-
-        $this->app->singleton(PartyService::class, function ($app) {
-            return new PartyService(
-                $app->make(PartyRepositoryInterface::class),
-                config('geocoder.cache.party_ttl_minutes', 1440)
-            );
-        });
-
-        $this->app->singleton(AddressService::class, function ($app) {
-            return new AddressService(
-                $app->make(AddressRepositoryInterface::class),
-                config('geocoder.cache.address_ttl_minutes', 1440),
-                config('geocoder.cache.country_ttl_minutes', 1440)
-            );
-        });*/
     }
 
     public function boot(): void
