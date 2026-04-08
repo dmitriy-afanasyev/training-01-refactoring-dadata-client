@@ -30,7 +30,7 @@ class BankByBicControllerTest extends TestCase
                 'suggestions' => [
                     [
                         'data' => [
-                            'name' => ['full_with_opf' => 'ПАО "СБЕРБАНК"'],
+                            'name' => ['full' => null, 'short' => 'ПАО "СБЕРБАНК"'],
                             'bic' => '044525225',
                             'inn' => '7707083893',
                         ],

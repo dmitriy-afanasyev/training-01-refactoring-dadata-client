@@ -12,8 +12,8 @@ final class Bank
 {
     /**
      * @param Bic $id Идентификатор банка (БИК)
-     * @param string $name Полное название банка
-     * @param string $shortName Краткое название банка
+     * @param string|null $name Полное название банка
+     * @param string|null $shortName Краткое название банка
      * @param Bic $bic БИК банка
      * @param Inn $inn ИНН банка
      * @param string|null $correspondentAccount Корреспондентский счёт
@@ -22,8 +22,8 @@ final class Bank
      */
     public function __construct(
         private(set) Bic $id,
-        private(set) string $name,
-        private(set) string $shortName,
+        private(set) ?string $name = null,
+        private(set) ?string $shortName = null,
         private(set) Bic $bic,
         private(set) Inn $inn,
         private(set) ?string $correspondentAccount = null,

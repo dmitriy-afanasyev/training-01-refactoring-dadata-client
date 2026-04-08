@@ -7,7 +7,6 @@ namespace App\Geocoder\Infrastructure\Persistence;
 use App\Geocoder\Domain\Enums\BankStatus;
 use App\Geocoder\Domain\Entities\Bank;
 use App\Geocoder\Domain\Exceptions\BankNotFoundException;
-use App\Geocoder\Domain\Exceptions\ExternalApiException;
 use App\Geocoder\Domain\Repositories\BankRepositoryInterface;
 use App\Geocoder\Domain\ValueObjects\Bic;
 use App\Geocoder\Domain\ValueObjects\Inn;
@@ -36,22 +35,12 @@ readonly class DadataBankRepository implements BankRepositoryInterface
     private function mapToBank(array $data): Bank
     {
         $nameData = $data['name'] ?? [];
-        $fullName = $nameData['full'] ?? $nameData['full_with_opf'] ?? '';
-        $shortName = $nameData['short'] ?? $nameData['short_with_opf'] ?? $fullName;
-        if ($fullName === '') {
-            throw new ExternalApiException(
-                'DaData API returned bank without a name',
-                response: $data
-            );
-        }
-
-        $bic = Bic::fromString($data['bic'] ?? '');
 
         return new Bank(
-            id: $bic,
-            name: $fullName,
-            shortName: $shortName,
-            bic: $bic,
+            id: Bic::fromString($data['bic'] ?? ''),
+            name: $nameData['full'] ?? null,
+            shortName: $nameData['short'] ?? null,
+            bic: Bic::fromString($data['bic'] ?? ''),
             inn: Inn::fromString($data['inn'] ?? ''),
             correspondentAccount: $data['correspondent_account'] ?? null,
             address: $data['address']['value'] ?? null,

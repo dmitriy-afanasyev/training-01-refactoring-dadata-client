@@ -6,7 +6,6 @@ namespace Tests\Unit\Geocoder\Infrastructure\Persistence;
 
 use App\Geocoder\Domain\Enums\BankStatus;
 use App\Geocoder\Domain\Exceptions\BankNotFoundException;
-use App\Geocoder\Domain\Exceptions\ExternalApiException;
 use App\Geocoder\Domain\ValueObjects\Bic;
 use App\Geocoder\Infrastructure\Http\Dadata\DadataApiInterface;
 use App\Geocoder\Infrastructure\Persistence\DadataBankRepository;
@@ -82,60 +81,6 @@ class DadataBankRepositoryTest extends TestCase
         $this->assertNull($bank->correspondentAccount);
         $this->assertNull($bank->address);
         $this->assertNull($bank->status);
-    }
-
-    public function test_find_by_bic_throws_external_api_exception_when_name_missing(): void
-    {
-        $bicValue = '044525225';
-
-        $this->api
-            ->method('findBankByBic')
-            ->willReturn([
-                'bic' => $bicValue,
-                'name' => [],
-                'inn' => '7707083893',
-            ]);
-
-        $this->expectException(ExternalApiException::class);
-        $this->expectExceptionMessage('DaData API returned bank without a name');
-
-        $this->repository->findByBicOrFail(Bic::fromString($bicValue));
-    }
-
-    public function test_find_by_bic_uses_full_with_opf_fallback(): void
-    {
-        $bicValue = '044525225';
-
-        $this->api
-            ->method('findBankByBic')
-            ->willReturn([
-                'bic' => $bicValue,
-                'name' => ['full_with_opf' => 'ПАО "СБЕРБАНК"', 'short_with_opf' => 'СБЕРБАНК'],
-                'inn' => '7707083893',
-            ]);
-
-        $bank = $this->repository->findByBicOrFail(Bic::fromString($bicValue));
-
-        $this->assertEquals('ПАО "СБЕРБАНК"', $bank->name);
-        $this->assertEquals('СБЕРБАНК', $bank->shortName);
-    }
-
-    public function test_find_by_bic_uses_full_as_short_fallback(): void
-    {
-        $bicValue = '044525225';
-
-        $this->api
-            ->method('findBankByBic')
-            ->willReturn([
-                'bic' => $bicValue,
-                'name' => ['full' => 'Банк без краткого имени'],
-                'inn' => '7707083893',
-            ]);
-
-        $bank = $this->repository->findByBicOrFail(Bic::fromString($bicValue));
-
-        $this->assertEquals('Банк без краткого имени', $bank->name);
-        $this->assertEquals('Банк без краткого имени', $bank->shortName);
     }
 
     private function fullBankData(): array
