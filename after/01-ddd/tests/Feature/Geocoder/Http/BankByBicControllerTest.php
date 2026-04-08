@@ -59,6 +59,23 @@ class BankByBicControllerTest extends TestCase
             ->assertJsonPath('errors.bic', ['The bic field must be 9 digits.']);
     }
 
+    public function test_get_bank_by_bic_not_found(): void
+    {
+        Http::fake([
+            '/suggest/bank' => Http::response([
+                'suggestions' => [],
+            ], 200),
+        ]);
+
+        $response = $this->getJson(self::ENDPOINT . '?bic=044525225');
+
+        $response->assertStatus(404)
+            ->assertJson([
+                'success' => false,
+                'error' => 'Банк не найден',
+            ]);
+    }
+
     public function test_get_bank_by_bic_external_api_error(): void
     {
         Http::fake([
