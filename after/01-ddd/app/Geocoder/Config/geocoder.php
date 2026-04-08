@@ -33,7 +33,7 @@ return [
     |
     */
 
-    'timeout' => env('DADATA_TIMEOUT', 30),
+    'timeout' => (int) env('DADATA_TIMEOUT', 30),
 
     /*
     |--------------------------------------------------------------------------
@@ -44,7 +44,7 @@ return [
     |
     */
 
-    'connect_timeout' => env('DADATA_CONNECT_TIMEOUT', 10),
+    'connect_timeout' => (int) env('DADATA_CONNECT_TIMEOUT', 10),
 
     /*
     |--------------------------------------------------------------------------
@@ -55,7 +55,7 @@ return [
     |
     */
 
-    'retry_count' => env('DADATA_RETRY_COUNT', 3),
+    'retry_count' => (int) env('DADATA_RETRY_COUNT', 3),
 
     /*
     |--------------------------------------------------------------------------
@@ -66,7 +66,7 @@ return [
     |
     */
 
-    'retry_delay' => env('DADATA_RETRY_DELAY', 100),
+    'retry_delay' => (int) env('DADATA_RETRY_DELAY', 100),
 
     /*
     |--------------------------------------------------------------------------
@@ -77,7 +77,7 @@ return [
     |
     */
 
-    'max_redirects' => env('DADATA_MAX_REDIRECTS', 10),
+    'max_redirects' => (int) env('DADATA_MAX_REDIRECTS', 10),
 
     /*
     |--------------------------------------------------------------------------
