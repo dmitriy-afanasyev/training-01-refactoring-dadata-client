@@ -26,9 +26,7 @@ class GeocoderExceptionHandlerTest extends TestCase
 
         $this->assertNotNull($response);
         $this->assertEquals(400, $response->getStatusCode());
-        $data = $response->getData(true);
-        $this->assertEquals('Неверный формат ИНН', $data['error']);
-        $this->assertStringContainsString('12345', $data['message']);
+        $this->assertEquals('Неверный формат ИНН', $response->getData(true)['error']);
     }
 
     public function test_handle_invalid_bic_exception(): void
@@ -39,9 +37,7 @@ class GeocoderExceptionHandlerTest extends TestCase
 
         $this->assertNotNull($response);
         $this->assertEquals(400, $response->getStatusCode());
-        $data = $response->getData(true);
-        $this->assertEquals('Неверный формат БИК', $data['error']);
-        $this->assertStringContainsString('0445', $data['message']);
+        $this->assertEquals('Неверный формат БИК', $response->getData(true)['error']);
     }
 
     public function test_handle_party_not_found_exception(): void
