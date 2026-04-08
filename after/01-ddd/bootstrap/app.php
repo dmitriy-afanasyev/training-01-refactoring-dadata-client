@@ -22,6 +22,9 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(
         function (Exceptions $exceptions): void {
+            // Не логировать ValidationException — это ожидаемое поведение клиента
+            $exceptions->dontReport(ValidationException::class);
+
             // Force JSON для ValidationException — без Accept: application/json
             // Laravel рендерит HTML (редирект). Это общая логика, не привязанная к модулю.
             $exceptions->render(function (ValidationException $e): JsonResponse {
