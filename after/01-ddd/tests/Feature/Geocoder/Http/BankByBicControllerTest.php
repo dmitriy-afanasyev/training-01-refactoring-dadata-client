@@ -39,7 +39,7 @@ class BankByBicControllerTest extends TestCase
             ], 200),
         ]);
 
-        $response = $this->getJson(self::ENDPOINT . '?bic=044525225');
+        $response = $this->postJson(self::ENDPOINT, ['bic' => '044525225']);
 
         $response->assertStatus(200)
             ->assertJson([
@@ -53,7 +53,7 @@ class BankByBicControllerTest extends TestCase
 
     public function test_get_bank_by_bic_validation_error(): void
     {
-        $response = $this->getJson(self::ENDPOINT . '?bic=123');
+        $response = $this->postJson(self::ENDPOINT, ['bic' => '123']);
 
         $response->assertStatus(422)
             ->assertJsonPath('errors.bic', ['The bic field must be 9 digits.']);
@@ -67,7 +67,7 @@ class BankByBicControllerTest extends TestCase
             ], 200),
         ]);
 
-        $response = $this->getJson(self::ENDPOINT . '?bic=044525225');
+        $response = $this->postJson(self::ENDPOINT, ['bic' => '044525225']);
 
         $response->assertStatus(404)
             ->assertJson([
@@ -82,7 +82,7 @@ class BankByBicControllerTest extends TestCase
             '/suggest/bank' => Http::response(['error' => 'Bad Gateway'], 502),
         ]);
 
-        $response = $this->getJson(self::ENDPOINT . '?bic=044525225');
+        $response = $this->postJson(self::ENDPOINT, ['bic' => '044525225']);
 
         $response->assertStatus(502)
             ->assertJson([
@@ -94,7 +94,7 @@ class BankByBicControllerTest extends TestCase
     public function test_get_bank_by_bic_validation_error_returns_json_without_accept_header(): void
     {
         $response = $this->withHeaders(['Accept' => 'text/html'])
-            ->get(self::ENDPOINT . '?bic=123');
+            ->post(self::ENDPOINT, ['bic' => '123']);
 
         $response->assertStatus(422)
             ->assertHeader('Content-Type', 'application/json')

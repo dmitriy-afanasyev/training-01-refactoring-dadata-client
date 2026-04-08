@@ -41,7 +41,7 @@ class PartyByInnControllerTest extends TestCase
             ], 200),
         ]);
 
-        $response = $this->getJson(self::ENDPOINT . '?inn=7707083893');
+        $response = $this->postJson(self::ENDPOINT, ['inn' => '7707083893']);
 
         $response->assertStatus(200)
             ->assertJson([
@@ -61,7 +61,7 @@ class PartyByInnControllerTest extends TestCase
             ], 200),
         ]);
 
-        $response = $this->getJson(self::ENDPOINT . '?inn=7707083893');
+        $response = $this->postJson(self::ENDPOINT, ['inn' => '7707083893']);
 
         $response->assertStatus(404)
             ->assertJson([
@@ -72,7 +72,7 @@ class PartyByInnControllerTest extends TestCase
 
     public function test_get_party_by_inn_validation_error(): void
     {
-        $response = $this->getJson(self::ENDPOINT . '?inn=123');
+        $response = $this->postJson(self::ENDPOINT, ['inn' => '123']);
 
         $response->assertStatus(422)
             ->assertJsonPath('errors.inn', ['The inn field must be between 10 and 12 digits.']);
@@ -84,7 +84,7 @@ class PartyByInnControllerTest extends TestCase
             '*/findById/party*' => Http::response(['error' => 'Bad Gateway'], 502),
         ]);
 
-        $response = $this->getJson(self::ENDPOINT . '?inn=7707083893');
+        $response = $this->postJson(self::ENDPOINT, ['inn' => '7707083893']);
 
         $response->assertStatus(502)
             ->assertJson([
@@ -95,7 +95,7 @@ class PartyByInnControllerTest extends TestCase
 
     public function test_get_party_by_inn_missing_inn(): void
     {
-        $response = $this->getJson(self::ENDPOINT);
+        $response = $this->postJson(self::ENDPOINT, []);
 
         $response->assertStatus(422)
             ->assertJsonPath('errors.inn', ['The inn field is required.']);
@@ -104,7 +104,7 @@ class PartyByInnControllerTest extends TestCase
     public function test_get_party_by_inn_validation_error_returns_json_without_accept_header(): void
     {
         $response = $this->withHeaders(['Accept' => 'text/html'])
-            ->get(self::ENDPOINT . '?inn=123');
+            ->post(self::ENDPOINT, ['inn' => '123']);
 
         $response->assertStatus(422)
             ->assertHeader('Content-Type', 'application/json')

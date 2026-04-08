@@ -14,8 +14,10 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('api/geocoder')
     ->middleware(['api', 'throttle:geocoder'])
     ->group(function () {
-        Route::get('/party/by-inn', PartyByInnController::class);
-        Route::get('/bank/by-bic', BankByBicController::class);
+        // POST вместо GET: ИНН — персональные данные, не должны попадать
+        // в логи сервера, CDN, proxy и историю браузера (query string логируется)
+        Route::post('/party/by-inn', PartyByInnController::class);
+        Route::post('/bank/by-bic', BankByBicController::class);
         Route::get('/address/search', AddressSearchController::class);
         Route::get('/country/search', CountrySearchController::class);
     });
