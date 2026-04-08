@@ -17,8 +17,8 @@ use Illuminate\Support\Facades\Cache;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\TestDox;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
+use Tests\TestCase;
 
 #[CoversClass(PartyService::class)]
 class PartyServiceTest extends TestCase

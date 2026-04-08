@@ -9,9 +9,9 @@ use App\Geocoder\Domain\Exceptions\ExternalApiException;
 use App\Geocoder\Domain\Repositories\AddressRepositoryInterface;
 use App\Geocoder\Domain\ValueObjects\Address;
 use Illuminate\Support\Facades\Cache;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\CoversClass;
+use Tests\TestCase;
 
 #[CoversClass(AddressService::class)]
 class AddressServiceTest extends TestCase
