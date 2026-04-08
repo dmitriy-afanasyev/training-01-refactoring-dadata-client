@@ -93,4 +93,20 @@ return [
         'max_attempts' => (int) env('DADATA_THROTTLE_MAX_ATTEMPTS', 100),
         'decay_minutes' => (int) env('DADATA_THROTTLE_DECAY_MINUTES', 1),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cache TTL
+    |--------------------------------------------------------------------------
+    |
+    | Время жизни кэша в минутах для различных типов данных.
+    |
+    */
+
+    'cache' => [
+        'bank_ttl_minutes' => (int) env('DADATA_CACHE_BANK_TTL_MINUTES', 1440),
+        'party_ttl_minutes' => (int) env('DADATA_CACHE_PARTY_TTL_MINUTES', 1440),
+        'address_ttl_minutes' => (int) env('DADATA_CACHE_ADDRESS_TTL_MINUTES', 1440),
+        'country_ttl_minutes' => (int) env('DADATA_CACHE_COUNTRY_TTL_MINUTES', 1440),
+    ],
 ];

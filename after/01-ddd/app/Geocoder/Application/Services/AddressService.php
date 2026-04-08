@@ -18,6 +18,8 @@ readonly class AddressService
         // DDD: Слой приложения может обращаться к возможностям слоя Инфраструктуры,
         //  но через интерфейсы Доменного слоя
         private AddressRepositoryInterface $repository,
+        private int $addressCacheTtlMinutes = 1440,
+        private int $countryCacheTtlMinutes = 1440,
     ) {}
 
     /**
@@ -41,7 +43,7 @@ readonly class AddressService
         //  а можно искать адрес в админке, тогда надо кэшировать на пару минут.
         return Cache::remember(
             $cacheKey,
-            now()->addHours(24),
+            now()->addMinutes($this->addressCacheTtlMinutes),
             fn() => $this->searchAddresses($query, $locations)
         );
     }
@@ -56,7 +58,7 @@ readonly class AddressService
     {
         return Cache::remember(
             "geocoder.country.{$query}",
-            now()->addHours(24),
+            now()->addMinutes($this->countryCacheTtlMinutes),
             fn() => $this->repository->searchCountry($query)
         );
     }

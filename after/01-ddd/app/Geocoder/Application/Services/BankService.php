@@ -18,6 +18,7 @@ readonly class BankService
 {
     public function __construct(
         private BankRepositoryInterface $repository,
+        private int $cacheTtlMinutes = 1440,
     ) {}
 
     /**
@@ -28,7 +29,7 @@ readonly class BankService
     {
         $data = Cache::remember(
             "geocoder.bank.bic.{$bic}",
-            now()->addHours(24),
+            now()->addMinutes($this->cacheTtlMinutes),
             fn() => $this->fetchBankData($bic)
         );
 

@@ -18,6 +18,7 @@ readonly class PartyService
 {
     public function __construct(
         private PartyRepositoryInterface $repository,
+        private int $cacheTtlMinutes = 1440,
     ) {}
 
     /**
@@ -32,7 +33,7 @@ readonly class PartyService
     {
         $data = Cache::remember(
             "geocoder.party.inn.{$inn}",
-            now()->addHours(24),
+            now()->addMinutes($this->cacheTtlMinutes),
             fn() => $this->fetchPartyData($inn)
         );
 

@@ -41,6 +41,11 @@ final class Bank
      */
     public function toArray(): array
     {
+        // toArray() трансформирует данные из camelCase в snake_case
+        // Это стандартный паттерн для Laravel/DDD проектов
+        // Domain Entity (PHP код) - camelCase  - PSR-12 стандарт PHP
+        // API Response / JSON     - snake_case - JSON API convention (JSON API spec, Laravel resource convention)
+
         return [
             'id' => $this->id->value,
             'name' => $this->name,
