@@ -2,10 +2,10 @@
 
 use App\Geocoder\Providers\GeocoderServiceProvider;
 use App\Geocoder\Presentation\Api\Exceptions\GeocoderExceptionHandler;
-use App\Geocoder\Presentation\Api\Responses\ApiResponseFactory;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -22,10 +22,13 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(
         function (Exceptions $exceptions): void {
-            // Force JSON для ValidationException на всех API маршрутах
-            // Без Accept: application/json Laravel рендерит HTML (редирект)
-            $exceptions->render(function (ValidationException $e) {
-                return ApiResponseFactory::validationError('Ошибка валидации', $e->errors())->toResponse();
+            // Force JSON для ValidationException — без Accept: application/json
+            // Laravel рендерит HTML (редирект). Это общая логика, не привязанная к модулю.
+            $exceptions->render(function (ValidationException $e): JsonResponse {
+                return response()->json([
+                    'message' => $e->getMessage(),
+                    'errors' => $e->errors(),
+                ], 422);
             });
 
             // Domain-исключения Geocoder

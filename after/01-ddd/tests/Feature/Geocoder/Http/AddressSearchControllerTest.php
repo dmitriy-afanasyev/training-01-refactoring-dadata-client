@@ -47,7 +47,7 @@ class AddressSearchControllerTest extends TestCase
         $response = $this->getJson(self::ENDPOINT);
 
         $response->assertStatus(422)
-            ->assertJsonPath('context.errors.query', ['The query field is required.']);
+            ->assertJsonPath('errors.query', ['The query field is required.']);
     }
 
     public function test_search_address_external_api_error(): void
@@ -72,6 +72,6 @@ class AddressSearchControllerTest extends TestCase
 
         $response->assertStatus(422)
             ->assertHeader('Content-Type', 'application/json')
-            ->assertJsonPath('context.errors.query', ['The query field is required.']);
+            ->assertJsonPath('errors.query', ['The query field is required.']);
     }
 }
