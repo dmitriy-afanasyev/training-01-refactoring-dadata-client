@@ -53,4 +53,19 @@ class AddressSearchControllerTest extends TestCase
             ])
             ->assertJsonPath('context.errors', ['query' => ['The query field is required.']]);
     }
+
+    public function test_search_address_external_api_error(): void
+    {
+        Http::fake([
+            '/suggest/address' => Http::response(['error' => 'Bad Gateway'], 502),
+        ]);
+
+        $response = $this->getJson(self::ENDPOINT . '?query=Москва');
+
+        $response->assertStatus(502)
+            ->assertJson([
+                'success' => false,
+                'error' => 'Ошибка внешнего API',
+            ]);
+    }
 }

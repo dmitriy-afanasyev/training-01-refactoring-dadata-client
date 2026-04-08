@@ -82,6 +82,21 @@ class PartyByInnControllerTest extends TestCase
             ->assertJsonPath('context.errors', ['inn' => ['The inn field must be between 10 and 12 digits.']]);
     }
 
+    public function test_get_party_by_inn_external_api_error(): void
+    {
+        Http::fake([
+            '*/findById/party*' => Http::response(['error' => 'Bad Gateway'], 502),
+        ]);
+
+        $response = $this->getJson(self::ENDPOINT . '?inn=7707083893');
+
+        $response->assertStatus(502)
+            ->assertJson([
+                'success' => false,
+                'error' => 'Ошибка внешнего API',
+            ]);
+    }
+
     public function test_get_party_by_inn_missing_inn(): void
     {
         $response = $this->getJson(self::ENDPOINT);

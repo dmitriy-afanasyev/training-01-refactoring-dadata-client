@@ -54,4 +54,19 @@ class CountrySearchControllerTest extends TestCase
             ])
             ->assertJsonPath('context.errors', ['query' => ['The query field is required.']]);
     }
+
+    public function test_search_country_external_api_error(): void
+    {
+        Http::fake([
+            '/suggest/country' => Http::response(['error' => 'Bad Gateway'], 502),
+        ]);
+
+        $response = $this->getJson(self::ENDPOINT . '?query=Россия');
+
+        $response->assertStatus(502)
+            ->assertJson([
+                'success' => false,
+                'error' => 'Ошибка внешнего API',
+            ]);
+    }
 }
