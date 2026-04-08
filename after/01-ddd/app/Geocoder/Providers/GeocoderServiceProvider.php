@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Geocoder\Providers;
 
+use App\Geocoder\Application\Services\AddressService;
+use App\Geocoder\Application\Services\BankService;
+use App\Geocoder\Application\Services\PartyService;
 use App\Geocoder\Domain\Repositories\AddressRepositoryInterface;
 use App\Geocoder\Domain\Repositories\BankRepositoryInterface;
 use App\Geocoder\Domain\Repositories\PartyRepositoryInterface;
