@@ -71,10 +71,11 @@ class GeocoderExceptionHandler
             'exception' => [
                 'class' => get_class($e),
                 'message' => $e->getMessage(),
+            ] + (config('app.debug') ? [
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
                 'trace' => $e->getTraceAsString(),
-            ],
+            ] : []),
         ];
 
         if ($e instanceof GeocoderException) {
