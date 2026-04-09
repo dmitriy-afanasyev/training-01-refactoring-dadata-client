@@ -283,6 +283,10 @@ public function __invoke(Request $request): JsonResponse
 }
 ```
 
+**Допустимое исключение:** `GeocoderExceptionHandler` импортирует доменные исключения (`PartyNotFoundException`, `InvalidInnException`) для маппинга на HTTP-статусы. Это **техническая зависимость на границе слоёв** — Handler не использует бизнес-логику Domain, только типы исключений. Его задача — переводить «язык домена» на «язык HTTP», и без знания о доменных исключениях он не может работать.
+
+Это минимальная зависимость: Handler знает _какие_ исключения бросает Domain, но не знает _как_ Domain работает.
+
 ### 4. Маршруты внутри модуля, не в глобальном routes/api.php
 
 Маршруты модуля — в `Presentation/Api/Routes/`, подключаются через `$this->loadRoutesFrom()` в Service Provider.

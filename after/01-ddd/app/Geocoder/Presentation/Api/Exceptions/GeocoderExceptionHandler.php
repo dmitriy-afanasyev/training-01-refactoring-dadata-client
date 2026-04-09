@@ -15,12 +15,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
 
-/**
- * Обработчик исключений для модуля Geocoder.
- */
 class GeocoderExceptionHandler
 {
-    public const LOG_CHANNEL = 'geocoder';
+    private const LOG_CHANNEL = 'geocoder';
 
     /**
      * Маппинг исключений на фабрики ответов.
