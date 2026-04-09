@@ -11,9 +11,6 @@ use App\Geocoder\Domain\Repositories\PartyRepositoryInterface;
 use App\Geocoder\Domain\ValueObjects\Inn;
 use Illuminate\Support\Facades\Cache;
 
-/**
- * Сервис для работы с данными организаций.
- */
 readonly class PartyService
 {
     public function __construct(
@@ -22,10 +19,6 @@ readonly class PartyService
     ) {}
 
     /**
-     * @see Dadata\DaDataRu::getCompanyDataByInn()
-     *
-     * @param string $inn
-     * @return PartyData
      * @throws PartyNotFoundException
      * @throws ExternalApiException
      */
