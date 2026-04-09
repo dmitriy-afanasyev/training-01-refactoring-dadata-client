@@ -1,0 +1,497 @@
+openapi: 3.1.0
+info:
+  title: Dadata Geocoder API
+  description: |
+    API для поиска организаций, банков, адресов и стран через сервис Дадата.
+
+    Все эндпоинты возвращают JSON в едином формате.
+  version: 1.0.0
+  contact:
+    name: Dmitriy Afanasyev
+    url: https://github.com/dmitriy-afanasyev
+
+servers:
+  - url: http://localhost
+    description: Local development
+
+tags:
+  - name: Party
+    description: Поиск организаций по ИНН
+  - name: Bank
+    description: Поиск банков по БИК
+  - name: Address
+    description: Поиск адресов
+  - name: Country
+    description: Поиск стран
+
+paths:
+  /api/geocoder/party/by-inn:
+    post:
+      summary: Найти организацию по ИНН
+      description: |
+        Возвращает информацию об организации по её ИНН.
+        Используется POST вместо GET, чтобы ИНН (персональные данные) не попадал в логи сервера, CDN и историю браузера.
+      operationId: findPartyByInn
+      tags:
+        - Party
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - inn
+              properties:
+                inn:
+                  type: string
+                  description: ИНН организации (10 или 12 цифр)
+                  pattern: '^\d{10,12}$'
+                  example: '7707083893'
+      responses:
+        '200':
+          description: Организация найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PartyResponse'
+              example:
+                success: true
+                data:
+                  id: '7707083893'
+                  inn: '7707083893'
+                  name: 'ПАО "СБЕРБАНК"'
+                  short_name: 'СБЕРБАНК'
+                  address: '117997, г Москва, ул Вавилова, д 19'
+                  status: 'ACTIVE'
+                  is_active: true
+        '404':
+          description: Организация не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                success: false
+                error: 'Организация не найдена'
+        '422':
+          description: Ошибка валидации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+              example:
+                success: false
+                error: 'The inn field must be between 10 and 12 digits.'
+                context:
+                  errors:
+                    inn:
+                      - 'The inn field must be between 10 and 12 digits.'
+        '502':
+          description: Ошибка внешнего API
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                success: false
+                error: 'Ошибка внешнего API'
+
+  /api/geocoder/bank/by-bic:
+    post:
+      summary: Найти банк по БИК
+      description: |
+        Возвращает информацию о банке по его БИК.
+        Используется POST вместо GET, чтобы БИК не попадал в логи сервера, CDN и историю браузера.
+      operationId: findBankByBic
+      tags:
+        - Bank
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - bic
+              properties:
+                bic:
+                  type: string
+                  description: БИК банка (9 цифр)
+                  pattern: '^\d{9}$'
+                  example: '044525225'
+      responses:
+        '200':
+          description: Банк найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankResponse'
+              example:
+                success: true
+                data:
+                  id: '044525225'
+                  name: 'ПАО СБЕРБАНК'
+                  short_name: 'СБЕРБАНК'
+                  bic: '044525225'
+                  inn: '7707083893'
+                  correspondent_account: '30101810400000000225'
+                  address: '117997, г Москва, ул Вавилова, д 19'
+                  status: 'ACTIVE'
+                  is_active: true
+        '404':
+          description: Банк не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                success: false
+                error: 'Банк не найден'
+        '422':
+          description: Ошибка валидации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+              example:
+                success: false
+                error: 'The bic field must be 9 digits.'
+                context:
+                  errors:
+                    bic:
+                      - 'The bic field must be 9 digits.'
+        '502':
+          description: Ошибка внешнего API
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                success: false
+                error: 'Ошибка внешнего API'
+
+  /api/geocoder/address/search:
+    get:
+      summary: Поиск адреса
+      description: Возвращает список адресов по поисковому запросу.
+      operationId: searchAddress
+      tags:
+        - Address
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: Поисковый запрос
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 255
+          example: 'Москва Вавилова 19'
+        - name: locations
+          in: query
+          required: false
+          description: |
+            Ограничение поиска по ФИАС-кодам адресов.
+            Передаётся как JSON-массив объектов.
+          schema:
+            type: array
+            items:
+              type: object
+              additionalProperties: true
+          example:
+            - city: 'Москва'
+      responses:
+        '200':
+          description: Адреса найдены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddressListResponse'
+              example:
+                success: true
+                data:
+                  - value: 'г Москва, ул Вавилова, д 19'
+                    unrestricted_value: '117312, г Москва, Академический р-н, ул Вавилова, д 19'
+                    data:
+                      city: 'Москва'
+                      street: 'Вавилова'
+                      house: '19'
+        '422':
+          description: Ошибка валидации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '502':
+          description: Ошибка внешнего API
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/geocoder/country/search:
+    get:
+      summary: Поиск страны
+      description: Возвращает список стран по поисковому запросу.
+      operationId: searchCountry
+      tags:
+        - Country
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: Поисковый запрос
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 255
+          example: 'Россия'
+      responses:
+        '200':
+          description: Страны найдены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountryListResponse'
+              example:
+                success: true
+                data:
+                  - value: 'Россия'
+                    unrestricted_value: 'Россия'
+                    data:
+                      code: '643'
+                      name: 'Россия'
+        '422':
+          description: Ошибка валидации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '502':
+          description: Ошибка внешнего API
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    # ---- Общий формат ответа ----
+    SuccessResponse:
+      type: object
+      required:
+        - success
+        - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          description: Данные ответа (тип зависит от эндпоинта)
+
+    ErrorResponse:
+      type: object
+      required:
+        - success
+        - error
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          description: Краткое описание ошибки
+        message:
+          type:
+            - string
+            - 'null'
+          description: Дополнительное сообщение
+
+    ValidationErrorResponse:
+      type: object
+      required:
+        - success
+        - error
+        - context
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          description: Общее сообщение об ошибке валидации
+        context:
+          type: object
+          properties:
+            errors:
+              type: object
+              additionalProperties:
+                type: array
+                items:
+                  type: string
+              description: Детали ошибок по полям
+
+    # ---- Организация ----
+    PartyResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/PartyData'
+
+    PartyData:
+      type: object
+      required:
+        - id
+        - inn
+        - name
+        - short_name
+        - is_active
+      properties:
+        id:
+          type: string
+          description: Идентификатор (ИНН)
+        inn:
+          type: string
+          description: ИНН
+        name:
+          type: string
+          description: Полное название
+        short_name:
+          type: string
+          description: Краткое название
+        address:
+          type:
+            - string
+            - 'null'
+          description: Адрес
+        status:
+          type:
+            - string
+            - 'null'
+          description: Статус организации
+          enum:
+            - ACTIVE
+            - LIQUIDATING
+            - LIQUIDATED
+            - REORGANIZING
+            - BANKRUPT
+            - null
+        is_active:
+          type: boolean
+          description: Активна ли организация
+
+    # ---- Банк ----
+    BankResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/BankData'
+
+    BankData:
+      type: object
+      required:
+        - id
+        - name
+        - short_name
+        - bic
+        - inn
+        - is_active
+      properties:
+        id:
+          type: string
+          description: Идентификатор (БИК)
+        name:
+          type: string
+          description: Полное название
+        short_name:
+          type: string
+          description: Краткое название
+        bic:
+          type: string
+          description: БИК
+        inn:
+          type: string
+          description: ИНН банка
+        correspondent_account:
+          type:
+            - string
+            - 'null'
+          description: Корреспондентский счёт
+        address:
+          type:
+            - string
+            - 'null'
+          description: Адрес
+        status:
+          type:
+            - string
+            - 'null'
+          description: Статус банка
+          enum:
+            - ACTIVE
+            - LIQUIDATING
+            - LIQUIDATED
+            - null
+        is_active:
+          type: boolean
+          description: Активен ли банк
+
+    # ---- Адреса ----
+    AddressListResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/AddressSuggestion'
+
+    AddressSuggestion:
+      type: object
+      properties:
+        value:
+          type: string
+          description: Краткий адрес
+        unrestricted_value:
+          type: string
+          description: Полный адрес с индексом и КЛАДР
+        data:
+          type: object
+          additionalProperties: true
+          description: Детали адреса (город, улица, дом и т.д.)
+
+    # ---- Страны ----
+    CountryListResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/CountrySuggestion'
+
+    CountrySuggestion:
+      type: object
+      properties:
+        value:
+          type: string
+          description: Название страны
+        unrestricted_value:
+          type: string
+          description: Полное название страны
+        data:
+          type: object
+          properties:
+            code:
+              type: string
+              description: Код страны (OKSM)
+            name:
+              type: string
+              description: Название страны

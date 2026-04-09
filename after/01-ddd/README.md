@@ -92,42 +92,56 @@ php artisan serve
 
 ## 📡 API Endpoints
 
-### Получить данные организации по ИНН
+Полная OpenAPI спецификация: [`docs/api/openapi.yaml`](docs/api/openapi.yaml)
 
-```bash
-GET /api/dadata/party/by-inn?inn=7707083893
-```
+Все эндпоинты возвращают JSON в едином формате:
 
-**Ответ:**
 ```json
 {
   "success": true,
-  "data": {
-    "name": "ПАО \"СБЕРБАНК\"",
-    "short_name": "СБЕРБАНК",
-    "inn": "7707083893",
-    "kpp": "773601001",
-    "status": "ACTIVE"
-  }
+  "data": { ... }
 }
 ```
 
-### Получить данные банка по БИК
+При ошибке:
 
-```bash
-GET /api/dadata/bank/by-bic?bic=044525225
+```json
+{
+  "success": false,
+  "error": "Описание ошибки"
+}
 ```
 
-### Поиск адресов
+### Найти организацию по ИНН
 
 ```bash
-GET /api/dadata/address/search?query=Москва
+POST /api/geocoder/party/by-inn
+Content-Type: application/json
+
+{"inn": "7707083893"}
 ```
 
-### Поиск стран
+> **POST** вместо GET: ИНН — персональные данные, не должны попадать в логи сервера, CDN и историю браузера.
+
+### Найти банк по БИК
 
 ```bash
-GET /api/dadata/country/search?query=Россия
+POST /api/geocoder/bank/by-bic
+Content-Type: application/json
+
+{"bic": "044525225"}
+```
+
+### Поиск адреса
+
+```bash
+GET /api/geocoder/address/search?query=Москва+Вавилова+19
+```
+
+### Поиск страны
+
+```bash
+GET /api/geocoder/country/search?query=Россия
 ```
 
 ## 🧪 Тестирование

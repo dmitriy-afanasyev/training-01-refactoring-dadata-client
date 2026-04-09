@@ -7,6 +7,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -42,6 +43,18 @@ return Application::configure(basePath: dirname(__DIR__))
             // Domain-исключения Geocoder (все наследуются от GeocoderException)
             $exceptions->render(function (GeocoderException $e) {
                 return GeocoderExceptionHandler::handle($e);
+            });
+
+            // Fallback: все API-маршруты должны возвращать JSON
+            // Без этого Laravel рендерит HTML для непредвиденных ошибок
+            $exceptions->render(function (Throwable $e, Request $request) {
+                if ($request->is('api/*')) {
+                    return response()->json([
+                        'message' => config('app.debug') ? $e->getMessage() : 'Server error',
+                    ], 500);
+                }
+
+                return null;
             });
         }
     )->create();
