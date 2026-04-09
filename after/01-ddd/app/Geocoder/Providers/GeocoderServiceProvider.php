@@ -19,6 +19,10 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
+/**
+ * Composition root — единственное место где допустим config().
+ * Правило: DI over app()/resolve() в слоях (architecture → Use Dependency Injection).
+ */
 class GeocoderServiceProvider extends ServiceProvider
 {
     public function register(): void
