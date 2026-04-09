@@ -11,7 +11,7 @@ info:
     url: https://github.com/dmitriy-afanasyev
 
 servers:
-  - url: http://localhost
+  - url: http://localhost:8080
     description: Local development
 
 tags:
