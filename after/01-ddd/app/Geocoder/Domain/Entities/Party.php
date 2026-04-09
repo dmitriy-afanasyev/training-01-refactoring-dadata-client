@@ -7,9 +7,6 @@ namespace App\Geocoder\Domain\Entities;
 use App\Geocoder\Domain\Enums\PartyStatus;
 use App\Geocoder\Domain\ValueObjects\Inn;
 
-/**
- * Сущность: Юридическое лицо (компания).
- */
 final class Party
 {
     /**
@@ -35,9 +32,6 @@ final class Party
         private(set) ?PartyStatus $status = null,
     ) {}
 
-    /**
-     * Проверить, активна ли компания.
-     */
     public function isActive(): bool
     {
         return $this->status?->isActive() ?? false;

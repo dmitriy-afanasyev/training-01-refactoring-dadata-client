@@ -9,9 +9,6 @@ use App\Geocoder\Domain\Exceptions\ExternalApiException;
 use App\Geocoder\Domain\Exceptions\PartyNotFoundException;
 use App\Geocoder\Domain\ValueObjects\Inn;
 
-/**
- * Интерфейс репозитория для работы с данными организаций.
- */
 interface PartyRepositoryInterface
 {
     /**

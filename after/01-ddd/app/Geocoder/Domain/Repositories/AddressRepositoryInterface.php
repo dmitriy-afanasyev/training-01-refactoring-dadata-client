@@ -6,9 +6,6 @@ namespace App\Geocoder\Domain\Repositories;
 
 use App\Geocoder\Domain\Exceptions\ExternalApiException;
 
-/**
- * Интерфейс репозитория для работы с адресами.
- */
 interface AddressRepositoryInterface
 {
     /**

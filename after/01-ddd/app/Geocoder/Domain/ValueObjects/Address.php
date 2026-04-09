@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace App\Geocoder\Domain\ValueObjects;
 
-/**
- * Value Object для адреса.
- */
 final class Address
 {
     public function __construct(
@@ -23,9 +20,6 @@ final class Address
         }
     ) {}
 
-    /**
-     * Создать адрес из строки.
-     */
     public static function fromString(string $value): self
     {
         return new self($value);

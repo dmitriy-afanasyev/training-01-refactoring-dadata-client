@@ -6,14 +6,8 @@ namespace App\Geocoder\Domain\ValueObjects;
 
 use App\Geocoder\Domain\Exceptions\InvalidBicException;
 
-/**
- * Value Object для БИК банка.
- */
 final class Bic
 {
-    /**
-     * Количество знаков БИК.
-     */
     private const LENGTH = 9;
 
     public function __construct(
@@ -34,9 +28,6 @@ final class Bic
         }
     ) {}
 
-    /**
-     * Создать BIC из строки.
-     */
     public static function fromString(string $value): self
     {
         return new self($value);

@@ -9,9 +9,6 @@ use App\Geocoder\Domain\Exceptions\BankNotFoundException;
 use App\Geocoder\Domain\Exceptions\ExternalApiException;
 use App\Geocoder\Domain\ValueObjects\Bic;
 
-/**
- * Интерфейс репозитория для работы с данными банков.
- */
 interface BankRepositoryInterface
 {
     /**
