@@ -6,6 +6,13 @@ Presentation — это **точка входа** в приложение. Зд�
 
 > **Зависимости:** Presentation зависит от Application (сервисы, DTO), но не от Domain напрямую (Entity, VO). Infrastructure и Domain не зависят от Presentation.
 
+```
+*Presentation* → Application → Domain ← Infrastructure
+ ^^^ мы здесь
+```
+
+**Dependency Rule:** стрелки показывают направление зависимостей. Presentation → Application → Domain — внешние слои зависят от внутренних. Infrastructure реализует интерфейсы Domain/Application (репозитории, внешние API), но не знает о Presentation.
+
 ## Структура
 
 ```
@@ -152,14 +159,11 @@ final class PartyTransformer extends Transformer
     }
 }
 ```
-
-**Правило:** `assert()` для проверки типов в трансформерах ненадёжен (может быть отключён в production). Используйте `if (!... instanceof) throw ...`.
-
 ---
 
 ### ApiResponseFactory — единый формат ответов
 
-Фабрика создаёт JSON-ответы в едином формате для всех эндпоинтов. Ошибки и успех выглядят одинаково.
+Фабрика создаёт JSON-ответы в едином формате для всех эндпоинтов.
 
 ```php
 // ✅ Единый формат: {'success': true/false, 'data': ...} или {'success': false, 'error': ...}
