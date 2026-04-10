@@ -6,6 +6,13 @@ Infrastructure — это **техническая реализация** кон
 
 > **Зависимости:** Infrastructure зависит от Domain (интерфейсы репозиториев, сущности, исключения, VO), но Domain не зависит от Infrastructure. Это **Dependency Inversion Principle** в действии.
 
+```
+Presentation → Application → Domain ← *Infrastructure*
+                                         ^^^ мы здесь
+```
+
+**Dependency Rule:** стрелки показывают направление зависимостей. Presentation → Application → Domain — внешние слои зависят от внутренних. Infrastructure реализует интерфейсы Domain/Application (репозитории, внешние API), но не знает о Presentation.
+
 ## Структура
 
 ```

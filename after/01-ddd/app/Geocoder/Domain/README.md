@@ -6,6 +6,13 @@ Domain — это **сердце DDD-архитектуры**. Здесь жив
 
 > **Правило зависимостей (Dependency Rule):** Domain не зависит ни от кого. Все остальные слои (Application, Infrastructure, Presentation) зависят от Domain, а не наоборот.
 
+```
+Presentation → Application → *Domain* ← Infrastructure
+                               ^^^ мы здесь
+```
+
+**Dependency Rule:** стрелки показывают направление зависимостей. Presentation → Application → Domain — внешние слои зависят от внутренних. Infrastructure реализует интерфейсы Domain/Application (репозитории, внешние API), но не знает о Presentation. Domain — самый внутренний слой, он не зависит ни от кого, а все остальные — от него.
+
 ## Структура
 
 ```
@@ -88,7 +95,7 @@ public function isActive(): bool
 
 ---
 
-### Repository — контракт домена на сохранение/получение
+### Repository — контракт домена на получение данных
 
 Repository — это **абстракция** для работы с коллекцией Entity. Домен говорит «мне нужно найти организацию по ИНН», а как именно (MySQL, DaData API, файл) — решает инфраструктура.
 
@@ -97,9 +104,7 @@ Repository — это **абстракция** для работы с колле
 - Легко подменить реализацию (тест, мок, другой источник) без изменения домена
 - Dependency Inversion Principle: Domain зависит от абстракций, не от конкретных технологий
 
-**Command vs Query:**
-- **Command-репозиторий** (изменение состояния) → возвращает Entity
-- **Query-репозиторий** (чтение, CQRS) → может возвращать DTO или примитивы
+**Наш контекст:** в этом проекте репозитории используются только для чтения (DaData API). Методы возвращают Entity или бросают исключение — «не найдено» это бизнес-ошибка, а не нормальный результат.
 
 ```php
 // ✅ Domain определяет контракт — что нужно бизнесу
@@ -111,13 +116,9 @@ interface PartyRepositoryInterface
 // ✅ Infrastructure решает как получить данные — БД, HTTP-клиент, файл
 class DadataPartyRepository implements PartyRepositoryInterface { ... }
 class DatabasePartyRepository implements PartyRepositoryInterface { ... }
-
-// ⚠️ CQRS: Query-репозиторий возвращает DTO для чтения
-interface PartyQueryRepository
-{
-    public function findByInn(Inn $inn): ?PartyData;  // DTO, null допустим
-}
 ```
+
+**CQRS на будущее:** если появятся команды (создание, изменение), репозитории можно разделить на Command (запись, возвращают Entity) и Query (чтение, могут возвращать DTO). Сейчас в этом нет необходимости — один источник данных, только чтение.
 
 ---
 
