@@ -1,238 +1,171 @@
-# Geocoder Module - DaData API Client
+# Решение с помощью DDD
 
 [![PHP Version](https://img.shields.io/badge/PHP-8.5-777BB4)](https://php.net)
 [![Laravel](https://img.shields.io/badge/Laravel-13.x-FF2D20)](https://laravel.com)
 
-Модуль для работы с DaData API в рамках Laravel-приложения.
+Решение на основе Domain-Driven Design (DDD) с разделением на 4 слоя.
 
-## 📋 Структура модуля
+## 🏗️ Архитектурный подход
+
+### Domain-Driven Design (Предметно-ориентированное проектирование)
+
+Код разделён на 4 слоя с чётким направлением зависимостей:
 
 ```
-app/Geocoder/
-├── Domain/                    # Domain Layer (ядро)
-│   ├── Entities/              # Сущности (Party, Bank, Address)
-│   ├── ValueObjects/          # Объекты-значения (Inn, Bic)
-│   ├── Repositories/          # Интерфейсы репозиториев
-│   └── Exceptions/            # Доменные исключения
-│
-├── Infrastructure/            # Infrastructure Layer
-│   ├── Http/Dadata/          # HTTP-клиент для DaData API
-│   └── Persistence/           # Реализации репозиториев
-│
-├── Application/               # Application Layer
-│   ├── Services/              # Сервисы приложения
-│   ├── DTO/                   # DTO для передачи данных
-│   └── Exceptions/            # Исключения приложения
-│
-├── UI/                        # Interface Layer
-│   └── Http/Controllers/      # HTTP-контроллеры
-│
-├── Providers/                 # Service Providers
-│   └── GeocoderServiceProvider.php
-│
-└── config/                    # Конфигурация модуля
-    └── geocoder.php
+Presentation → Application → Domain ← Infrastructure
 ```
 
-## 🚀 Быстрый старт
+| Слой | Назначение | Документация |
+|------|------------|--------------|
+| **Presentation** | Invokable-контроллеры, FormRequest, трансформеры, маршруты | [Представление ↗](app/Geocoder/Presentation/README.md) |
+| **Application** | Use Cases: сервисы-оркестраторы, DTO, кэширование | [Приложение ↗](app/Geocoder/Application/README.md) |
+| **Domain** | Бизнес-сущности, Value Objects, интерфейсы репозиториев, доменные исключения | [Домен ↗](app/Geocoder/Domain/README.md) |
+| **Infrastructure** | HTTP-клиент для DaData API, реализация репозиториев | [Инфраструктура ↗](app/Geocoder/Infrastructure/README.md) |
 
-### 1. Установка зависимостей
+
+### Ключевые принципы
+
+- **Dependency Rule** — внешние слои зависят от внутренних, Domain не зависит ни от кого
+- **Composition Root** — Service Provider, единственное место с `config()` и `env()`
+- **DI over `app()`** — все зависимости через конструктор, скрытые зависимости запрещены
+- **Repository Pattern** — Domain определяет контракт, Infrastructure реализует
+- **Value Objects** — входные ворота с валидацией (`Inn`, `Bic`)
+
+## ✅ Лучшие практики Laravel
+
+### Контроллеры
+- **Invokable controllers** — один класс = одно действие (`__invoke`)
+- **FormRequest** для валидации вместо `$request->validate()` в контроллере
+- **Публичные геттеры** в FormRequest (`getInn()`) вместо `$request->input()`
+
+### Маршруты
+- **Маршруты внутри модуля** — `loadRoutesFrom()` в Service Provider, не в глобальном `routes/api.php`
+- **POST для персональных данных** (ИНН, БИК) — не попадают в логи сервера и CDN
+- **Rate limiting** на уровне модуля (`throttle:geocoder`)
+
+### Ответы
+- **Единый формат JSON** через `ApiResponseFactory`: `{"success": true, "data": {...}}`
+- **Трансформеры** — DTO → формат ответа, отдельно от контроллера
+- **Exception Handler** — маппинг доменных исключений на HTTP-статусы с русскими сообщениями
+
+### Конфигурация
+- **Публикация конфига** через `php artisan vendor:publish --tag=geocoder-config`
+- **Разные TTL для кэша** — настраиваются через DI, разные для партий/банков/адресов
+
+### Тестирование
+- **`#[CoversClass]`** атрибут на каждом тестовом классе — строгий контроль покрытия
+- **Отдельные testsuites** — Unit, Feature, PartyService и др.
+
+## 🚀 Запуск проекта
+
+### Предварительные требования
+
+- Docker и Docker Compose
+- Git
+
+### 1. Клонировать репозиторий
 
 ```bash
-cd after
+git clone <repo-url>
+cd training-01-refactoring-dadata-client/after/01-ddd
+```
+
+### 2. Установить зависимости
+
+```bash
 composer install
 ```
 
-### 2. Настройка окружения
+### 3. Настроить окружение
 
 ```bash
 cp .env.example .env
 php artisan key:generate
 ```
 
-### 3. Настройка DaData API
+### 4. Указать API-ключ DaData
 
-В файле `.env` укажите ваш API ключ DaData:
+В файле `.env`:
 
 ```env
 DADATA_API_KEY=ваш_ключ
 DADATA_BASE_URL=https://suggestions.dadata.ru/suggestions/api/4_1/rs
 ```
 
-Получить API ключ можно на https://dadata.ru/api/
+API-ключ можно получить на https://dadata.ru/api/
 
-### 4. Запуск через Docker (Laravel Sail)
+### 5. Запустить через Docker (Laravel Sail)
 
 ```bash
 # Запуск контейнеров
 ./vendor/bin/sail up -d
 
-# Запуск тестов
-./vendor/bin/sail test
-
-# Запуск тестов с покрытием
-./vendor/bin/sail php artisan test --coverage
+# Проверка
+./vendor/bin/sail artisan about
 ```
 
-### 5. Запуск без Docker
+Если порт 80 занят, добавьте в `.env`:
+
+```env
+APP_PORT=8080
+```
+
+### 6. Без Docker (локальный PHP)
 
 ```bash
-# Миграция БД
-php artisan migrate
-
-# Запуск тестов
-php artisan test
-
-# Запуск сервера
 php artisan serve
 ```
 
-## 📡 API Endpoints
+## 🧪 Запуск тестов
 
-Полная OpenAPI спецификация: [`docs/api/openapi.yaml`](docs/api/openapi.yaml)
-
-Все эндпоинты возвращают JSON в едином формате:
-
-```json
-{
-  "success": true,
-  "data": { ... }
-}
-```
-
-При ошибке:
-
-```json
-{
-  "success": false,
-  "error": "Описание ошибки"
-}
-```
-
-### Найти организацию по ИНН
-
-```bash
-POST /api/geocoder/party/by-inn
-Content-Type: application/json
-
-{"inn": "7707083893"}
-```
-
-> **POST** вместо GET: ИНН — персональные данные, не должны попадать в логи сервера, CDN и историю браузера.
-
-### Найти банк по БИК
-
-```bash
-POST /api/geocoder/bank/by-bic
-Content-Type: application/json
-
-{"bic": "044525225"}
-```
-
-### Поиск адреса
-
-```bash
-GET /api/geocoder/address/search?query=Москва+Вавилова+19
-```
-
-### Поиск страны
-
-```bash
-GET /api/geocoder/country/search?query=Россия
-```
-
-## 🧪 Тестирование
-
-Каждый тестовый класс помечен атрибутом `#[CoversClass]` для строгого контроля покрытия кода тестами.
-
-### Запуск всех тестов
+### Все тесты
 
 ```bash
 ./vendor/bin/sail test
 ```
 
-### Запуск отдельного testsuite
+### Отдельный testsuite
 
 ```bash
 ./vendor/bin/sail test --testsuite=Unit
 ./vendor/bin/sail test --testsuite=Feature
-./vendor/bin/sail test --testsuite=PartyService
 ```
 
-### Запуск конкретного файла теста
+### Конкретный файл
 
 ```bash
 ./vendor/bin/sail test tests/Unit/Geocoder/Application/Services/PartyServiceTest.php
 ```
 
-### Запуск отдельного теста по имени
+### По имени теста
 
 ```bash
 ./vendor/bin/sail test --filter=find_by_inn_returns_party_data
 ```
 
-### Запуск с покрытием
+### С покрытием
 
 ```bash
 ./vendor/bin/sail test --coverage
 ```
 
-## 📦 Публикация конфигурации
-
-Для публикации конфигурации модуля в основной `config/`:
+### Без Docker
 
 ```bash
-php artisan vendor:publish --tag=geocoder-config
+php artisan test
 ```
 
-## 🏗️ Архитектура
+## 📡 API Endpoints
 
-Модуль построен на основе **Domain-Driven Design (DDD)** с разделением на слои:
+| Метод | Путь | Описание |
+|-------|------|----------|
+| POST | `/api/geocoder/party/by-inn` | Найти организацию по ИНН |
+| POST | `/api/geocoder/bank/by-bic` | Найти банк по БИК |
+| GET | `/api/geocoder/address/search?query=...` | Поиск адреса |
+| GET | `/api/geocoder/country/search?query=...` | Поиск страны |
 
-1. **Domain Layer** - бизнес-сущности и правила предметной области
-2. **Infrastructure Layer** - внешние зависимости (HTTP, БД)
-3. **Application Layer** - сервисы-посредники
-4. **UI Layer** - HTTP-контроллеры
-
-### Принципы
-
-- **SOLID** - соблюдение принципов объектно-ориентированного проектирования
-- **Dependency Inversion** - зависимость от абстракций, а не от деталей
-- **Repository Pattern** - абстракция доступа к данным
-- **Value Objects** - объекты-значения с валидацией (Inn, Bic)
-
-## 📝 Примеры использования
-
-### Через сервис
-
-```php
-use App\Geocoder\Application\Services\PartyService;
-
-$partyService = app(PartyService::class);
-
-// Получить данные организации
-$party = $partyService->findByInn('7707083893');
-```
-
-### Через HTTP API
-
-```bash
-curl "http://localhost/api/dadata/party/by-inn?inn=7707083893"
-```
-
-## 🔧 Конфигурация
-
-Файл `config/geocoder.php`:
-
-```php
-return [
-    'api_key' => env('DADATA_API_KEY', ''),
-    'base_url' => env('DADATA_BASE_URL', 'https://suggestions.dadata.ru/suggestions/api/4_1/rs'),
-    'timeout' => env('DADATA_TIMEOUT', 30),
-    'retry_count' => env('DADATA_RETRY_COUNT', 3),
-];
-```
+Полная OpenAPI-спецификация: [`docs/api/openapi.yaml`](docs/api/openapi.yaml)
 
 ## 📄 Лицензия
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+MIT
