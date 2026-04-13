@@ -43,7 +43,7 @@ jobs:
 
       - name: Run tests with coverage
         working-directory: after/01-ddd
-        run: vendor/bin/sail test --coverage-html tests/coverage --coverage-clover tests/coverage/clover.xml
+        run: vendor/bin/phpunit --coverage-html tests/coverage --coverage-clover tests/coverage/clover.xml
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
