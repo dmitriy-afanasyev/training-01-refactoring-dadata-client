@@ -29,8 +29,9 @@ Presentation → Application → Domain ← Infrastructure
 - **Dependency Rule** — внешние слои зависят от внутренних, Domain не зависит ни от кого
 - **Composition Root** — Service Provider, единственное место с `config()` и `env()`
 - **DI over `app()`** — все зависимости через конструктор, скрытые зависимости запрещены
+- **Чистый Domain** — чистый PHP без фреймворков, `Cache`, `Http`, `config()`
 - **Repository Pattern** — Domain определяет контракт, Infrastructure реализует
-- **Value Objects** — входные ворота с валидацией (`Inn`, `Bic`)
+- **Anti-Corruption Layer** — DTO между Application и Presentation, Domain Entity не утекает наружу
 
 ## ✅ Лучшие практики Laravel
 
