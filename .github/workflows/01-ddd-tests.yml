@@ -37,9 +37,13 @@ jobs:
         working-directory: after/01-ddd
         run: php artisan key:generate
 
-      - name: Run tests
+      - name: Create coverage directory
         working-directory: after/01-ddd
-        run: php artisan test --coverage-html tests/coverage --coverage-clover tests/coverage/clover.xml
+        run: mkdir -p tests/coverage
+
+      - name: Run tests with coverage
+        working-directory: after/01-ddd
+        run: vendor/bin/sail test --coverage-html tests/coverage --coverage-clover tests/coverage/clover.xml
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4

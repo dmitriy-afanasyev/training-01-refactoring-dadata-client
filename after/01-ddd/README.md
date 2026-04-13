@@ -34,7 +34,7 @@ Presentation → Application → Domain ← Infrastructure
 - **Anti-Corruption Layer** — DTO между Application и Presentation, Domain Entity не утекает наружу
 
 ## ✅ Лучшие практики Laravel
-Что было применено из Laravel boost скилов
+Примечательное, что было применено из Laravel boost скилов, "Чистой архитектуры" и "Чистого кода"
 
 ### Контроллеры и валидация
 - **Invokable controllers** — один класс = одно действие (`__invoke`), тело метода < 10 строк
@@ -90,14 +90,17 @@ cd training-01-refactoring-dadata-client/after/01-ddd
 composer install
 ```
 
-### 3. Настроить окружение
+### 3. Создать файл окружения
 
 ```bash
 cp .env.example .env
-php artisan key:generate
 ```
 
-### 4. Указать API-ключ DaData
+### 4. Получить и указать API-ключ DaData
+
+API-ключ можно бесплатно получить на https://dadata.ru/pricing/
+На текущий момент существует бесплатный тариф с лимитом до 10_000 запросов в день.
+В тарифной сетке его можно не заметить, но информация о нём есть на странице цен.
 
 В файле `.env`:
 
@@ -106,13 +109,14 @@ DADATA_API_KEY=ваш_ключ
 DADATA_BASE_URL=https://suggestions.dadata.ru/suggestions/api/4_1/rs
 ```
 
-API-ключ можно получить на https://dadata.ru/api/
-
 ### 5. Запустить через Docker (Laravel Sail)
 
 ```bash
 # Запуск контейнеров
 ./vendor/bin/sail up -d
+
+# Генерация ключа приложения
+./vendor/bin/sail artisan key:generate
 
 # Проверка
 ./vendor/bin/sail artisan about
@@ -122,12 +126,6 @@ API-ключ можно получить на https://dadata.ru/api/
 
 ```env
 APP_PORT=8080
-```
-
-### 6. Без Docker (локальный PHP)
-
-```bash
-php artisan serve
 ```
 
 ## 🧪 Запуск тестов
