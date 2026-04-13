@@ -2,6 +2,7 @@
 
 [![PHP Version](https://img.shields.io/badge/PHP-8.5-777BB4)](https://php.net)
 [![Laravel](https://img.shields.io/badge/Laravel-13.x-FF2D20)](https://laravel.com)
+[![Tests](https://github.com/dmitriy-afanasyev/training-01-refactoring-dadata-client/actions/workflows/01-ddd-tests.yml/badge.svg)](https://github.com/dmitriy-afanasyev/training-01-refactoring-dadata-client/actions/workflows/01-ddd-tests.yml)
 
 Решение на основе Domain-Driven Design (DDD) с разделением на 4 слоя.
 
