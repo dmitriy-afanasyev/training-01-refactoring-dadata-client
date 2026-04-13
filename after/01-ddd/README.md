@@ -34,29 +34,41 @@ Presentation → Application → Domain ← Infrastructure
 - **Anti-Corruption Layer** — DTO между Application и Presentation, Domain Entity не утекает наружу
 
 ## ✅ Лучшие практики Laravel
+Что было применено из Laravel boost скилов
 
-### Контроллеры
-- **Invokable controllers** — один класс = одно действие (`__invoke`)
-- **FormRequest** для валидации вместо `$request->validate()` в контроллере
-- **Публичные геттеры** в FormRequest (`getInn()`) вместо `$request->input()`
+### Контроллеры и валидация
+- **Invokable controllers** — один класс = одно действие (`__invoke`), тело метода < 10 строк
+- **FormRequest** — валидация отдельно, типизированные геттеры (`getInn()`) вместо `$request->input()`
 
 ### Маршруты
 - **Маршруты внутри модуля** — `loadRoutesFrom()` в Service Provider, не в глобальном `routes/api.php`
 - **POST для персональных данных** (ИНН, БИК) — не попадают в логи сервера и CDN
 - **Rate limiting** на уровне модуля (`throttle:geocoder`)
 
-### Ответы
+### HTTP-клиент
+- **Timeout обязательно** — `timeout()` + `connectTimeout()` на каждый запрос
+- **Retry с exponential backoff** — `100ms → 200ms → 400ms`, только при сетевых/5xx ошибках
+- **`preventStrayRequests()`** в тестах — никаких случайных запросов к реальному API
+
+### Кэширование
+- **TTL через DI** — настраивается в Service Provider, не захардкожено
+
+### Исключения и ответы
+- **Контроллер — только success path** — `$this->service->find()` + трансформер, без `try/catch`
 - **Единый формат JSON** через `ApiResponseFactory`: `{"success": true, "data": {...}}`
 - **Трансформеры** — DTO → формат ответа, отдельно от контроллера
 - **Exception Handler** — маппинг доменных исключений на HTTP-статусы с русскими сообщениями
-
-### Конфигурация
-- **Публикация конфига** через `php artisan vendor:publish --tag=geocoder-config`
-- **Разные TTL для кэша** — настраиваются через DI, разные для партий/банков/адресов
+- **`context(): array`** на каждом доменном исключении — структурированное логирование
 
 ### Тестирование
 - **`#[CoversClass]`** атрибут на каждом тестовом классе — строгий контроль покрытия
-- **Отдельные testsuites** — Unit, Feature, PartyService и др.
+- **`Http::fake()`** — моки внешнего API во всех Feature/Unit тестах
+
+### Логирование
+- **Отдельный канал `geocoder`** — `storage/logs/geocoder/geocoder.log` (daily, 14 дней)
+- **Структурированный контекст** — URL, метод, input (без паролей/токенов), IP, user-agent, маршрут
+- **Debug-режим** — stack trace и доменный `context()` только при `config('app.debug')`
+- **Тесты не логируют** — `app()->environment('testing')` пропускает запись в лог
 
 ## 🚀 Запуск проекта
 
