@@ -23,7 +23,7 @@ jobs:
         with:
           php-version: "8.5"
           extensions: mbstring, dom, fileinfo, mysql
-          coverage: none
+          coverage: xdebug
 
       - name: Copy .env
         working-directory: after/01-ddd
@@ -39,4 +39,11 @@ jobs:
 
       - name: Run tests
         working-directory: after/01-ddd
-        run: composer test
+        run: php artisan test --coverage-html tests/coverage --coverage-clover tests/coverage/clover.xml
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: after/01-ddd/tests/coverage/
+          retention-days: 30

@@ -5,6 +5,8 @@
 .env.production
 .phpactor.json
 .phpunit.result.cache
+.phpunit.result.coverage
+/tests/coverage
 /.fleet
 /.idea
 /.nova
