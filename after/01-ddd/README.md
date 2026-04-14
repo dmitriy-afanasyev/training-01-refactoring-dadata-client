@@ -113,10 +113,8 @@ DADATA_BASE_URL=https://suggestions.dadata.ru/suggestions/api/4_1/rs
 ### 5. Запустить через Docker (Laravel Sail)
 
 ```bash
-# Запуск контейнеров
 ./vendor/bin/sail up -d
 
-# Генерация ключа приложения
 ./vendor/bin/sail artisan key:generate
 ./vendor/bin/sail artisan migrate
 
