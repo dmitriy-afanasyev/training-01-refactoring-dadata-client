@@ -50,6 +50,7 @@ Presentation/
 Каждый контроллер делает **одно действие** — вызывает Application-сервис и возвращает ответ. Контроллер тонкий (< 10 строк), не содержит бизнес-логики.
 
 **Зачем invokable:**
+
 - Принцип единственной ответственности — один класс = один сценарий
 - Контроллер не раздувается — нет `index()`, `store()`, `update()` в одном файле
 - Легко найти код по названию класса (`PartyByInnController`)
@@ -93,6 +94,7 @@ class GeocoderController extends Controller
 Валидация входных данных вынесена в отдельные классы. Laravel автоматически запускает валидацию до вызова контроллера.
 
 **Зачем FormRequest:**
+
 - Контроллер не занимается валидацией — только координирует
 - Валидация переиспользуема (тесты, документация)
 - Публичные геттеры — типобезопасный доступ к валидированным данным
@@ -133,6 +135,7 @@ public function __invoke(Request $request): JsonResponse
 Трансформер преобразует Application DTO в формат JSON-ответа. Это «последняя миля» перед клиентом.
 
 **Зачем Transformer:**
+
 - Presentation контролирует формат ответа, не зависит от структуры DTO
 - Разные трансформеры для разных версий API
 - Тестируется отдельно от контроллера
@@ -154,11 +157,12 @@ final class PartyTransformer extends Transformer
             'short_name' => $data->shortName,     // camelCase → snake_case
             'address' => $data->address,
             'status' => $data->status?->value,
-            'is_active' => $data->status?->isActive(),
+            'is_active' => $data->status?->isActive() ?? false,
         ];
     }
 }
 ```
+
 ---
 
 ### ApiResponseFactory — единый формат ответов
@@ -169,7 +173,7 @@ final class PartyTransformer extends Transformer
 // ✅ Единый формат: {'success': true/false, 'data': ...} или {'success': false, 'error': ...}
 ApiResponseFactory::success($party, $transformer);   // 200
 ApiResponseFactory::error('Invalid request');        // 400
-ApiResponseFactory::validationError($message, $errors); // 422
+ApiResponseFactory::validationError($error, $errors);         // 422
 ApiResponseFactory::notFound('Party not found');     // 404
 ApiResponseFactory::badGateway('API error');         // 502
 ApiResponseFactory::internalError('Internal error'); // 500
@@ -183,9 +187,10 @@ ApiResponseFactory::internalError('Internal error'); // 500
 
 ```php
 // ✅ Доменное исключение → HTTP 400 + сообщение на русском
-'InvalidInnException' => fn($e) => ApiResponseFactory::error(
-    'Неверный формат ИНН. Должно быть 10 или 12 цифр.',
-    400
+// Статус зашит в фабрику: error() → 400, notFound() → 404, badGateway() → 502
+InvalidInnException::class => fn($e) => self::respond(
+    $e,
+    ApiResponseFactory::error('Неверный формат ИНН')
 ),
 
 // ✅ Технический стек-трейс только в debug-режиме
@@ -203,6 +208,7 @@ ApiResponseFactory::internalError('Internal error'); // 500
 Маршруты модуля находятся в `Presentation/Api/Routes/api.php` и подключаются через Service Provider (`loadRoutesFrom()`).
 
 **Почему маршруты в модуле:**
+
 - Модуль самодостаточен — все файлы модуля в одном месте
 - Не засоряем глобальный `routes/api.php`
 - Rate limiting (`throttle:geocoder`) на уровне модуля
@@ -234,38 +240,11 @@ Route::prefix('api/geocoder')
 
 ### 1. Invokable контроллеры — один метод `__invoke`
 
-Каждый контроллер делает одно действие. Нет `index()`, `show()`, `store()` — только `__invoke()`.
-
-```php
-// ✅ Invokable — одно действие
-final class PartyByInnController
-{
-    public function __invoke(PartyByInnRequest $request): JsonResponse
-    {
-        $party = $this->partyService->findByInn($request->getInn());
-        return ApiResponseFactory::success($party, $this->transformer)->toResponse();
-    }
-}
-```
+Каждый контроллер делает одно действие. Нет `index()`, `show()`, `store()` — только `__invoke()`. Контроллер тонкий (< 10 строк), без бизнес-логики. См. развёрнутое описание с примерами выше в секции «Ключевые концепции».
 
 ### 2. FormRequest для валидации, не `$request->validate()` в контроллере
 
-Валидация в отдельном классе FormRequest. Контроллер получает уже валидированные данные через геттеры.
-
-```php
-// ✅ FormRequest — валидация отдельно, геттеры для данных
-public function __invoke(PartyByInnRequest $request): JsonResponse
-{
-    $inn = $request->getInn();  // типизированный геттер
-}
-
-// ❌ Нарушение — валидация в контроллере
-public function __invoke(Request $request): JsonResponse
-{
-    $validated = $request->validate(['inn' => 'required|string']);
-    $inn = $validated['inn'];
-}
-```
+Валидация в отдельном классе FormRequest. Контроллер получает уже валидированные данные через типизированные геттеры (`getInn()`, `getBic()`). См. развёрнутое описание выше.
 
 ### 3. Presentation зависит от Application, не от Domain напрямую
 
