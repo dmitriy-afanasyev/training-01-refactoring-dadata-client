@@ -81,14 +81,14 @@ Presentation → Application → Domain ← Infrastructure
 ### 1. Клонировать репозиторий
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/dmitriy-afanasyev/training-01-refactoring-dadata-client.git
 cd training-01-refactoring-dadata-client/after/01-ddd
 ```
 
 ### 2. Установить зависимости
 
 ```bash
-composer install
+composer install --ignore-platform-reqs
 ```
 
 ### 3. Создать файл окружения
@@ -118,6 +118,7 @@ DADATA_BASE_URL=https://suggestions.dadata.ru/suggestions/api/4_1/rs
 
 # Генерация ключа приложения
 ./vendor/bin/sail artisan key:generate
+./vendor/bin/sail artisan migrate
 
 # Проверка
 ./vendor/bin/sail artisan about
@@ -168,8 +169,8 @@ APP_PORT=8080
 |-------|------|----------|
 | POST | `/api/geocoder/party/by-inn` | Найти организацию по ИНН |
 | POST | `/api/geocoder/bank/by-bic` | Найти банк по БИК |
-| GET | `/api/geocoder/address/search?query=...` | Поиск адреса |
-| GET | `/api/geocoder/country/search?query=...` | Поиск страны |
+| GET | `/api/geocoder/address/search?query=Ботаническая` | Поиск адреса |
+| GET | `/api/geocoder/country/search?query=Россия` | Поиск страны |
 
 Полная OpenAPI-спецификация: [`docs/api/openapi.yaml`](docs/api/openapi.yaml)
 
