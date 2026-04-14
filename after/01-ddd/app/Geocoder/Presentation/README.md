@@ -132,7 +132,7 @@ public function __invoke(Request $request): JsonResponse
 
 ### Transformer — DTO → формат ответа API
 
-Трансформер преобразует Application DTO в формат JSON-ответа. Это «последняя миля» перед клиентом.
+Трансформер преобразует Application DTO в формат JSON-ответа. Это последний этап обработки данных перед отправкой клиенту.
 
 **Зачем Transformer:**
 
