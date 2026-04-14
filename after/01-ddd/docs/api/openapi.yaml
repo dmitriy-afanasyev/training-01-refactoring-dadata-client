@@ -187,20 +187,14 @@ paths:
             type: string
             minLength: 1
             maxLength: 255
-          example: 'Москва Вавилова 19'
-        - name: locations
+          example: 'Ботаническая'
+        - name: 'locations[0][region]'
           in: query
           required: false
-          description: |
-            Ограничение поиска по ФИАС-кодам адресов.
-            Передаётся как JSON-массив объектов.
+          description: Ограничение поиска по региону (например, «москва»).
           schema:
-            type: array
-            items:
-              type: object
-              additionalProperties: true
-          example:
-            - city: 'Москва'
+            type: string
+          example: 'москва'
       responses:
         '200':
           description: Адреса найдены
