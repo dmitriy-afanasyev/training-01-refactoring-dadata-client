@@ -7,6 +7,7 @@ namespace Tests\Unit\Geocoder\Presentation\Api\Exceptions;
 use App\Geocoder\Domain\Exceptions\BankNotFoundException;
 use App\Geocoder\Domain\Exceptions\ExternalApiException;
 use App\Geocoder\Domain\Exceptions\GeocoderException;
+use App\Geocoder\Domain\Exceptions\InvalidAddressException;
 use App\Geocoder\Domain\Exceptions\InvalidBicException;
 use App\Geocoder\Domain\Exceptions\InvalidInnException;
 use App\Geocoder\Domain\Exceptions\PartyNotFoundException;
@@ -18,6 +19,17 @@ use Tests\TestCase;
 #[CoversClass(GeocoderExceptionHandler::class)]
 class GeocoderExceptionHandlerTest extends TestCase
 {
+    public function test_handle_invalid_address_exception(): void
+    {
+        $exception = new InvalidAddressException('');
+
+        $response = GeocoderExceptionHandler::handle($exception);
+
+        $this->assertNotNull($response);
+        $this->assertEquals(400, $response->getStatusCode());
+        $this->assertEquals('Неверный формат адреса', $response->getData(true)['error']);
+    }
+
     public function test_handle_invalid_inn_exception(): void
     {
         $exception = new InvalidInnException('12345');

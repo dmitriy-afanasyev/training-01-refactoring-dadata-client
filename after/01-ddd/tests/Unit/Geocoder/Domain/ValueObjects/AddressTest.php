@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Geocoder\Domain\ValueObjects;
 
+use App\Geocoder\Domain\Exceptions\InvalidAddressException;
 use App\Geocoder\Domain\ValueObjects\Address;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -27,15 +28,14 @@ class AddressTest extends TestCase
 
     public function test_throws_for_empty_string(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Адрес не может быть пустым');
+        $this->expectException(InvalidAddressException::class);
 
         Address::fromString('');
     }
 
     public function test_throws_for_whitespace_only(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidAddressException::class);
 
         Address::fromString('   ');
     }

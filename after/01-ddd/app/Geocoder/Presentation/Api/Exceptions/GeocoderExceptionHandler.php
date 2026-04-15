@@ -7,6 +7,7 @@ namespace App\Geocoder\Presentation\Api\Exceptions;
 use App\Geocoder\Domain\Exceptions\BankNotFoundException;
 use App\Geocoder\Domain\Exceptions\ExternalApiException;
 use App\Geocoder\Domain\Exceptions\GeocoderException;
+use App\Geocoder\Domain\Exceptions\InvalidAddressException;
 use App\Geocoder\Domain\Exceptions\InvalidBicException;
 use App\Geocoder\Domain\Exceptions\InvalidInnException;
 use App\Geocoder\Domain\Exceptions\PartyNotFoundException;
@@ -30,6 +31,7 @@ class GeocoderExceptionHandler
     {
         if (!isset(self::$exceptionHandlers)) {
             self::$exceptionHandlers = [
+                InvalidAddressException::class => fn($e) => self::respond($e, ApiResponseFactory::error('Неверный формат адреса')),
                 InvalidInnException::class => fn($e) => self::respond($e, ApiResponseFactory::error('Неверный формат ИНН')),
                 InvalidBicException::class => fn($e) => self::respond($e, ApiResponseFactory::error('Неверный формат БИК')),
                 PartyNotFoundException::class => fn($e) => self::respond($e, ApiResponseFactory::notFound('Организация не найдена')),

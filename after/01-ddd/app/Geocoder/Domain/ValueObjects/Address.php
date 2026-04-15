@@ -4,18 +4,20 @@ declare(strict_types=1);
 
 namespace App\Geocoder\Domain\ValueObjects;
 
+use App\Geocoder\Domain\Exceptions\InvalidAddressException;
+
 final class Address
 {
     public function __construct(
         private(set) string $value {
             set(string $value) {
-                $value = trim($value);
+                $trimmed = trim($value);
 
-                if ($value === '') {
-                    throw new \InvalidArgumentException('Адрес не может быть пустым');
+                if ($trimmed === '') {
+                    throw new InvalidAddressException($value);
                 }
 
-                $this->value = $value;
+                $this->value = $trimmed;
             }
         }
     ) {}
