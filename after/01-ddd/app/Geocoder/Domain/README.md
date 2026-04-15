@@ -4,14 +4,14 @@
 
 Domain — это **сердце DDD-архитектуры**. Здесь живут бизнес-правила, понятия и язык бизнеса (Ubiquitous Language). Доменный слой ничего не знает о базах данных, HTTP, Laravel или фреймворках — это чистый PHP, который описывает **бизнес-смысл**, а не технические детали.
 
-> **Правило зависимостей (Dependency Rule):** Domain не зависит ни от кого. Все остальные слои (Application, Infrastructure, Presentation) зависят от Domain, а не наоборот.
+> **Dependency Rule:** Domain — самый внутренний слой, он не зависит ни от кого. Все остальные слои (Application, Infrastructure, Presentation) зависят от Domain, а не наоборот.
 
 ```
 Presentation → Application → *Domain* ← Infrastructure
                                ^^^ мы здесь
 ```
 
-**Dependency Rule:** стрелки показывают направление зависимостей. Presentation → Application → Domain — внешние слои зависят от внутренних. Infrastructure реализует интерфейсы Domain/Application (репозитории, внешние API), но не знает о Presentation. Domain — самый внутренний слой, он не зависит ни от кого, а все остальные — от него.
+Стрелки показывают направление зависимостей: внешние слои зависят от внутренних. Infrastructure реализует интерфейсы Domain (репозитории, внешние API), но не знает о Presentation.
 
 ## Структура
 
@@ -25,6 +25,7 @@ Domain/
 │   └── PartyStatus.php # Те же статусы для организаций
 ├── Exceptions/         # Доменные исключения — бизнес-ошибки с контекстом
 │   ├── GeocoderException.php        # Базовый абстрактный exception
+│   ├── InvalidAddressException.php  # Невалидный адрес
 │   ├── InvalidBicException.php      # Невалидный БИК
 │   ├── InvalidInnException.php      # Невалидный ИНН
 │   ├── BankNotFoundException.php    # Банк не найден
@@ -42,13 +43,14 @@ Domain/
 
 ---
 
-## Ключевые концепции DDD
+## Концепции и правила
 
-### Value Object — объект-значение
+### 1. Value Objects — входные ворота с валидацией
 
 Value Object описывает **атрибут** сущности, а не саму сущность. У него нет уникальной идентичности — два VO с одинаковым значением **равны**.
 
 **Зачем VO:**
+
 - Валидация при создании — нельзя создать `Bic('abc')`, будет исключение
 - Самодокументируемость — `Inn $inn` понятнее чем `string $inn`
 - Иммутабельность — после создания значение не меняется
@@ -58,26 +60,26 @@ Value Object описывает **атрибут** сущности, а не с�
 // ✅ VO валидируется при создании — дальше по коду значение гарантированно корректно
 $bic = Bic::fromString('044525225');
 
-// ❌ Примитивная одержимость (Primitive Obsession) — антипаттерн
-// string не валидируется, любая функция может получить мусор
+// ❌ Primitive Obsession — string не валидируется, любая функция может получить мусор
 public function findByBic(string $bic): Bank
 ```
 
-**Правило:** создавайте VO для каждого бизнес-понятия с правилами валидации. Это «входные ворота» домена — невалидные данные не пройдут.
+**Правило:** все входные данные проходят через VO. Фабричный метод бросает доменное исключение при невалидном значении. Никаких примитивов (`string`, `int`) на границе домена — это «входные ворота», невалидные данные не пройдут.
 
 ---
 
-### Entity — сущность с идентичностью
+### 2. Entity — иммутабельные сущности с идентичностью
 
-Entity — объект, который **уникально идентифицируется** (по INN, БИК, ID). Две организации с одинаковым названием — это разные Entity, потому что у них разные ИНН.
+Entity — объект, который **уникально идентифицируется** (по ИНН, БИК, ID). Две организации с одинаковым названием — это разные Entity, потому что у них разные ИНН.
 
 **Зачем Entity:**
+
 - Имеет уникальную идентичность (Identity)
 - Может изменяться во времени (статус, адрес)
 - Содержит бизнес-правила, связанные с этой сущностью
 
 ```php
-// ✅ Entity иммутабельна — состояние задаётся раз и навсегда
+// ✅ Entity иммутабельна — состояние задаётся в конструкторе через private(set)
 public function __construct(
     private(set) Bic $id,
     private(set) ?string $name = null,
@@ -91,20 +93,23 @@ public function isActive(): bool
 }
 ```
 
-**Правило:** если в будущем Entity понадобится изменяемой (методы, меняющие состояние) — это будет **агрегат с поведением**, а не просто контейнер данных.
+**Правило:** сущности используют PHP 8.4 `private(set)` — свойства задаются только в конструкторе. Если в будущем понадобится изменяемая Entity (методы, меняющие состояние) — это будет **агрегат с поведением**, а не просто контейнер данных.
+
+**toArray():** в текущей реализации Entity возвращает данные в snake_case — это **компромисс для простоты**. В чистой архитектуре Domain не должен заботиться о формате внешнего мира (JSON API, gRPC). Правильнее: `toArray()` возвращает «сырые» данные, а Presentation Transformer отвечает за трансформацию `camelCase → snake_case` перед отправкой в HTTP-ответ.
 
 ---
 
-### Repository — контракт домена на получение данных
+### 3. Repository — контракт домена на получение данных
 
 Repository — это **абстракция** для работы с коллекцией Entity. Домен говорит «мне нужно найти организацию по ИНН», а как именно (MySQL, DaData API, файл) — решает инфраструктура.
 
 **Почему интерфейс в Domain:**
+
+- Domain Inversion Principle: Domain зависит от абстракций, не от конкретных технологий
 - Домен сам определяет свои потребности — инфраструктура подстраивается
 - Легко подменить реализацию (тест, мок, другой источник) без изменения домена
-- Dependency Inversion Principle: Domain зависит от абстракций, не от конкретных технологий
 
-**Наш контекст:** в этом проекте репозитории используются только для чтения (DaData API). Методы возвращают Entity или бросают исключение — «не найдено» это бизнес-ошибка, а не нормальный результат.
+**Наш контекст:** репозитории используются только для чтения (DaData API). Методы возвращают Entity или бросают исключение — «не найдено» это бизнес-ошибка, а не нормальный результат.
 
 ```php
 // ✅ Domain определяет контракт — что нужно бизнесу
@@ -118,18 +123,57 @@ class DadataPartyRepository implements PartyRepositoryInterface { ... }
 class DatabasePartyRepository implements PartyRepositoryInterface { ... }
 ```
 
-**CQRS на будущее:** если появятся команды (создание, изменение), репозитории можно разделить на Command (запись, возвращают Entity) и Query (чтение, могут возвращать DTO). Сейчас в этом нет необходимости — один источник данных, только чтение.
+**Контракт: null или исключение — осознанный выбор.** Метод бросает исключение если вызывающий код не может продолжить без результата (`findByInn` → `PartyNotFoundException`). `null` допустим если отсутствие результата — ожидаемое состояние (`findById(int $id): ?Party`).
+
+**CQRS на будущее:** если появятся команды (создание, изменение), репозитории можно разделить на Command (запись, возвращают Entity) и Query (чтение, могут возвращать DTO). Сейчас один источник данных, только чтение.
+
+**Как данные попадают в Domain — Infrastructure, не Application.** Когда сущность имеет много полей (10+), Infrastructure парсит сырые данные и создаёт Entity напрямую:
+
+```php
+// ✅ Infrastructure парсит сырые данные → создаёт VO → создаёт Entity
+public function findByInn(Inn $inn): Party
+{
+    $raw = $this->client->findParty($inn->value);  // массив от DaData
+
+    return new Party(
+        id: $inn,
+        name: $raw['name']['full_with_opf'],    // string — нет правил валидации
+        shortName: $raw['name']['short'],       // string — нет правил
+        inn: Inn::fromString($raw['inn']),      // VO — 10 или 12 цифр
+        kpp: $raw['kpp'] ?? null,               // ?string — опционально
+        status: PartyStatus::fromString($raw['state']['status']),  // Enum
+    );
+}
+```
+
+```php
+// ❌ Антипаттерн: Application собирает «мешок сырых строк» в DTO → передаёт в Domain
+class PartyCreationData {
+    public string $inn;    // ещё не валидирован
+    public string $name;
+    public ?string $kpp;
+    // ...
+}
+
+// Domain вынужден сам валидировать — теряет смысл VO как входных ворот
+public function __construct(PartyCreationData $data) { ... }
+```
+
+DTO для передачи данных в Domain — это обход VO-валидации. Domain должен получать уже проверенные значения, а не сырые строки, которые ещё предстоит проверить.
 
 ---
 
-### Domain Exceptions — бизнес-ошибки, не технические
+### 4. Exceptions — бизнес-ошибки с контекстом
 
 Доменные исключения — это **бизнес-контракт**, а не ошибка программы. «Организация не найдена» — это бизнес-ситуация, и вызывающий код должен знать как её обработать.
 
 **Почему свои исключения:**
+
 - Каждый тип ошибки обрабатывается по-разному (404 vs 400 vs 502)
 - Контекст для логирования — бизнес-данные (ИНН, БИК), не стек-трейс
 - Вызывающий код ловит конкретные исключения, а не `catch (\Exception $e)`
+
+**Правило:** все доменные исключения наследуют `GeocoderException` и реализуют `context(): array` для структурированного логирования.
 
 ```php
 // ✅ Исключение — часть доменного контракта
@@ -138,105 +182,28 @@ throw new PartyNotFoundException($inn);
 // ✅ Контекст для логирования — бизнес-данные
 public function context(): array
 {
-    return ['inn' => $this->inn, 'message' => $this->getMessage()];
+    return ['inn' => $this->inn];
 }
+```
+
+**Иерархия:**
+
+```
+Exception
+  └── GeocoderException (базовый, context(): array → [])
+        ├── InvalidAddressException  — context: ['address']
+        ├── InvalidBicException      — context: ['bic']
+        ├── InvalidInnException      — context: ['inn']
+        ├── BankNotFoundException    — context: ['bic']
+        ├── PartyNotFoundException   — context: ['inn']
+        └── ExternalApiException     — context: ['http_status', 'response']
 ```
 
 ---
 
-## Правила слоя (нельзя нарушать)
+### 5. Enums — бизнес-статусы с fallback
 
-### 1. Никаких зависимостей от инфраструктуры и внешних пакетов
-
-Доменный слой — чистый PHP. Никаких `Cache`, `Http`, `DB`, `config()`, Laravel Facades, Eloquent, внешних библиотек. Все зависимости — только на другие файлы этого же слоя.
-
-```php
-// ✅ Верно — только доменные типы
-public function findByInn(Inn $inn): Party;
-
-// ❌ Нарушение — зависимость от инфраструктуры
-public function findByInn(string $inn): Party
-{
-    $data = Cache::remember(...);  // Cache — инфраструктура
-}
-```
-
-### 2. Value Objects — входные ворота с валидацией
-
-Все входные данные проходят через Value Objects. Фабричный метод `fromString()` бросает доменное исключение при невалидном значении. Слой выше (Application) создаёт VO, домен получает только валидные.
-
-```php
-// ✅ Валидация в VO — нельзя создать Bic с буквами
-$bic = Bic::fromString('044525225');
-
-// ❌ Нельзя: примитивы просачиваются в домен
-public function findByBic(string $bic): Bank  // string не валидирован
-```
-
-### 3. Entity иммутабельны (private(set))
-
-Сущности используют PHP 8.4 property hooks `private(set)` — свойства задаются только в конструкторе. Это делает Entity предсказуемыми: после создания состояние не меняется.
-
-```php
-public function __construct(
-    private(set) Bic $id,
-    private(set) ?string $name = null,
-    private(set) ?BankStatus $status = null,
-) {}
-```
-
-Если в будущем понадобится изменяемая Entity — это будет означать что это **агрегат с поведением** (методы-команды), а не просто контейнер данных.
-
-### 4. Repository — интерфейс в домене, реализация в инфраструктуре
-
-В DDD **Domain зависит от абстракций, а не от конкретных технологий**. Слой домена определяет **что** нужно (контракт), а слой инфраструктуры решает **как** это сделать (БД, внешний API, файл).
-
-**Почему интерфейс в Domain:**
-- Домен сам определяет свои потребности — никто снаружи не навязывает ему формат данных
-- Инфраструктура подстраивается под домен, а не наоборот
-- Легко подменить реализацию (тест, мок, другой источник данных) без изменения домена
-
-**Что возвращают методы репозитория:**
-- **Command-репозитории** (изменение состояния) → возвращают Entity
-- **Query-репозитории** (чтение, CQRS) → могут возвращать DTO или примитивы
-- `null` допустим если «не найдено» — ожидаемый сценарий (см. правило 8)
-
-```php
-// ✅ Domain определяет контракт — что нужно бизнесу
-interface PartyRepositoryInterface
-{
-    public function findByInn(Inn $inn): Party;
-}
-
-// ✅ Infrastructure решает как получить данные — БД, HTTP-клиент, файл
-class DadataPartyRepository implements PartyRepositoryInterface { ... }
-class DatabasePartyRepository implements PartyRepositoryInterface { ... }
-
-// ⚠️ CQRS: Query-репозиторий возвращает DTO для чтения
-interface PartyQueryRepository
-{
-    public function findByInn(Inn $inn): ?PartyData;
-}
-```
-
-### 5. Исключения с контекстом
-
-Все доменные исключения наследуют `GeocoderException` и реализуют `context(): array` для структурированного логирования. Исключения — это бизнес-контракт, не техническая деталь.
-
-```php
-// ✅ Исключение — часть доменного контракта
-throw new PartyNotFoundException($inn);
-
-// ✅ Контекст для логирования — бизнес-данные, не стек-трейс
-public function context(): array
-{
-    return ['inn' => $this->inn, 'message' => $this->getMessage()];
-}
-```
-
-### 6. Enums — бизнес-статусы с fallback
-
-Backed enums для статусов (`ACTIVE`, `LIQUIDATED`, `REORGANIZED`, `CLOSING`). Метод `fromString()` возвращает `null` для `null` и fallback на `ACTIVE` для неизвестных значений — потому что внешние API могут вернуть непредусмотренный статус, и домен должен быть устойчив к этому.
+Backed enums для статусов (`ACTIVE`, `LIQUIDATED`, `REORGANIZED`, `CLOSING`). Метод `fromString()` возвращает `null` для `null` и fallback на `ACTIVE` для неизвестных значений — внешние API могут вернуть непредусмотренный статус, и домен должен быть устойчив к этому.
 
 ```php
 // ✅ Fallback на ACTIVE для неизвестных значений из внешнего API
@@ -247,31 +214,54 @@ public static function fromString(?string $value): ?self
 }
 ```
 
-### 7. Entity toArray() — snake_case для JSON API
+---
 
-Метод `toArray()` трансформирует camelCase (PSR-12 PHP) → snake_case (JSON API convention). Entity использует PHP-именование, но внешний мир (API) получает snake_case.
+## Отношения между компонентами
 
-```php
-// Domain Entity — camelCase (PSR-12)
-private(set) string $shortName;
-
-// JSON Response — snake_case (JSON API)
-return ['short_name' => $this->shortName];
 ```
+                    ┌──────────────────────────────────┐
+                    │        Repository Interfaces      │
+                    │  BankRepositoryInterface          │
+                    │  PartyRepositoryInterface         │
+                    │  AddressRepositoryInterface       │
+                    └──────┬───────────────┬────────────┘
+                           │               │
+            зависит от     │               │  возвращает
+                           ▼               ▼
+                    ┌──────────────┐  ┌──────────────┐
+                    │   Entities   │  │   VO → Bank  │
+                    │   Bank       │  │   VO → Party │
+                    │   Party      │  └──────────────┘
+                    └──────┬───────┘
+                           │  использует
+                           ▼
+                    ┌──────────────────┐
+                    │     Enums        │
+                    │  BankStatus      │
+                    │  PartyStatus     │
+                    └──────────────────┘
 
-### 8. Контракт репозитория: null или исключение — осознанный выбор
-
-Репозиторий **должен** бросать исключение если вызывающий код не может продолжить работу без результата (бизнес-требование). Методы `findByInn()` и `findByBicOrFail()` бросают `PartyNotFoundException` / `BankNotFoundException` — потому что «организация не найдена» это бизнес-ошибка, а не обычный сценарий.
-
-Но `null` допустим если отсутствие результата — ожидаемое состояние:
-
-```php
-// ❌ Исключение там где null — нормальный результат
-public function findById(int $id): Party;  // Не нашли — бросаем? Но это не ошибка
-
-// ✅ Null — допустимый результат
-public function findById(int $id): ?Party;
-
-// ✅ Исключение — когда это бизнес-ошибка
-public function findByInnOrFail(Inn $inn): Party;
+  Entities зависят от ──────────────────────────────┐
+       │                                            │
+       ├── Bic (VO)                                 │
+       ├── Inn (VO)                                 │
+       ├── BankStatus (Enum)                        │
+       └── PartyStatus (Enum)                       │
+                                                    │
+  VO бросают ───────────────────────────────────────┤
+       │                                            │
+       ├── InvalidAddressException ◄──┐             │
+       ├── InvalidBicException  ◄─────┤             │
+       ├── InvalidInnException  ◄─────┤             │
+       └──────────────────────────────┤             │
+                                      │             │
+  Repository бросят ──────────────────┤             │
+       │                              │             │
+       ├── BankNotFoundException ─────┘             │
+       ├── PartyNotFoundException ────┘             │
+       └── ExternalApiException                     │
+                                                    │
+  Все исключения наследуют ─────────────────────────┤
+       │                                            │
+       └── GeocoderException ◄──────────────────────┘
 ```
