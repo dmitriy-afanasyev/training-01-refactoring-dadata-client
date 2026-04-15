@@ -2,18 +2,48 @@
 
 ## Назначение
 
-Application — это **слой Use Cases** (сценариев использования). Он оркестрирует выполнение бизнес-кейсов: координирует доменные объекты, управляет транзакциями, кэшированием и трансформацией данных между слоями.
-
-Здесь живёт логика **сценариев** (что происходит когда пользователь делает X), а не бизнес-правила (что делает X допустимым). Бизнес-правила — в Domain.
-
-> **Зависимости:** Application зависит от Domain (интерфейсы репозиториев, VO, исключения), но не от Infrastructure (кэш, HTTP, БД) или Presentation. Infrastructure и Presentation зависят от Application.
-
 ```
 Presentation → *Application* → Domain ← Infrastructure
                 ^^^ мы здесь
 ```
 
 **Dependency Rule:** стрелки показывают направление зависимостей. Presentation → Application → Domain — внешние слои зависят от внутренних. Infrastructure реализует интерфейсы Domain/Application (репозитории, внешние API), но не знает о Presentation.
+
+Application — это **слой Use Cases** (сценариев использования). Он оркестрирует выполнение бизнес-кейсов: координирует доменные объекты, управляет транзакциями, кэшированием и трансформацией данных между слоями.
+
+Здесь живёт логика **сценариев** (что происходит когда пользователь делает X), а не **доменные бизнес-правила** (что делает X допустимым, какие данные корректны, какие состояния валидны). Доменные правила — в Domain.
+
+> **Зависимости:** Application зависит от Domain (интерфейсы репозиториев, VO, исключения), но не от Infrastructure (кэш, HTTP, БД) или Presentation. Presentation зависит от Application. Infrastructure зависит от Domain (реализует интерфейсы репозиториев).
+
+Infrastructure может зависеть и от Application — когда слой приложения определяет **outbound ports** (интерфейсы сервисов), а Infrastructure их реализует. Например, уведомление об обновлении кэша:
+
+```
+// Application — объявляет контракт: что должно произойти
+interface CacheInvalidationNotifier
+{
+    public function notifyInvalidated(string $pattern): void;
+}
+
+// Infrastructure — реализует: куда и как оповестить
+class LogCacheNotifier implements CacheInvalidationNotifier
+{
+    public function notifyInvalidated(string $pattern): void
+    {
+        Log::info("Cache invalidated: {$pattern}");
+    }
+}
+
+// Другая реализация — оповестить все ноды кластера
+class BroadcastCacheNotifier implements CacheInvalidationNotifier
+{
+    public function notifyInvalidated(string $pattern): void
+    {
+        Redis::publish('cache.invalidate', json_encode(['pattern' => $pattern]));
+    }
+}
+```
+
+Application знает _что_ должно произойти (кеш инвалидирован — оповестить), Infrastructure — _как_ (записать в лог, отправить в Redis pub/sub, webhook — неважно для сценария). Это паттерн «порт и адаптер».
 
 ## Структура
 
@@ -32,14 +62,15 @@ Application/
 
 ## Ключевые концепции DDD
 
-### Application Service — оркестратор, не бизнес-логика
+### Application Service — оркестратор, не доменная логика
 
-Application Service **координирует** доменные объекты, но не содержит бизнес-правил. Он получает запрос, создаёт/получает доменные объекты, вызывает репозиторий, возвращает результат.
+Application Service **координирует** доменные объекты, но не содержит **доменной логики**. Он получает запрос, создаёт/получает доменные объекты, вызывает репозиторий, возвращает результат.
 
 **Зачем Application Service:**
+
 - Определяет **последовательность** действий (получить → проверить → сохранить → отправить)
-- Управляет **техническими задачами** (кэш, транзакции, события)
-- Не содержит бизнес-правил — это чужая ответственность
+- Управляет **оркестрационными задачами** (кэш, транзакции, события)
+- Не содержит доменных правил — это ответственность Domain
 
 ```php
 // ✅ Application Service — только оркестрация
@@ -49,7 +80,7 @@ public function findByInn(string $inn): PartyData
     return PartyData::fromArray($data);    // трансформация
 }
 
-// ❌ Нарушение — бизнес-правило в сервисе
+// ❌ Нарушение — доменное правило в сервисе
 public function findByInn(string $inn): PartyData
 {
     if (strlen($inn) !== 10 && strlen($inn) !== 12) {  // это валидация — Domain!
@@ -63,12 +94,15 @@ public function findByInn(string $inn): PartyData
 
 ---
 
-### DTO — данные между слоями без доменной зависимости
+### DTO — данные между слоями
 
-DTO — простой объект для передачи данных из Application в Presentation. Presentation **не должен** зависеть от доменных Entity и Value Objects.
+DTO — простой объект для передачи данных из Application в Presentation. Presentation **не должен** зависеть от доменных Entity и Value Objects напрямую.
+
+> **Примечание:** DTO могут использовать доменные enum (например `PartyStatus`, `BankStatus`) — они описывают тот же язык, что и домен, но не несут поведения. Это допустимо, потому что enum — это данные, не логика.
 
 **Зачем DTO:**
-- Presentation зависит только от Application (DTO), а не от Domain (Entity, VO)
+
+- Presentation зависит от Application (DTO), а не от Domain (Entity, VO)
 - DTO может содержать «сплющенные» данные из нескольких Entity
 - DTO иммутабелен (`readonly class`) — не является моделью с поведением
 
@@ -100,17 +134,20 @@ public function show(): JsonResponse
 
 ### Кэширование — решение Application-слоя
 
-Решение «кешировать или нет», «на сколько» и «по какому ключу» — это **бизнес-правило уровня приложения**, а не техническая деталь.
+Решение «кешировать или нет», «на сколько» и «по какому ключу» — это **оркестрационное решение уровня сценария**, а не техническая деталь инфраструктуры и не доменное правило.
 
 **Почему не в Domain:**
+
 - Домен не должен знать про `Cache` facade, Redis, Memcached
 - Домен описывает бизнес-понятия, не инфраструктурные оптимизации
 
 **Почему не в Infrastructure:**
+
 - Репозиторий только получает данные — он не решает, кешировать их или нет
-- TTL и ключи кэша — бизнес-правила, а не технический параметр
+- TTL и ключи кэша — оркестрационные решения, а не технический параметр
 
 **Почему Application:**
+
 - Слой приложения решает: этот сценарий стоит кешировать, этот — нет
 - Разные сценарии — разный TTL (поиск адреса для клиента = надолго, для админки = на пару минут)
 
@@ -119,8 +156,8 @@ public function show(): JsonResponse
 public function findByInn(string $inn): PartyData
 {
     $data = Cache::remember(
-        "geocoder.party.inn.{$inn}",           // ключ кэша — бизнес-решение
-        now()->addMinutes($this->cacheTtlMinutes),  // TTL — бизнес-решение
+        "geocoder.party.inn.{$inn}",           // ключ кэша — оркестрационное решение
+        now()->addMinutes($this->cacheTtlMinutes),  // TTL — оркестрационное решение
         fn() => $this->fetchPartyData($inn)
     );
     return PartyData::fromArray($data);
@@ -140,17 +177,16 @@ Application-слой определяет где начинается и зак�
 
 ```php
 // ✅ Application управляет транзакцией — единица работы
-public function createOrder(OrderData $data): OrderId
+public function syncParties(): void
 {
-    return DB::transaction(function () use ($data) {
-        $order = $this->orderRepository->save($data);
-        $this->inventoryRepository->reserve($order);
-        return $order->getId();
+    DB::transaction(function () {
+        $this->partyRepository->syncFromExternalApi();
+        $this->cache->invalidate('geocoder.party.*');
     });
 }
 
 // ❌ Domain сущность не управляет транзакцией
-class Order {
+class Party {
     public function save(): void {
         DB::transaction(fn() => $this->persist());  // Domain не знает про БД!
     }
@@ -173,17 +209,14 @@ public function __construct(private PartyRepositoryInterface $repository)
 public function __construct(private DadataPartyRepository $repository)
 ```
 
-### 2. Кэширование — в слое приложения, не в домене и не в инфраструктуре
+### 2. Кэширование — в слое приложения
 
-- **Домен** не должен знать об инфраструктурных деталях (`Cache` facade, Redis, Memcached)
-- **Инфраструктура** (репозиторий) только получает данные — не решает, кэшировать или нет
-- **Слой приложения** оркестрирует: TTL, ключи кэша, инвалидация — это бизнес-правила, а не техническая деталь
-
-TTL настраивается через конструктор (DI из сервис-провайдера) — разные окружения могут использовать разное время жизни.
+Решение о кэшировании (TTL, ключи, инвалидация) — оркестрационное решение уровня сценария. См. раздел «Кэширование» выше.
 
 ### 3. Возвращать DTO или примитивы, не доменные объекты
 
 Слой представления не должен зависеть от доменных Value Objects (`Address`, `Bank`, `Party`). Сервисы возвращают:
+
 - **DTO** (`PartyData`, `BankData`) — для сложных объектов
 - **Примитивы** (`array<int, string>`) — для простых списков
 
@@ -200,26 +233,7 @@ public function findByInn(string $inn): Party
 
 ### 4. Управление транзакциями — в слое приложения
 
-Границы транзакции определяет Application-слой, потому что он знает что такое «единица работы». Домен оперирует агрегатами и не должен знать про БД, `DB::transaction()` или connection pooling.
-
-```php
-// ✅ Верно — приложение управляет транзакцией
-public function createOrder(OrderData $data): OrderId
-{
-    return DB::transaction(function () use ($data) {
-        $order = $this->orderRepository->save($data);
-        $this->inventoryRepository->reserve($order);
-        return $order->getId();
-    });
-}
-
-// ❌ Нарушение — доменная сущность управляет транзакцией
-class Order {
-    public function save(): void {
-        DB::transaction(fn() => $this->persist());
-    }
-}
-```
+Границы транзакции определяет Application-слой, потому что он знает что такое «единица работы». Домен оперирует агрегатами и не должен знать про БД. См. раздел «Транзакции» выше.
 
 ### 5. Не возвращать null
 
