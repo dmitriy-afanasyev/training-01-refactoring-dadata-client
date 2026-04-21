@@ -4,7 +4,7 @@
 
 Infrastructure — это **техническая реализация** контрактов, определённых в Domain. Здесь живут HTTP-клиенты, репозитории (работа с БД, внешними API), файловые хранилища, очереди, mail-сервисы. Всё, что связано с «внешним миром».
 
-> **Зависимости:** Infrastructure зависит от Domain (интерфейсы репозиториев, сущности, исключения, VO), но Domain не зависит от Infrastructure. Это **Dependency Inversion Principle** в действии.
+> **Зависимости:** Infrastructure зависит от Domain (интерфейсы репозиториев, сущности, исключения, VO), но Domain не зависит от Infrastructure. Это **SOLI(D) - Dependency Inversion Principle** в действии.
 
 ```
 Presentation → Application → Domain ← *Infrastructure*
@@ -33,11 +33,12 @@ Infrastructure/
 
 ## Ключевые концепции DDD
 
-### Repository Implementation — реализация доменного контракрата
+### Repository Implementation — реализация доменного контрактa
 
 Репозиторий в Infrastructure **реализует** интерфейс из Domain. Он знает про технические детали (HTTP, JSON, API), но снаружи выглядит как доменный контракт.
 
 **Зачем Repository в Infrastructure:**
+
 - Domain говорит «мне нужно найти организацию по ИНН» — Infrastructure решает «как» (HTTP к DaData)
 - Репозиторий маппит сырые данные API → доменные Entity
 - Репозиторий бросает доменные исключения, а не технические
@@ -70,6 +71,7 @@ class DadataPartyRepository implements PartyRepositoryInterface
 В этом проекте есть дополнительный слой абстракции: `DadataApiInterface` в Infrastructure. Это не доменный интерфейс, а **инфраструктурный** — он описывает технический контракт HTTP-клиента, а не бизнес-потребность.
 
 **Зачем интерфейс для HTTP-клиента:**
+
 - Легко подменить реализацию (тестовый мок, другой HTTP-клиент)
 - Репозиторий зависит от абстракции, а не от конкретного класса
 - Можно протестировать репозиторий без реальных HTTP-запросов
@@ -79,20 +81,6 @@ class DadataPartyRepository implements PartyRepositoryInterface
 interface DadataApiInterface
 {
     public function findPartyByInn(string $inn): ?array;  // примитивы, не доменные типы!
-}
-
-// ✅ Реализация с retry, timeout, auth
-readonly class DadataHttpClient implements DadataApiInterface
-{
-    public function __construct(
-        private string $apiKey,
-        private string $baseUrl,
-        private int $timeout = 40,
-        private int $connectTimeout = 20,
-        private int $retryCount = 3,
-        private int $retryDelay = 100,
-        private int $maxRedirects = 10,
-    ) {}
 }
 ```
 
