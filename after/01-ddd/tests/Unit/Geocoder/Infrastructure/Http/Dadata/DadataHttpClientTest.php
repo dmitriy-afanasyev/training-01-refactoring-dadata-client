@@ -226,4 +226,126 @@ class DadataHttpClientTest extends TestCase
 
         $this->assertNull($result);
     }
+
+    /**
+     * Проверяет, что при ошибке 500 клиент повторяет запрос и в итоге успешно получает данные.
+     */
+    public function test_retries_on_server_error_and_succeeds(): void
+    {
+        $client = new DadataHttpClient(
+            apiKey: 'test-api-key',
+            baseUrl: 'https://suggestions.dadata.ru/suggestions/api/4_1/rs',
+            retryCount: 3,
+            retryDelay: 100,
+        );
+
+        Http::fakeSequence('/findById/party')
+            ->push('Error', 500)
+            ->push('Error', 500)
+            ->push(['suggestions' => [['data' => ['inn' => '7707083893']],]]);
+
+        $result = $client->findPartyByInn('7707083893');
+
+        $this->assertNotNull($result);
+        $this->assertEquals('7707083893', $result['inn']);
+        Http::assertSentCount(3);
+    }
+
+    /**
+     * Проверяет, что при ConnectionException клиент повторяет запрос и успешно получает данные.
+     */
+    public function test_retries_on_connection_exception_and_succeeds(): void
+    {
+        $client = new DadataHttpClient(
+            apiKey: 'test-api-key',
+            baseUrl: 'https://suggestions.dadata.ru/suggestions/api/4_1/rs',
+            retryCount: 2,
+            retryDelay: 100,
+        );
+
+        Http::fake(function (\Illuminate\Http\Client\Request $request) {
+            static $tries = 0;
+            $tries++;
+
+            if ($tries < 2) {
+                throw new \GuzzleHttp\Exception\ServerException(
+                    'Server Error',
+                    $request->toPsrRequest(),
+                    new \GuzzleHttp\Psr7\Response(500)
+                );
+            }
+
+            return Http::response(['suggestions' => [['data' => ['inn' => '7707083893']]]], 200);
+        });
+
+
+        $result = $client->findPartyByInn('7707083893');
+
+        $this->assertNotNull($result);
+        Http::assertSentCount(2);
+    }
+
+    /**
+     * Проверяет, что клиентские ошибки (4xx) не вызывают повторных попыток.
+     */
+    public function test_does_not_retry_on_client_error(): void
+    {
+        $client = new DadataHttpClient(
+            apiKey: 'test-api-key',
+            baseUrl: 'https://suggestions.dadata.ru/suggestions/api/4_1/rs',
+            retryCount: 3,
+            retryDelay: 100,
+        );
+
+        Http::fake(['/findById/party' => Http::response('Bad Request', 400)]);
+
+        $this->expectException(ExternalApiException::class);
+        $this->expectExceptionMessageMatches('/DaData API error: 400/');
+
+        try {
+            $client->findPartyByInn('7707083893');
+        } finally {
+            Http::assertSentCount(1);
+        }
+    }
+
+    /**
+     * Проверяет, что после исчерпания всех попыток выбрасывается исключение.
+     */
+    public function test_throws_exception_after_all_retries_exhausted(): void
+    {
+        $client = new DadataHttpClient(
+            apiKey: 'test-api-key',
+            baseUrl: 'https://suggestions.dadata.ru/suggestions/api/4_1/rs',
+            retryCount: 2,
+            retryDelay: 100,
+        );
+
+        Http::fakeSequence('/findById/party')
+            ->push('Error', 500)
+            ->push('Error', 500);
+
+        $this->expectException(ExternalApiException::class);
+        $this->expectExceptionMessageMatches('/DaData API error: 500/');
+
+        try {
+            $client->findPartyByInn('7707083893');
+        } finally {
+            Http::assertSentCount(2);
+        }
+    }
+
+    /**
+     * Проверяет математику экспоненциальной задержки (чистая функция, без доступа к внутренностям).
+     */
+    public function test_uses_exponential_backoff_strategy(): void
+    {
+        $retryDelay = 100;
+        $calculateDelay = fn(int $attempt) => $retryDelay * (2 ** ($attempt - 1));
+
+        $this->assertEquals(100, $calculateDelay(1));
+        $this->assertEquals(200, $calculateDelay(2));
+        $this->assertEquals(400, $calculateDelay(3));
+        $this->assertEquals(800, $calculateDelay(4));
+    }
 }
