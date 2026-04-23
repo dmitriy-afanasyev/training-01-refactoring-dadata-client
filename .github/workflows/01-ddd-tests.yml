@@ -45,9 +45,65 @@ jobs:
         working-directory: after/01-ddd
         run: vendor/bin/phpunit --coverage-html tests/coverage --coverage-clover tests/coverage/clover.xml
 
+      - name: Extract coverage percentage
+        id: coverage
+        working-directory: after/01-ddd
+        run: |
+          COVERAGE=$(grep -oP 'percentage="\K[0-9.]+' tests/coverage/clover.xml | head -1)
+          echo "percentage=$COVERAGE" >> $GITHUB_OUTPUT
+          
+          # Determine color based on coverage
+          if (( $(echo "$COVERAGE >= 80" | bc -l) )); then
+            COLOR="brightgreen"
+          elif (( $(echo "$COVERAGE >= 60" | bc -l) )); then
+            COLOR="yellow"
+          else
+            COLOR="red"
+          fi
+          echo "color=$COLOR" >> $GITHUB_OUTPUT
+
+      - name: Create coverage badge JSON
+        working-directory: after/01-ddd
+        run: |
+          mkdir -p .github/badges
+          cat > .github/badges/coverage.json << EOF
+          {
+            "schemaVersion": 1,
+            "label": "coverage",
+            "message": "${{ steps.coverage.outputs.percentage }}%",
+            "color": "${{ steps.coverage.outputs.color }}"
+          }
+          EOF
+
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: after/01-ddd/tests/coverage/
           retention-days: 30
+
+      - name: Upload coverage badge
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-badge
+          path: after/01-ddd/.github/badges/coverage.json
+          retention-days: 30
+
+      - name: Update README.md with coverage info
+        working-directory: after/01-ddd
+        run: |
+          COVERAGE="${{ steps.coverage.outputs.percentage }}"
+          COLOR="${{ steps.coverage.outputs.color }}"
+          
+          # Remove existing coverage badge if present
+          sed -i '/coverage-[0-9]/d' README.md
+          
+          # Add coverage badge after Tests badge line
+          sed -i "/Tests.*actions\/workflows\/01-ddd-tests.yml/a \\\\[![Coverage](https://img.shields.io/badge/coverage-${COVERAGE}%25-${COLOR})\\\\]" README.md
+
+      - name: Commit and push if changed
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Update test coverage badge in README [skip ci]"
+          file_pattern: after/01-ddd/README.md
+          branch: ${{ github.head_ref || github.ref_name }}
