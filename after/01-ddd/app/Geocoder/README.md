@@ -1,6 +1,6 @@
 # Geocoder Module
 
-Модуль геокодера — DDD CQRS-архитектура с 4 слоями. Только чтение из внешнего API (DaData).
+Модуль геокодера — DDD архитектура с 4 слоями. Только чтение из внешнего API (DaData).
 
 ```
 Presentation → Application → Domain ← Infrastructure
@@ -8,12 +8,12 @@ Presentation → Application → Domain ← Infrastructure
 
 ## Слои
 
-| Слой | Назначение | README |
-|---|---|---|
-| **Presentation** | Точка входа: HTTP → сервисы → JSON-ответ | [Presentation/README.md](Presentation/README.md) |
-| **Application** | Use Cases: оркестрация, кэш, DTO | [Application/README.md](Application/README.md) |
-| **Domain** | Бизнес-правила: Entity, VO, интерфейсы репозиториев | [Domain/README.md](Domain/README.md) |
-| **Infrastructure** | Реализация: HTTP-клиент, DaData-репозитории | [Infrastructure/README.md](Infrastructure/README.md) |
+| Слой               | Назначение                                          | README                                               |
+| ------------------ | --------------------------------------------------- | ---------------------------------------------------- |
+| **Presentation**   | Точка входа: HTTP → сервисы → JSON-ответ            | [Presentation/README.md](Presentation/README.md)     |
+| **Application**    | Use Cases: оркестрация, кэш, DTO                    | [Application/README.md](Application/README.md)       |
+| **Domain**         | Бизнес-правила: Entity, VO, интерфейсы репозиториев | [Domain/README.md](Domain/README.md)                 |
+| **Infrastructure** | Реализация: HTTP-клиент, DaData-репозитории         | [Infrastructure/README.md](Infrastructure/README.md) |
 
 ---
 
@@ -47,7 +47,7 @@ class PartyService {
 Presentation → Application → Domain ← Infrastructure
 ```
 
-Domain — самый внутренний, он не зависит ни от кого, а все остальные слои — от него. Infrastructure реализует его интерфейсы. Presentation работает с Application DTO, не с Domain Entity.
+Domain — самый внутренний, он не зависит ни от кого, а все остальные слои зависят от него. Infrastructure реализует его интерфейсы. Presentation работает с Application DTO, не с Domain Entity.
 
 ### 3. Чистый Domain
 
@@ -62,6 +62,7 @@ Domain-слой — чистый PHP. Никаких `config()`, `Cache`, `Http`
 В слоях запрещён контейнерный доступ (`app()`, `resolve()`, `app(Service::class)`). Все зависимости — через конструктор. Единственное исключение — Service Provider.
 
 **Почему нельзя `app()`:**
+
 - **Скрытые зависимости** — из сигнатуры метода не видно, что ему нужно. Конструктор честно показывает все зависимости
 - **Сложнее тестирование** — чтобы замокать зависимость, нужно биндить в контейнере вместо простого `new Class($mock)`
 - **Жёсткая связность** — код привязан к Laravel-контейнеру, нельзя запустить вне Laravel
