@@ -56,4 +56,14 @@ class PartyTransformerTest extends TestCase
         $this->assertNull($result['status']);
         $this->assertFalse($result['is_active']);
     }
+
+    public function test_transform_throws_exception_for_invalid_input(): void
+    {
+        $transformer = new PartyTransformer();
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Expected PartyData');
+
+        $transformer->transform('invalid_data');
+    }
 }
