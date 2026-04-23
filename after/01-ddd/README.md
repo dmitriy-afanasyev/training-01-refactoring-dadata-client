@@ -4,6 +4,8 @@
 [![Laravel](https://img.shields.io/badge/Laravel-13.x-FF2D20)](https://laravel.com)
 [![Tests](https://github.com/dmitriy-afanasyev/training-01-refactoring-dadata-client/actions/workflows/01-ddd-tests.yml/badge.svg)](https://github.com/dmitriy-afanasyev/training-01-refactoring-dadata-client/actions/workflows/01-ddd-tests.yml)
 [![API](https://img.shields.io/badge/API%20Reference-OpenAPI-blue)](docs/api/openapi.yaml)
+[![Postman Collection](https://img.shields.io/badge/Postman-Collection-orange)](docs/api/training-01-refactoring-dadata-client.postman_collection)
+[![Postman Environment](https://img.shields.io/badge/Postman-Environment-lightgrey)](docs/api/training-01-refactoring-dadata-client-env.postman_environment.json)
 
 Решение на основе Domain-Driven Design (DDD) с разделением на 4 слоя.
 
