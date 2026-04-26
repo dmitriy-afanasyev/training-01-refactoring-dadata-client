@@ -1,7 +1,6 @@
 <?php
 
 use App\Geocoder\Domain\Exceptions\GeocoderException;
-use App\Geocoder\Providers\GeocoderServiceProvider;
 use App\Geocoder\Presentation\Api\Exceptions\GeocoderExceptionHandler;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -16,9 +15,6 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
-    ->withProviders([
-        GeocoderServiceProvider::class,
-    ])
     ->withMiddleware(function (Middleware $middleware): void {
         //
     })
