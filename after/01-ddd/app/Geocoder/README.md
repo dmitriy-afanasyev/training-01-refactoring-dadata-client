@@ -11,7 +11,7 @@ Presentation → Application → Domain ← Infrastructure
 | Слой               | Назначение                                          | README                                               |
 | ------------------ | --------------------------------------------------- | ---------------------------------------------------- |
 | **Presentation**   | Точка входа: HTTP → сервисы → JSON-ответ            | [Presentation/README.md](Presentation/README.md)     |
-| **Application**    | Use Cases: оркестрация, кэш, DTO                    | [Application/README.md](Application/README.md)       |
+| **Application**    | Варианты использования: оркестрация, кэш, DTO       | [Application/README.md](Application/README.md)       |
 | **Domain**         | Бизнес-правила: Entity, VO, интерфейсы репозиториев | [Domain/README.md](Domain/README.md)                 |
 | **Infrastructure** | Реализация: HTTP-клиент, DaData-репозитории         | [Infrastructure/README.md](Infrastructure/README.md) |
 
@@ -39,7 +39,7 @@ class PartyService {
 
 Это касается **всех слоёв**, и тем более Domain — чистый PHP не должен знать про Laravel-конфигурацию.
 
-### 2. Dependency Rule
+### 2. Правило зависимостей
 
 Внешние слои зависят от внутренних, но не наоборот:
 
@@ -49,7 +49,7 @@ Presentation → Application → Domain ← Infrastructure
 
 Domain — самый внутренний, он не зависит ни от кого, а все остальные слои зависят от него. Infrastructure реализует его интерфейсы. Presentation работает с Application DTO, не с Domain Entity.
 
-### 3. Чистый Domain
+### 3. Чистая предметная область (Domain)
 
 Domain-слой — чистый PHP. Никаких `config()`, `Cache`, `Http`, `DB`, Laravel Collection, Facades, внешних пакетов. Если нужны параметры — они передаются через конструктор из Composition Root.
 
@@ -57,7 +57,7 @@ Domain-слой — чистый PHP. Никаких `config()`, `Cache`, `Http`
 
 В этом проекте нет записи — только чтение из DaData API. Репозитории возвращают Entity или бросают исключение. CQRS-разделение не нужно.
 
-### 5. DI over `app()`/`resolve()`
+### 5. Инъекция зависимостей (DI) вместо `app()`/`resolve()`
 
 В слоях запрещён контейнерный доступ (`app()`, `resolve()`, `app(Service::class)`). Все зависимости — через конструктор. Единственное исключение — Service Provider.
 
