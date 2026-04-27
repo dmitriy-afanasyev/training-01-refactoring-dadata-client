@@ -22,7 +22,7 @@ Presentation → Application → Domain ← Infrastructure
 | Слой               | Назначение                                                                   | Документация                                              |
 | ------------------ | ---------------------------------------------------------------------------- | --------------------------------------------------------- |
 | **Presentation**   | Invokable-контроллеры, FormRequest, трансформеры, маршруты                   | [Представление ↗](app/Geocoder/Presentation/README.md)    |
-| **Application**    | Use Cases: сервисы-оркестраторы, DTO, кэширование                            | [Приложение ↗](app/Geocoder/Application/README.md)        |
+| **Application**    | Варианты использования: сервисы-оркестраторы, DTO, кэширование               | [Операционка ↗](app/Geocoder/Application/README.md)       |
 | **Domain**         | Бизнес-сущности, Value Objects, интерфейсы репозиториев, доменные исключения | [Домен ↗](app/Geocoder/Domain/README.md)                  |
 | **Infrastructure** | HTTP-клиент для DaData API, реализация репозиториев                          | [Инфраструктура ↗](app/Geocoder/Infrastructure/README.md) |
 
