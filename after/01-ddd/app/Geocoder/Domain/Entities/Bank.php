@@ -7,6 +7,7 @@ namespace App\Geocoder\Domain\Entities;
 use App\Geocoder\Domain\Enums\BankStatus;
 use App\Geocoder\Domain\ValueObjects\Bic;
 use App\Geocoder\Domain\ValueObjects\Inn;
+use Illuminate\Support\Collection;
 
 final class Bank
 {
