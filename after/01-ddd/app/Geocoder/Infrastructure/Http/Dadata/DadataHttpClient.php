@@ -85,6 +85,8 @@ readonly class DadataHttpClient implements DadataApiInterface
     /**
      * @throws ExternalApiException
      * @throws ConnectionException
+     * @see https://dadata.ru/api/find-party/
+     * @see https://confluence.hflabs.ru/spaces/SGTDOC/pages/568918058/Поиск+организации+по+ИНН+или+ОГРН+API
      */
     public function findPartyByInn(string $inn): ?array
     {
@@ -105,6 +107,8 @@ readonly class DadataHttpClient implements DadataApiInterface
     /**
      * @throws ExternalApiException
      * @throws ConnectionException
+     * @see https://dadata.ru/api/suggest/bank/
+     * @see https://confluence.hflabs.ru/spaces/SGTDOC/pages/262996078/Подсказки+по+банкам+API
      */
     public function findBankByBic(string $bic): ?array
     {
@@ -124,6 +128,7 @@ readonly class DadataHttpClient implements DadataApiInterface
     /**
      * @throws ExternalApiException
      * @throws ConnectionException
+     * @see https://dadata.ru/api/suggest/country/
      */
     public function searchCountry(string $query): array
     {
@@ -142,6 +147,7 @@ readonly class DadataHttpClient implements DadataApiInterface
     /**
      * @throws ExternalApiException
      * @throws ConnectionException
+     * @see https://dadata.ru/api/suggest/address/
      * @see https://confluence.hflabs.ru/spaces/SGTDOC/pages/204669107/Подсказки+по+адресу+API
      */
     public function searchAddress(string $query, ?array $locations = null): array
