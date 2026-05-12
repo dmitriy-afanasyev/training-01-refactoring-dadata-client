@@ -94,16 +94,19 @@ git clone https://github.com/dmitriy-afanasyev/training-01-refactoring-dadata-cl
 cd training-01-refactoring-dadata-client/after/01-ddd
 ```
 
-### 2. Установить зависимости
-
-```bash
-composer install --ignore-platform-reqs
-```
-
-### 3. Создать файл окружения
+### 2. Создать файл окружения
 
 ```bash
 cp .env.example .env
+```
+
+### 3. Установить зависимости
+
+```bash
+docker run --rm \
+    -v "$(pwd):/app" \
+    -u "$(id -u):$(id -g)" \
+    composer install --ignore-platform-reqs
 ```
 
 ### 4. Получить и указать API-ключ DaData
