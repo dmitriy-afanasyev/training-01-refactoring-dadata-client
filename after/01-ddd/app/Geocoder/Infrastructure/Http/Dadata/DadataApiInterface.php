@@ -4,12 +4,6 @@ declare(strict_types=1);
 
 namespace App\Geocoder\Infrastructure\Http\Dadata;
 
-use App\Geocoder\Domain\Exceptions\ExternalApiException;
-use Illuminate\Http\Client\ConnectionException;
-
-/**
- * Интерфейс для работы с DaData API.
- */
 interface DadataApiInterface
 {
     /**
