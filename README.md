@@ -16,6 +16,12 @@
 - 🎥 **Контент** — база для записи обзорных видео на YouTube
 - 💼 **Портфолио** — демонстрация навыков для потенциальных работодателей
 
+---
+
+![YouTube Video Views](https://img.shields.io/youtube/views/_Nvo76wV6CQ?style=for-the-badge) [Плейлист курса на YouTube](https://www.youtube.com/playlist?list=PLoonZ8wII66iOAJkkfT4ZNQZmG5ymB9yn)
+
+---
+
 ## 📂 Структура проекта
 
 ```
