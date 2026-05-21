@@ -159,6 +159,34 @@ class DadataHttpClientTest extends TestCase
         $this->assertCount(1, $result);
     }
 
+    public function test_search_country_returns_empty_array_when_not_found(): void
+    {
+        Http::fake([
+            '/suggest/country' => Http::response([
+                'suggestions' => [],
+            ], 200),
+        ]);
+
+        $result = $this->client->searchCountry('НесуществующаяСтрана');
+
+        $this->assertIsArray($result);
+        $this->assertEmpty($result);
+    }
+
+    public function test_search_address_returns_empty_array_when_not_found(): void
+    {
+        Http::fake([
+            '/suggest/address' => Http::response([
+                'suggestions' => [],
+            ], 200),
+        ]);
+
+        $result = $this->client->searchAddress('НесуществующийАдрес');
+
+        $this->assertIsArray($result);
+        $this->assertEmpty($result);
+    }
+
     public function test_external_api_exception_on_failure(): void
     {
         Http::fake([
@@ -224,6 +252,21 @@ class DadataHttpClientTest extends TestCase
         ]);
 
         $result = $this->client->findBankByBic('044525225');
+
+        $this->assertNull($result);
+    }
+
+    /**
+     * Проверяет, что при пустом теле ответа (200, non-JSON) клиент не падает,
+     * а возвращает пустой массив.
+     */
+    public function test_request_returns_empty_array_when_json_is_null(): void
+    {
+        Http::fake([
+            '/findById/party' => Http::response('', 200, ['Content-Type' => 'text/plain']),
+        ]);
+
+        $result = $this->client->findPartyByInn('7707083893');
 
         $this->assertNull($result);
     }
@@ -329,5 +372,38 @@ class DadataHttpClientTest extends TestCase
         } finally {
             $this->assertEquals(3, $callCount);
         }
+    }
+
+    /**
+     * Проверяет, что при ConnectionException клиент повторяет запрос
+     * и успешно получает данные после восстановления соединения.
+     */
+    public function test_connection_exception_retries_then_succeeds(): void
+    {
+        $client = new DadataHttpClient(
+            apiKey: 'test-api-key',
+            baseUrl: 'https://suggestions.dadata.ru/suggestions/api/4_1/rs',
+            retryCount: 3,
+            retryDelay: 100,
+        );
+
+        $callCount = 0;
+        Http::fake(function (\Illuminate\Http\Client\Request $request) use (&$callCount) {
+            $callCount++;
+
+            if ($callCount < 3) {
+                throw new ConnectionException('Connection refused');
+            }
+
+            return Http::response([
+                'suggestions' => [['data' => ['inn' => '7707083893']]],
+            ], 200);
+        });
+
+        $result = $client->findPartyByInn('7707083893');
+
+        $this->assertNotNull($result);
+        $this->assertEquals('7707083893', $result['inn']);
+        $this->assertEquals(3, $callCount);
     }
 }
