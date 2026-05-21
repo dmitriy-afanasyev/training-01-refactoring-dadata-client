@@ -9,6 +9,7 @@ use App\Geocoder\Infrastructure\Http\Dadata\DadataHttpClient;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 #[CoversClass(DadataHttpClient::class)]
@@ -214,6 +215,7 @@ class DadataHttpClientTest extends TestCase
             apiKey: 'test-api-key',
             baseUrl: 'https://suggestions.dadata.ru/suggestions/api/4_1/rs',
             interface: '192.168.1.100',
+            retryCount: 0, // Отключаем retry для тестов
         );
 
         Http::fake([
@@ -297,8 +299,12 @@ class DadataHttpClientTest extends TestCase
 
     /**
      * Проверяет, что клиентские ошибки (4xx) не вызывают повторных попыток.
+     *
+     * @param int $statusCode HTTP-статус
+     * @param string $expectedMessagePart Ожидаемая часть сообщения
      */
-    public function test_does_not_retry_on_client_error(): void
+    #[DataProvider('clientErrorStatusesProvider')]
+    public function test_does_not_retry_on_client_error(int $statusCode, string $expectedMessagePart): void
     {
         $client = new DadataHttpClient(
             apiKey: 'test-api-key',
@@ -307,16 +313,27 @@ class DadataHttpClientTest extends TestCase
             retryDelay: 100,
         );
 
-        Http::fake(['/findById/party' => Http::response('Bad Request', 400)]);
+        Http::fake(['/findById/party' => Http::response('Error', $statusCode)]);
 
         $this->expectException(ExternalApiException::class);
-        $this->expectExceptionMessageMatches('/DaData API error: 400/');
+        $this->expectExceptionMessage($expectedMessagePart);
 
         try {
             $client->findPartyByInn('7707083893');
         } finally {
             Http::assertSentCount(1);
         }
+    }
+
+    /**
+     * @return iterable<string, array{0: int, 1: string}>
+     */
+    public static function clientErrorStatusesProvider(): iterable
+    {
+        yield '400 Bad Request' => [400, 'DaData API error: 400'];
+        yield '401 Unauthorized' => [401, 'DaData API error: 401'];
+        yield '403 Forbidden' => [403, 'DaData API error: 403'];
+        yield '404 Not Found' => [404, 'DaData API error: 404'];
     }
 
     /**
