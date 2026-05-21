@@ -68,6 +68,10 @@ readonly class DadataHttpClient implements DadataApiInterface
         try {
             // Boost-rule
             $response = $this->httpClient()->post($endpoint, $payload)->throw();
+        } catch (ConnectionException $e) {
+            throw new ExternalApiException(
+                'DaData connection error: ' . $e->getMessage()
+            );
         } catch (RequestException $e) {
             throw new ExternalApiException(
                 sprintf(

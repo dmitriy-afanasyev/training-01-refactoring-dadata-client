@@ -6,6 +6,7 @@ namespace Tests\Unit\Geocoder\Infrastructure\Http\Dadata;
 
 use App\Geocoder\Domain\Exceptions\ExternalApiException;
 use App\Geocoder\Infrastructure\Http\Dadata\DadataHttpClient;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
@@ -252,40 +253,6 @@ class DadataHttpClientTest extends TestCase
     }
 
     /**
-     * Проверяет, что при ConnectionException клиент повторяет запрос и успешно получает данные.
-     */
-    public function test_retries_on_connection_exception_and_succeeds(): void
-    {
-        $client = new DadataHttpClient(
-            apiKey: 'test-api-key',
-            baseUrl: 'https://suggestions.dadata.ru/suggestions/api/4_1/rs',
-            retryCount: 2,
-            retryDelay: 100,
-        );
-
-        Http::fake(function (\Illuminate\Http\Client\Request $request) {
-            static $tries = 0;
-            $tries++;
-
-            if ($tries < 2) {
-                throw new \GuzzleHttp\Exception\ServerException(
-                    'Server Error',
-                    $request->toPsrRequest(),
-                    new \GuzzleHttp\Psr7\Response(500)
-                );
-            }
-
-            return Http::response(['suggestions' => [['data' => ['inn' => '7707083893']]]], 200);
-        });
-
-
-        $result = $client->findPartyByInn('7707083893');
-
-        $this->assertNotNull($result);
-        Http::assertSentCount(2);
-    }
-
-    /**
      * Проверяет, что клиентские ошибки (4xx) не вызывают повторных попыток.
      */
     public function test_does_not_retry_on_client_error(): void
@@ -336,16 +303,31 @@ class DadataHttpClientTest extends TestCase
     }
 
     /**
-     * Проверяет математику экспоненциальной задержки (чистая функция, без доступа к внутренностям).
+     * Проверяет, что ConnectionException вызывает retry (3 попытки),
+     * а затем оборачивается в ExternalApiException.
      */
-    public function test_uses_exponential_backoff_strategy(): void
+    public function test_connection_exception_retries_then_wrapped_in_external_api_exception(): void
     {
-        $retryDelay = 100;
-        $calculateDelay = fn(int $attempt) => $retryDelay * (2 ** ($attempt - 1));
+        $client = new DadataHttpClient(
+            apiKey: 'test-api-key',
+            baseUrl: 'https://suggestions.dadata.ru/suggestions/api/4_1/rs',
+            retryCount: 3,
+            retryDelay: 100,
+        );
 
-        $this->assertEquals(100, $calculateDelay(1));
-        $this->assertEquals(200, $calculateDelay(2));
-        $this->assertEquals(400, $calculateDelay(3));
-        $this->assertEquals(800, $calculateDelay(4));
+        $callCount = 0;
+        Http::fake(function (\Illuminate\Http\Client\Request $request) use (&$callCount) {
+            $callCount++;
+            throw new ConnectionException('Connection refused');
+        });
+
+        $this->expectException(ExternalApiException::class);
+        $this->expectExceptionMessage('DaData connection error: Connection refused');
+
+        try {
+            $client->findPartyByInn('7707083893');
+        } finally {
+            $this->assertEquals(3, $callCount);
+        }
     }
 }
