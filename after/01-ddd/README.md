@@ -184,9 +184,11 @@ APP_PORT=8080
 
 Полная OpenAPI-спецификация: [`docs/api/openapi.yaml`](docs/api/openapi.yaml)
 
-## ⚖️ Плюсы и минусы DDD-подхода
+## Laravel-way документация
 
-Этот проект — демонстрация DDD-архитектуры. Ниже — честная оценка подхода.
+[`Laravel-way документация`](docs/project-laravel-way-index.md)
+
+## ⚖️ Плюсы и минусы DDD-подхода
 
 ### Плюсы
 
