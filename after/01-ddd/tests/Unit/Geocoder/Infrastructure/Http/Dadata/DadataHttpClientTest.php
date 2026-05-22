@@ -21,6 +21,8 @@ class DadataHttpClientTest extends TestCase
     {
         parent::setUp();
 
+        Http::preventStrayRequests();
+
         $this->client = new DadataHttpClient(
             apiKey: 'test-api-key',
             baseUrl: 'https://suggestions.dadata.ru/suggestions/api/4_1/rs',
@@ -196,15 +198,6 @@ class DadataHttpClientTest extends TestCase
 
         $this->expectException(ExternalApiException::class);
         $this->expectExceptionMessageMatches('/DaData API error: 500/');
-
-        $this->client->findPartyByInn('7707083893');
-    }
-
-    public function test_prevent_stray_requests(): void
-    {
-        Http::preventStrayRequests();
-
-        $this->expectException(\Illuminate\Http\Client\StrayRequestException::class);
 
         $this->client->findPartyByInn('7707083893');
     }
