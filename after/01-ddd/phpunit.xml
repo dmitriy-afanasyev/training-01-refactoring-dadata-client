@@ -12,14 +12,11 @@
             <directory>tests/Feature</directory>
         </testsuite>        
     </testsuites>
-<!-- Контейнер, указывающий, какие исходные файлы участвуют в расчёте покрытия и анализе кода -->
+    <!-- @see docs/project-laravel-way/testing-coverage-report.md -->
     <source>
-<!-- Включает в отчёт покрытия только PHP-файлы из директории app/Geocoder (и подпапки)
-Атрибут suffix=".php" гарантирует, что учитываются только файлы с расширением .php. -->
         <include>
             <directory suffix=".php">app/Geocoder</directory>
         </include>
-<!-- Явно исключает из расчёта покрытия директории -->
         <exclude>
             <directory>app/Geocoder/Domain/Exceptions</directory>
             <directory>app/Geocoder/Application/Exceptions</directory>

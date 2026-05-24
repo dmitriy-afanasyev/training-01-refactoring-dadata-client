@@ -3,6 +3,6 @@
 Как, что и зачем было настроено в проекте:
 
 - [Модульность](project-laravel-way/modules.md)
-- Тестирование
+- [Отчет по покрытию](project-laravel-way/testing-coverage-report.md)
 - Логирование
 - Http запросы

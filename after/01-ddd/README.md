@@ -159,12 +159,14 @@ APP_PORT=8080
 
 ```bash
 ./vendor/bin/sail test tests/Unit/Geocoder/Application/Services/PartyServiceTest.php
+./vendor/bin/sail test tests/Unit/Geocoder/Application/Services/BankServiceTest.php
 ```
 
 ### По имени теста
 
 ```bash
 ./vendor/bin/sail test --filter=find_by_inn_returns_party_data
+./vendor/bin/sail test --filter=test_find_by_bic_throws_bank_not_found
 ```
 
 ### С генерацией отчета по покрытию
