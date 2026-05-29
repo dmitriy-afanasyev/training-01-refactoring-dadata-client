@@ -106,3 +106,6 @@ abstract class AbstractProvider implements ProviderInterface
 > **Правило разумного рефакторинга**:  
 > Сначала заставьте код работать чисто и просто.  
 > Разделяйте слои, когда появится конкретная боль сопровождения — не заранее.
+
+см так же про SRP
+Application/Services/
