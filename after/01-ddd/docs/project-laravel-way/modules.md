@@ -41,10 +41,10 @@
 <корень проекта>/
 └── app/
     └── Modules/
-        └── <SomeSection_1>/
-            ├── <SomeModule_1.1>/
-            ├── <SomeModule_1.2>/
-            └── <SomeModule_1.3>/
+        ├── <SomeSection_1>/
+        │   ├── <SomeModule_1.1>/
+        │   ├── <SomeModule_1.2>/
+        │   └── <SomeModule_1.3>/
         └── <SomeSection_2>/
             ├── <SomeModule_2.1>/
             ├── <SomeModule_2.2>/
