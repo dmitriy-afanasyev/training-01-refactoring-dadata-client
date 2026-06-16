@@ -34,7 +34,7 @@ class GeocoderServiceProvider extends ServiceProvider
 
         $this->app->bind(DadataApiInterface::class, function ($app) {
             return new DadataHttpClient(
-                apiKey: config('geocoder.api_key'),
+                apiKey: config('geocoder.api_key', ''),
                 baseUrl: config('geocoder.base_url'),
                 timeout: config('geocoder.timeout', 40),
                 connectTimeout: config('geocoder.connect_timeout', 20),

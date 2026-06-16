@@ -35,23 +35,29 @@
 
 ---
 
-### 🔹 Модули внутри ограниченных контекстов (DDD-подход)
+### 🔹 Группировка модулей по единому вектору
 
 ```
 <корень проекта>/
 └── app/
     └── Modules/
-        └── <SomeSection1>/          # Ограниченный контекст
-            ├── <SomeModule1>/
-            ├── <SomeModule2>/
-            └── <SomeModule3>/
+        └── <SomeSection_1>/
+            ├── <SomeModule_1.1>/
+            ├── <SomeModule_1.2>/
+            └── <SomeModule_1.3>/
+        └── <SomeSection_2>/
+            ├── <SomeModule_2.1>/
+            ├── <SomeModule_2.2>/
+            └── <SomeModule_2.3>/
 ```
 
-✅ Подходит для сложной предметной области, где даже в рамках одного **Bounded Context** удобно разделить ответственность.
+✅ Подходит для сложной предметной области.
 
 ---
 
-### 🔹 Apiato-like структура (максимальная гибкость)
+### 🔹 Apiato-like структура (максимальная гибкость монолита)
+
+По сути Модульный монолит - группируем модули в секции, и выносим общее в Shared. Как это сделано в Apiato (Porto).
 
 ```
 <корень проекта>/
@@ -72,7 +78,13 @@
 
 ---
 
-## ⚙️ Реализация модульности
+## ⚙️ Реализация модульности в Laravel
+
+### План реализации
+
+1. Создаем структуру папок модуля;
+2. Создаем `MyModuleServiceProvider` как мостик между Laravel и новой структурой нашего приложения;
+3. Подключаем `MyModuleServiceProvider` к фреймворку;
 
 ### Ключевой компонент: `Service Provider` модуля
 
@@ -97,7 +109,7 @@ class GeocoderServiceProvider extends ServiceProvider
             'geocoder'
         );
 
-        $this->app->bind(PartyRepositoryInterface::class,   DadataPartyRepository::class);
+        $this->app->bind(PartyRepositoryInterface::class, DadataPartyRepository::class);
     }
 
     public function boot(): void
@@ -105,6 +117,21 @@ class GeocoderServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__ . '/../Presentation/Api/Routes/api.php');
     }
 }
+```
+
+### Подключаем модуль
+
+[`providers.php`](../../bootstrap/providers.php)
+
+```php
+<?php
+use App\Providers\AppServiceProvider;
+use App\Geocoder\Providers\GeocoderServiceProvider;
+
+return [
+    AppServiceProvider::class,
+    GeocoderServiceProvider::class,
+];
 ```
 
 ---
@@ -150,4 +177,3 @@ class GeocoderServiceProvider extends ServiceProvider
 2. **Соблюдайте единый стиль** — все модули должны следовать одним правилам именования и организации.
 3. **Изолируйте зависимости** — модули не должны знать о внутренней реализации друг друга.
 4. **Документируйте публичный API модуля** — что он предоставляет и как с ним взаимодействовать.
-5. **Используйте интерфейсы** — для гибкой замены реализаций и упрощения тестирования.
