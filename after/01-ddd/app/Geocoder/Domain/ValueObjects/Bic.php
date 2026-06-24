@@ -20,7 +20,7 @@ final class Bic
                 }
 
                 if (strlen($value) !== self::LENGTH) {
-                    throw new InvalidBicException('БИК должен содержать 9 цифр');
+                    throw new InvalidBicException('БИК должен содержать ' . self::LENGTH . ' цифр');
                 }
 
                 $this->value = $value;

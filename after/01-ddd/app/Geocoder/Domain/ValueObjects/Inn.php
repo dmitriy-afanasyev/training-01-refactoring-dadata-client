@@ -26,7 +26,11 @@ final class Inn
                 }
 
                 if (!in_array(strlen($value), self::VALID_LENGTHS, true)) {
-                    throw new InvalidInnException('ИНН должен содержать 10 или 12 цифр');
+                    throw new InvalidInnException('ИНН должен содержать '
+                        . self::LENGTH_LEGAL_ENTITY
+                        . ' или '
+                        . self::LENGTH_INDIVIDUAL_ENTREPRENEUR
+                        . ' цифр');
                 }
 
                 $this->value = $value;
