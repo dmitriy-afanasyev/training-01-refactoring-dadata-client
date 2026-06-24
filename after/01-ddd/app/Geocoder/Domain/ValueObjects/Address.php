@@ -8,7 +8,7 @@ use App\Geocoder\Domain\Exceptions\InvalidAddressException;
 
 final class Address
 {
-    public function __construct(
+    private function __construct(
         private(set) string $value {
             set(string $value) {
                 $trimmed = trim($value);

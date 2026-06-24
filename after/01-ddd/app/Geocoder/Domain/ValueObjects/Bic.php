@@ -10,7 +10,7 @@ final class Bic
 {
     private const LENGTH = 9;
 
-    public function __construct(
+    private function __construct(
         private(set) string $value {
             set(string $value) {
                 $value = trim($value);

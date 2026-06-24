@@ -16,7 +16,7 @@ final class Inn
         self::LENGTH_INDIVIDUAL_ENTREPRENEUR,
     ];
 
-    public function __construct(
+    private function __construct(
         private(set) string $value {
             set(string $value) {
                 $value = trim($value);
