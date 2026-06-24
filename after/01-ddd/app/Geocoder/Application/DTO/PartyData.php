@@ -28,6 +28,7 @@ final readonly class PartyData
         public ?string $ogrn = null,
         public ?string $okpo = null,
         public ?string $address = null,
+        //TODO: нарушение 
         public ?PartyStatus $status = null,
     ) {}
 
