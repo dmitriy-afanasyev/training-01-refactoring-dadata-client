@@ -41,9 +41,6 @@ final class Bank
      */
     public function toArray(): array
     {
-        //TODO: здесь и далее переделать в camelCase, так как про "формат API" домен не должен думать, и если
-        // домен как-то возвращает свои данные, то в том виде в котором ему удобно, соответственно 
-        // тут предсказумее вернуть в camelCase
         return [
             'id' => $this->id->value,
             'name' => $this->name,

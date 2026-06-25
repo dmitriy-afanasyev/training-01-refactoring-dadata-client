@@ -38,8 +38,6 @@ final class Party
     }
 
     /**
-     * Получить массив данных сущности.
-     *
      * @return array<string, mixed>
      */
     public function toArray(): array
