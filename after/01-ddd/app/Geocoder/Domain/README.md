@@ -45,7 +45,7 @@ Domain/
 
 ## Концепции и правила
 
-### 1. Value Objects — входные ворота с валидацией
+### 1. Value Objects — объекты значений (пользовательский тип данных)
 
 Value Object описывает **атрибут** сущности, а не саму сущность. У него нет уникальной идентичности — два VO с одинаковым значением **равны**.
 
@@ -220,11 +220,11 @@ public static function fromString(?string $value): ?self
 
 ```
                     ┌──────────────────────────────────┐
-                    │        Repository Interfaces      │
-                    │  BankRepositoryInterface          │
-                    │  PartyRepositoryInterface         │
-                    │  AddressRepositoryInterface       │
-                    └──────┬───────────────┬────────────┘
+                    │  Repository Interfaces           │
+                    │  BankRepositoryInterface         │
+                    │  PartyRepositoryInterface        │
+                    │  AddressRepositoryInterface      │
+                    └──────┬───────────────┬───────────┘
                            │               │
             зависит от     │               │  возвращает
                            ▼               ▼
