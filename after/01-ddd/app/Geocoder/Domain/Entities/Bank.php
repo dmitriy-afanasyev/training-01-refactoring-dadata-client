@@ -22,10 +22,10 @@ final class Bank
      */
     public function __construct(
         private(set) Bic $id,
-        private(set) ?string $name = null,
-        private(set) ?string $shortName = null,
         private(set) Bic $bic,
         private(set) Inn $inn,
+        private(set) ?string $name = null,
+        private(set) ?string $shortName = null,
         private(set) ?string $correspondentAccount = null,
         private(set) ?string $address = null,
         private(set) ?BankStatus $status = null,
