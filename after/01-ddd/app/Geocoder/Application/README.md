@@ -96,7 +96,7 @@ public function findByInn(string $inn): PartyData
 
 ### DTO — данные между слоями
 
-DTO — простой объект для передачи данных из Application в Presentation. Presentation **не должен** зависеть от доменных Entity и Value Objects напрямую _(или от любых других классов уровня Domain коотрые содержат бизнес-логику)_.
+DTO — простой объект для передачи данных из Application в Presentation. Presentation **не должен** зависеть от доменных Entity и Value Objects напрямую _(или от любых других классов уровня Domain которые содержат бизнес-логику)_.
 
 Application DTO — это контракт между Use Case и Presentation.
 
