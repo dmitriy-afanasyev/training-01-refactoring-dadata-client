@@ -9,7 +9,7 @@ use App\Geocoder\Domain\Repositories\AddressRepositoryInterface;
 use App\Geocoder\Domain\ValueObjects\Address;
 
 /*
- * Фреймворк на уровне Application.
+ * DDD: Фреймворк на уровне Application.
  * В чистом DDD это не допустимо. Если фреймворк используется на уровне Application 
  * (или на уровне Domain), то это уже не DDD, а Laravel-проект с папками Application/Domain.
  * Однако реализовать сразу на 100% DDD не возможно - это поэтапный, итерационный процесс.
