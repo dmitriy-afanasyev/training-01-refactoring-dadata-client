@@ -174,6 +174,10 @@ class Party {
 }
 ```
 
+См. дополнительно про кэширование в `Application/Services/AddressService`
+
+коммент `use Illuminate\Support\Facades\Cache;`
+
 ---
 
 ### Транзакции — граница единицы работы
