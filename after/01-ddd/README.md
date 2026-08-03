@@ -173,6 +173,14 @@ APP_PORT=8080
 ./vendor/bin/sail test --coverage-html=tests/coverage
 ```
 
+### Обновление пакетов
+
+```bash
+./vendor/bin/sail up -d
+./vendor/bin/sail composer update
+./vendor/bin/sail test
+```
+
 ## 📡 API Endpoints
 
 | Метод | Путь                                              | Описание                 |
