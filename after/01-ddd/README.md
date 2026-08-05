@@ -129,6 +129,7 @@ DADATA_BASE_URL=https://suggestions.dadata.ru/suggestions/api/4_1/rs
 
 ./vendor/bin/sail artisan key:generate
 ./vendor/bin/sail artisan migrate
+./vendor/bin/sail artisan boost:install
 
 # Проверка
 ./vendor/bin/sail artisan about
@@ -173,7 +174,7 @@ APP_PORT=8080
 ./vendor/bin/sail test --coverage-html=tests/coverage
 ```
 
-### Обновление пакетов
+### Регулярные обновления
 
 ```bash
 ./vendor/bin/sail up -d
