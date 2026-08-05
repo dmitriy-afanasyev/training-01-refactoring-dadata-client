@@ -1,5 +1,6 @@
 ## Контекст проекта
 
+- Рабочее приложение: `after/01-ddd/` (Laravel + PHP 8.5 + Sail); `before/` — исходный код для рефакторинга
 - Laravel Boost guidelines: `after/01-ddd/AGENTS.md` — читать при необходимости (версии пакетов, Pint, PHP 8 синтаксис, запуск тестов, Artisan)
 
 ## Laravel Best Practices
