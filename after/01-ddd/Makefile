@@ -48,7 +48,7 @@ test: ## Запустить все тесты
 	./vendor/bin/sail test
 
 test-compact: ## Тесты в компактном режиме
-	./vendor/bin/sail test
+	./vendor/bin/sail test --compact
 
 COVERAGE_DIR := storage/app/coverage-report
 
