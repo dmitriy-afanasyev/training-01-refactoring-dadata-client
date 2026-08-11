@@ -33,7 +33,7 @@ install: .env vendor ## Установить проект: окружение, �
 	./vendor/bin/sail artisan about
 	@echo ""
 	@echo "✅ Проект установлен и запущен."
-	@echo "   Далее (README, шаг 4): укажите DADATA_API_KEY в файле .env."
+	@echo "   Далее (README): укажите DADATA_API_KEY в файле .env."
 	@echo "   Если порт 80 занят — добавьте в .env: APP_PORT=8080."
 
 # --- Dev-цикл ---

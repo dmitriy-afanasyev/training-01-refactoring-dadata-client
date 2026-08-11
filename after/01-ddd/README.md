@@ -86,6 +86,7 @@ Presentation → Application → Domain ← Infrastructure
 
 - Docker и Docker Compose
 - Git
+- Make
 
 ### 1. Клонировать репозиторий
 
@@ -94,22 +95,19 @@ git clone https://github.com/dmitriy-afanasyev/training-01-refactoring-dadata-cl
 cd training-01-refactoring-dadata-client/after/01-ddd
 ```
 
-### 2. Создать файл окружения
+### 2. Установить и запустить
+
+Установка автоматизирована в [Makefile](Makefile) — одной командой:
 
 ```bash
-cp .env.example .env
+make install
 ```
 
-### 3. Установить зависимости
+`make install` выполняет все шаги установки: создаёт файл окружения `.env` из `.env.example` (если его ещё нет), устанавливает зависимости через Docker (`composer install` без локального PHP), запускает Sail-контейнеры (`sail up -d`), генерирует ключ приложения, выполняет миграции, устанавливает Laravel Boost (`boost:install`) и выводит информацию о приложении (`artisan about`).
 
-```bash
-docker run --rm \
-    -v "$(pwd):/app" \
-    -u "$(id -u):$(id -g)" \
-    composer install --ignore-platform-reqs
-```
+Повторный запуск безопасен: `.env` и зависимости переустанавливаются только при их отсутствии.
 
-### 4. Получить и указать API-ключ DaData
+### 3. Получить и указать API-ключ DaData
 
 API-ключ можно бесплатно получить на https://dadata.ru/pricing/
 На текущий момент существует бесплатный тариф с лимитом до 10_000 запросов в день.
@@ -122,18 +120,16 @@ DADATA_API_KEY=ваш_ключ
 DADATA_BASE_URL=https://suggestions.dadata.ru/suggestions/api/4_1/rs
 ```
 
-### 5. Запустить через Docker (Laravel Sail)
+### Другие команды Makefile
 
-```bash
-./vendor/bin/sail up -d
-
-./vendor/bin/sail artisan key:generate
-./vendor/bin/sail artisan migrate
-./vendor/bin/sail artisan boost:install
-
-# Проверка
-./vendor/bin/sail artisan about
-```
+| Команда         | Что делает                 |
+| --------------- | -------------------------- |
+| `make help`     | Показать список всех целей |
+| `make up`       | Запустить Sail-контейнеры  |
+| `make down`     | Остановить Sail-контейнеры |
+| `make test`     | Запустить все тесты        |
+| `make coverage` | Тесты + отчёт по покрытию  |
+| `make logs`     | Показать логи Sail         |
 
 Если порт 80 занят, добавьте в `.env`:
 
@@ -146,7 +142,7 @@ APP_PORT=8080
 ### Все тесты
 
 ```bash
-./vendor/bin/sail test
+make test
 ```
 
 ### Отдельный testsuite
@@ -168,18 +164,24 @@ APP_PORT=8080
 ./vendor/bin/sail test --filter=test_find_by_bic_throws_bank_not_found
 ```
 
+Запуски с аргументами (testsuite, конкретный файл, фильтр) не имеют отдельных целей в Makefile — для них используются прямые команды Sail.
+
 ### С генерацией отчета по покрытию
 
 ```bash
-./vendor/bin/sail test --coverage-html=tests/coverage
+make coverage
 ```
+
+Отчёт сохраняется в `storage/app/coverage-report/`. `make coverage` автоматически откроет его в браузере; если автоматическое открытие недоступно, будет выведен путь к отчёту.
+
+> Для генерации отчёта требуется режим xdebug `coverage`: добавьте `SAIL_XDEBUG_MODE=coverage` в `.env` и перезапустите контейнер (`make up`).
 
 ### Регулярные обновления
 
 ```bash
-./vendor/bin/sail up -d
+make up
 ./vendor/bin/sail composer update
-./vendor/bin/sail test
+make test
 ```
 
 ## 📡 API Endpoints
