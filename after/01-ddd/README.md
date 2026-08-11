@@ -107,6 +107,12 @@ make install
 
 Повторный запуск безопасен: `.env` и зависимости переустанавливаются только при их отсутствии.
 
+Если порт 80 занят, добавьте в `.env`:
+
+```env
+APP_PORT=8080
+```
+
 ### 3. Получить и указать API-ключ DaData
 
 API-ключ можно бесплатно получить на https://dadata.ru/pricing/
@@ -130,12 +136,6 @@ DADATA_BASE_URL=https://suggestions.dadata.ru/suggestions/api/4_1/rs
 | `make test`     | Запустить все тесты        |
 | `make coverage` | Тесты + отчёт по покрытию  |
 | `make logs`     | Показать логи Sail         |
-
-Если порт 80 занят, добавьте в `.env`:
-
-```env
-APP_PORT=8080
-```
 
 ## 🧪 Запуск тестов
 
