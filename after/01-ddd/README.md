@@ -180,7 +180,7 @@ make coverage
 
 ```bash
 make up
-./vendor/bin/sail composer update
+make vendor_update
 make test
 ```
 

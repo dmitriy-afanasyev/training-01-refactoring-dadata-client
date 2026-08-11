@@ -60,3 +60,6 @@ coverage: ## Запустить все тесты, создать и откры�
 
 logs: ## Показать логи Sail
 	./vendor/bin/sail logs -f
+
+vendor_update: ## Обновить пакеты
+	./vendor/bin/sail composer update
