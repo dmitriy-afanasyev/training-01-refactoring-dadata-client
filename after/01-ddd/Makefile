@@ -47,9 +47,12 @@ down: ## Остановить Sail-контейнеры
 test: ## Запустить все тесты
 	./vendor/bin/sail test
 
+test-compact: ## Тесты в компактном режиме
+	./vendor/bin/sail test
+
 COVERAGE_DIR := storage/app/coverage-report
 
-coverage: ## Запустить все тесты, создать и открыть отчет по покрытию
+test-coverage: ## Запустить все тесты, создать и открыть отчет по покрытию
 	./vendor/bin/sail test --coverage-html=$(COVERAGE_DIR)
 	@if command -v xdg-open >/dev/null 2>&1; then \
 		xdg-open $(CURDIR)/$(COVERAGE_DIR)/index.html >/dev/null 2>&1 && echo "Отчет открыт в браузере." || \
@@ -61,5 +64,5 @@ coverage: ## Запустить все тесты, создать и откры�
 logs: ## Показать логи Sail
 	./vendor/bin/sail logs -f
 
-vendor_update: ## Обновить пакеты
+vendor-update: ## Обновить пакеты
 	./vendor/bin/sail composer update
