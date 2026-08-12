@@ -76,14 +76,15 @@ Application Service **координирует** доменные объекты
 // ✅ Application Service — только оркестрация
 public function findByInn(string $inn): PartyData
 {
-    $data = Cache::remember(...);          // техническая задача
-    return PartyData::fromArray($data);    // трансформация
+    $innVo = Domain\VO\Inn::fromString($inn); // Работа не с обезличенной строкой, а с конкретным объектом доменной области
+    $data  = $this->cache->remember(...);     // техническая задача
+    return PartyData::fromArray($data);       // трансформация
 }
 
 // ❌ Нарушение — доменное правило в сервисе
 public function findByInn(string $inn): PartyData
 {
-    if (strlen($inn) !== 10 && strlen($inn) !== 12) {  // это валидация — Domain!
+    if (strlen($inn) !== 10 && strlen($inn) !== 12) {  // это валидация — Domain! Ответственность Domain\VO\Inn::class
         throw new InvalidInnException($inn);
     }
     //...
@@ -139,7 +140,7 @@ public function show(): JsonResponse
 
 ### Кэширование — решение Прикладного уровня
 
-Решение «кешировать или нет», «на сколько» и «по какому ключу» — это **оркестрационное решение уровня сценария**, а не техническая деталь инфраструктуры и не доменное правило в большинстве случаев.
+Решение «кешировать или нет», «на сколько» и «по какому ключу» — это **оркестрационное решение уровня сценария**, а не техническая деталь инфраструктуры и не доменное правило **в большинстве случаев**.
 
 **Почему не в Domain:**
 
@@ -148,7 +149,7 @@ public function show(): JsonResponse
 
 **Почему не в Infrastructure:**
 
-- Репозиторий только получает данные — он не решает, кешировать их или нет
+- Если смотреть со стороны логики - Репозиторий только получает данные — он не решает, кешировать их или нет.
 - TTL и ключи кэша — оркестрационные решения, а не технический параметр
 
 Однако Эванс вовсе не против кэширования в репозитории:
@@ -156,6 +157,8 @@ public function show(): JsonResponse
 > "_Извлекайте преимущества из независимости от клиента_".
 >
 > "...Этим можно воспользоваться для оптимизации быстродействия, варьируя запросы или кэшируя объекты в памяти..." _(стр. 148)_
+
+Соответственно, если смотреть со стороны технической проблемы, то Репозиторий МОЖЕТ кэшировать. _(Если доступ к данным не прост и может оказаться либо дорогим, либо долгим, то это чисто техническая проблема и решать ее надо в слое Инфраструктуры)_
 
 **Почему Application:**
 
@@ -167,8 +170,8 @@ public function show(): JsonResponse
 public function findByInn(string $inn): PartyData
 {
     $data = $this->cache->remember(
-        "geocoder.party.inn.{$inn}",           // ключ кэша — оркестрационное решение
-        now()->addMinutes($this->cacheTtlMinutes),  // TTL — оркестрационное решение
+        "geocoder.party.inn.{$inn}",  // ключ кэша — оркестрационное решение
+        $this->cacheTtlMinutes,       // TTL — оркестрационное решение
         fn() => $this->fetchPartyData($inn)
     );
     return PartyData::fromArray($data);
@@ -214,7 +217,7 @@ class Party {
 
 ### 1. Зависимость от интерфейсов домена, а не от инфраструктуры
 
-Сервисы зависят от `*RepositoryInterface` (Domain), а не от конкретных реализаций (`DadataPartyRepository`). Это позволяет подменить инфраструктуру без изменения прикладного слоя.
+Сервисы зависят от `RepositoryInterface` (Domain), а не от конкретных реализаций (`DadataPartyRepository`). Это позволяет подменить инфраструктуру без изменения прикладного слоя.
 
 ```php
 // ✅ Верно — зависит от интерфейса домена
@@ -237,13 +240,13 @@ public function __construct(private DadataPartyRepository $repository)
 
 ```php
 // ✅ Верно — DTO для слоя представления
-public function findByInn(string $inn): PartyData
+public function findByInn(string $inn): Domain\DTO\PartyData
 
 // ✅ Верно — примитив для списка строк
 public function searchAddress(string $query): array  // array<int, string>
 
 // ❌ Нарушение — доменный объект утекает наружу
-public function findByInn(string $inn): Party
+public function findByInn(string $inn): Domain\Entities\Party
 ```
 
 ### 4. Управление транзакциями — на прикладном уровне
