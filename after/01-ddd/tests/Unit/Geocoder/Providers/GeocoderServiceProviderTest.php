@@ -4,15 +4,18 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Geocoder\Providers;
 
+use App\Geocoder\Application\Caching\CacheInterface;
 use App\Geocoder\Domain\Repositories\AddressRepositoryInterface;
 use App\Geocoder\Domain\Repositories\BankRepositoryInterface;
 use App\Geocoder\Domain\Repositories\PartyRepositoryInterface;
+use App\Geocoder\Infrastructure\Caching\LaravelCache;
 use App\Geocoder\Infrastructure\Http\Dadata\DadataApiInterface;
 use App\Geocoder\Infrastructure\Persistence\DadataAddressRepository;
 use App\Geocoder\Infrastructure\Persistence\DadataBankRepository;
 use App\Geocoder\Infrastructure\Persistence\DadataPartyRepository;
 use App\Geocoder\Providers\GeocoderServiceProvider;
 use Illuminate\Cache\RateLimiter;
+use Illuminate\Cache\RateLimiting\Limit;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 
@@ -51,6 +54,14 @@ class GeocoderServiceProviderTest extends TestCase
         );
     }
 
+    public function test_binds_cache_interface(): void
+    {
+        $this->assertInstanceOf(
+            LaravelCache::class,
+            $this->app->make(CacheInterface::class)
+        );
+    }
+
     public function test_repository_implementations_are_correct(): void
     {
         $partyRepo = $this->app->make(PartyRepositoryInterface::class);
@@ -82,7 +93,7 @@ class GeocoderServiceProviderTest extends TestCase
 
         $limit = $callback(request());
 
-        $this->assertInstanceOf(\Illuminate\Cache\RateLimiting\Limit::class, $limit);
+        $this->assertInstanceOf(Limit::class, $limit);
         $this->assertEquals(5, $limit->maxAttempts);
     }
 }

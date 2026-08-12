@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Geocoder\Application\Services;
 
+use App\Geocoder\Application\Caching\CacheInterface;
 use App\Geocoder\Application\DTO\BankData;
 use App\Geocoder\Application\Services\BankService;
-use App\Geocoder\Domain\Enums\BankStatus;
 use App\Geocoder\Domain\Entities\Bank;
+use App\Geocoder\Domain\Enums\BankStatus;
 use App\Geocoder\Domain\Exceptions\BankNotFoundException;
 use App\Geocoder\Domain\Exceptions\ExternalApiException;
 use App\Geocoder\Domain\Exceptions\InvalidBicException;
 use App\Geocoder\Domain\Repositories\BankRepositoryInterface;
 use App\Geocoder\Domain\ValueObjects\Bic;
 use App\Geocoder\Domain\ValueObjects\Inn;
-use Illuminate\Support\Facades\Cache;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\TestDox;
@@ -25,6 +25,9 @@ use Tests\TestCase;
 class BankServiceTest extends TestCase
 {
     private BankRepositoryInterface|MockObject $repository;
+
+    private CacheInterface|MockObject $cache;
+
     private BankService $service;
 
     protected function setUp(): void
@@ -32,7 +35,8 @@ class BankServiceTest extends TestCase
         parent::setUp();
 
         $this->repository = $this->createMock(BankRepositoryInterface::class);
-        $this->service = new BankService($this->repository);
+        $this->cache = $this->createMock(CacheInterface::class);
+        $this->service = new BankService($this->repository, $this->cache);
     }
 
     protected function tearDown(): void
@@ -55,16 +59,16 @@ class BankServiceTest extends TestCase
             status: BankStatus::ACTIVE,
         );
 
-        // Замокать Cache::remember с выполнением callback.
-        Cache::shouldReceive('remember')
-            ->once()
-            ->with("geocoder.bank.bic.{$bic}", static::isInstanceOf(\DateTimeInterface::class), static::isCallable())
-            ->andReturnUsing(fn($key, $ttl, $callback) => $callback());
+        $this->cache
+            ->expects($this->once())
+            ->method('remember')
+            ->with("geocoder.bank.bic.{$bic}", 1440, static::isCallable())
+            ->willReturnCallback(fn ($key, $ttl, $callback) => $callback());
 
         $this->repository
             ->expects($this->once())
             ->method('findByBicOrFail')
-            ->with($this->callback(fn(Bic $bicVO): bool => $bicVO->value === $bic))
+            ->with($this->callback(fn (Bic $bicVO): bool => $bicVO->value === $bic))
             ->willReturn($bank);
 
         $result = $this->service->findByBic($bic);
@@ -88,10 +92,17 @@ class BankServiceTest extends TestCase
         $bic = '044525225';
         $bank = $this->createBank($bic);
 
-        // Первый вызов — кэш пуст, callback выполняется, репозиторий вызывается
-        Cache::shouldReceive('remember')
-            ->once()
-            ->andReturnUsing(fn($k, $t, $cb) => $cb());
+        // Первый вызов — кэш пуст, callback выполняется, репозиторий вызывается.
+        // Второй вызов — данные из кэша, репозиторий НЕ вызывается.
+        $calls = 0;
+        $this->cache
+            ->expects($this->exactly(2))
+            ->method('remember')
+            ->willReturnCallback(function ($key, $ttl, $callback) use ($bank, &$calls) {
+                $calls++;
+
+                return $calls === 1 ? $callback() : $bank->toArray();
+            });
 
         // Репозиторий должен вызваться ровно 1 раз (при первом вызове, второй — из кэша)
         $this->repository
@@ -100,12 +111,6 @@ class BankServiceTest extends TestCase
             ->willReturn($bank);
 
         $result1 = $this->service->findByBic($bic);
-
-        // Второй вызов — данные из кэша, репозиторий НЕ вызывается
-        Cache::shouldReceive('remember')
-            ->once()
-            ->andReturn($bank->toArray());
-
         $result2 = $this->service->findByBic($bic);
 
         $this->assertEquals($result1, $result2);
@@ -137,9 +142,10 @@ class BankServiceTest extends TestCase
     #[DataProvider('invalidBicProvider')]
     public function test_find_by_bic_throws_invalid_bic_exception(string $bic): void
     {
-        Cache::shouldReceive('remember')
-            ->once()
-            ->andReturnUsing(fn($key, $ttl, $callback) => $callback());
+        $this->cache
+            ->expects($this->once())
+            ->method('remember')
+            ->willReturnCallback(fn ($key, $ttl, $callback) => $callback());
 
         $this->expectException(InvalidBicException::class);
         $this->service->findByBic($bic);
@@ -170,9 +176,10 @@ class BankServiceTest extends TestCase
 
     private function mockCacheRememberThrows(string $bic, \Throwable $exception): void
     {
-        Cache::shouldReceive('remember')
-            ->once()
-            ->with("geocoder.bank.bic.{$bic}", static::isInstanceOf(\DateTimeInterface::class), static::isCallable())
-            ->andThrow($exception);
+        $this->cache
+            ->expects($this->once())
+            ->method('remember')
+            ->with("geocoder.bank.bic.{$bic}", 1440, static::isCallable())
+            ->willThrowException($exception);
     }
 }

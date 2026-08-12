@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Geocoder\Providers;
 
+use App\Geocoder\Application\Caching\CacheInterface;
 use App\Geocoder\Application\Services\AddressService;
 use App\Geocoder\Application\Services\BankService;
 use App\Geocoder\Application\Services\PartyService;
 use App\Geocoder\Domain\Repositories\AddressRepositoryInterface;
 use App\Geocoder\Domain\Repositories\BankRepositoryInterface;
 use App\Geocoder\Domain\Repositories\PartyRepositoryInterface;
+use App\Geocoder\Infrastructure\Caching\LaravelCache;
 use App\Geocoder\Infrastructure\Http\Dadata\DadataApiInterface;
 use App\Geocoder\Infrastructure\Http\Dadata\DadataHttpClient;
 use App\Geocoder\Infrastructure\Persistence\DadataAddressRepository;
@@ -28,7 +30,7 @@ class GeocoderServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->mergeConfigFrom(
-            __DIR__ . '/../Config/geocoder.php',
+            __DIR__.'/../Config/geocoder.php',
             'geocoder'
         );
 
@@ -49,16 +51,18 @@ class GeocoderServiceProvider extends ServiceProvider
         $this->app->bind(BankRepositoryInterface::class, DadataBankRepository::class);
         $this->app->bind(AddressRepositoryInterface::class, DadataAddressRepository::class);
 
-        $this->app->when(BankService::class)->needs('$cacheTtlMinutes')->give(fn() => config('geocoder.cache.bank_ttl_minutes'));
-        $this->app->when(PartyService::class)->needs('$cacheTtlMinutes')->give(fn() => config('geocoder.cache.party_ttl_minutes'));
-        $this->app->when(AddressService::class)->needs('$addressCacheTtlMinutes')->give(fn() => config('geocoder.cache.address_ttl_minutes'));
-        $this->app->when(AddressService::class)->needs('$countryCacheTtlMinutes')->give(fn() => config('geocoder.cache.country_ttl_minutes'));
+        $this->app->bind(CacheInterface::class, LaravelCache::class);
+
+        $this->app->when(BankService::class)->needs('$cacheTtlMinutes')->give(fn () => config('geocoder.cache.bank_ttl_minutes'));
+        $this->app->when(PartyService::class)->needs('$cacheTtlMinutes')->give(fn () => config('geocoder.cache.party_ttl_minutes'));
+        $this->app->when(AddressService::class)->needs('$addressCacheTtlMinutes')->give(fn () => config('geocoder.cache.address_ttl_minutes'));
+        $this->app->when(AddressService::class)->needs('$countryCacheTtlMinutes')->give(fn () => config('geocoder.cache.country_ttl_minutes'));
     }
 
     public function boot(): void
     {
         $this->registerRateLimiter();
-        $this->loadRoutesFrom(__DIR__ . '/../Presentation/Api/Routes/api.php');
+        $this->loadRoutesFrom(__DIR__.'/../Presentation/Api/Routes/api.php');
     }
 
     private function registerRateLimiter(): void
