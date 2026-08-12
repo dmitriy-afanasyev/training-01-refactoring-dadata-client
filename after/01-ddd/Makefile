@@ -66,3 +66,10 @@ logs: ## Показать логи Sail
 
 vendor-update: ## Обновить пакеты
 	./vendor/bin/sail composer update
+
+check-xdebug: ## Проверка загруженных расширений для дебага и генерации покрытия
+	@./vendor/bin/sail php -r "\
+		echo 'PCOV:  ' . (extension_loaded('pcov') ? '✅ Загружен' : '❌ Не загружен') . PHP_EOL; \
+		echo 'Xdebug: ' . (extension_loaded('xdebug') ? '✅ Загружен' : '❌ Не загружен') . PHP_EOL; \
+		echo 'Xdebug mode: ' . (ini_get('xdebug.mode') ?: 'не задан') . PHP_EOL; \
+	"
