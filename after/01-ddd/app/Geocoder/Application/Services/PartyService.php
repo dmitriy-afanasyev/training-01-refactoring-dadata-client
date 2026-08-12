@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace App\Geocoder\Application\Services;
 
+use App\Geocoder\Application\Caching\CacheInterface;
 use App\Geocoder\Application\DTO\PartyData;
 use App\Geocoder\Domain\Exceptions\ExternalApiException;
 use App\Geocoder\Domain\Exceptions\PartyNotFoundException;
 use App\Geocoder\Domain\Repositories\PartyRepositoryInterface;
 use App\Geocoder\Domain\ValueObjects\Inn;
-use Illuminate\Support\Facades\Cache;
 
 readonly class PartyService
 {
     public function __construct(
         private PartyRepositoryInterface $repository,
+        private CacheInterface $cache,
         private int $cacheTtlMinutes = 1440,
     ) {}
 
@@ -24,10 +25,10 @@ readonly class PartyService
      */
     public function findByInn(string $inn): PartyData
     {
-        $data = Cache::remember(
+        $data = $this->cache->remember(
             "geocoder.party.inn.{$inn}",
-            now()->addMinutes($this->cacheTtlMinutes),
-            fn() => $this->fetchPartyData($inn)
+            $this->cacheTtlMinutes,
+            fn () => $this->fetchPartyData($inn)
         );
 
         return PartyData::fromArray($data);
