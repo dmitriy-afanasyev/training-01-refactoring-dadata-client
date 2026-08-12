@@ -128,14 +128,17 @@ DADATA_BASE_URL=https://suggestions.dadata.ru/suggestions/api/4_1/rs
 
 ### Другие команды Makefile
 
-| Команда         | Что делает                 |
-| --------------- | -------------------------- |
-| `make help`     | Показать список всех целей |
-| `make up`       | Запустить Sail-контейнеры  |
-| `make down`     | Остановить Sail-контейнеры |
-| `make test`     | Запустить все тесты        |
-| `make coverage` | Тесты + отчёт по покрытию  |
-| `make logs`     | Показать логи Sail         |
+| Команда              | Что делает                                                      |
+| -------------------- | --------------------------------------------------------------- |
+| `make help`          | Показать список всех целей                                      |
+| `make up`            | Запустить Sail-контейнеры                                       |
+| `make down`          | Остановить Sail-контейнеры                                      |
+| `make test`          | Запустить все тесты                                             |
+| `make test-compact`  | Запустить тесты с компактным выводом                            |
+| `make test-coverage` | Тесты + отчёт по покрытию                                       |
+| `make logs`          | Показать логи Sail                                              |
+| `make vendor-update` | Обновить пакеты                                                 |
+| `make check-xdebug`  | Проверка загруженных расширений для дебага и генерации покрытия |
 
 ## 🧪 Запуск тестов
 
@@ -169,19 +172,17 @@ make test
 ### С генерацией отчета по покрытию
 
 ```bash
-make coverage
+make test-coverage
 ```
 
-Отчёт сохраняется в `storage/app/coverage-report/`. `make coverage` автоматически откроет его в браузере; если автоматическое открытие недоступно, будет выведен путь к отчёту.
-
-> Для генерации отчёта требуется режим xdebug `coverage`: добавьте `SAIL_XDEBUG_MODE=coverage` в `.env` и перезапустите контейнер (`make up`).
+Отчёт сохраняется в `storage/app/coverage-report/`. `make test-coverage` автоматически откроет его в браузере; если автоматическое открытие недоступно, будет выведен путь к отчёту.
 
 ### Регулярные обновления
 
 ```bash
 make up
-make vendor_update
-make test
+make vendor-update
+make test-compact
 ```
 
 ## 📡 API Endpoints
