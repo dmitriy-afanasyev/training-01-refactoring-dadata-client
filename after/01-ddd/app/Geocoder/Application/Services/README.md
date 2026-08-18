@@ -24,5 +24,4 @@
 
 ### Дополнительные материалы
 
-Подробнее о **SRP** см. в файле:  
-`Infrastructure/Http/Dadata/README.md`
+Подробнее о **SRP** см. в файле: [Dadata/README.md](../../Infrastructure/Http/Dadata/README.md)

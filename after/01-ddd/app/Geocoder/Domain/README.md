@@ -4,7 +4,7 @@
 
 Domain — это **сердце DDD-архитектуры**. Здесь живут бизнес-правила, понятия и язык бизнеса (Ubiquitous Language). Доменный слой ничего не знает о базах данных, HTTP, Laravel или фреймворках — это чистый PHP, который описывает **бизнес-смысл**, а не технические детали.
 
-> **Dependency Rule:** Domain — самый внутренний слой, он не зависит ни от кого. Все остальные слои (Application, Infrastructure, Presentation) зависят от Domain, а не наоборот.
+> **Dependency Rule:** Domain — самый внутренний слой, он не зависит ни от кого. Все остальные слои зависят от Domain.
 
 ```
 Presentation → Application → *Domain* ← Infrastructure
