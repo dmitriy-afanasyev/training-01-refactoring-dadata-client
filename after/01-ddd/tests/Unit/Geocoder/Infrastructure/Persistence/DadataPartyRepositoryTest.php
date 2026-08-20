@@ -71,6 +71,7 @@ class DadataPartyRepositoryTest extends TestCase
 
         $this->api
             ->method('findPartyByInn')
+            ->with($innValue)
             ->willReturn([
                 'name' => ['full_with_opf' => 'ООО Тест'],
                 'inn' => $innValue,
@@ -91,6 +92,7 @@ class DadataPartyRepositoryTest extends TestCase
 
         $this->api
             ->method('findPartyByInn')
+            ->with($innValue)
             ->willReturn([
                 'name' => ['short_with_opf' => 'ООО Тест'],
                 'inn' => $innValue,

@@ -70,6 +70,7 @@ class DadataBankRepositoryTest extends TestCase
 
         $this->api
             ->method('findBankByBic')
+            ->with($bicValue)
             ->willReturn([
                 'bic' => $bicValue,
                 'name' => ['full' => 'Банк', 'short' => 'Б'],

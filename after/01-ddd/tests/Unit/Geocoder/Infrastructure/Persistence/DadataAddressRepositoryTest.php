@@ -62,6 +62,7 @@ class DadataAddressRepositoryTest extends TestCase
     {
         $this->api
             ->method('searchAddress')
+            ->with('НесуществующийАдрес', null)
             ->willReturn([]);
 
         $result = $this->repository->searchAddress('НесуществующийАдрес');
