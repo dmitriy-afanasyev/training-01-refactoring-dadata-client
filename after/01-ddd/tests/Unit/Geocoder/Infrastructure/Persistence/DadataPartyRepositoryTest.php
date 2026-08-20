@@ -10,13 +10,14 @@ use App\Geocoder\Domain\ValueObjects\Inn;
 use App\Geocoder\Infrastructure\Http\Dadata\DadataApiInterface;
 use App\Geocoder\Infrastructure\Persistence\DadataPartyRepository;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 #[CoversClass(DadataPartyRepository::class)]
 class DadataPartyRepositoryTest extends TestCase
 {
     private DadataApiInterface|MockObject $api;
+
     private DadataPartyRepository $repository;
 
     protected function setUp(): void

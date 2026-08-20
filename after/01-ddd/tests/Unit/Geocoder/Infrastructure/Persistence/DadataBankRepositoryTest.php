@@ -10,13 +10,14 @@ use App\Geocoder\Domain\ValueObjects\Bic;
 use App\Geocoder\Infrastructure\Http\Dadata\DadataApiInterface;
 use App\Geocoder\Infrastructure\Persistence\DadataBankRepository;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 #[CoversClass(DadataBankRepository::class)]
 class DadataBankRepositoryTest extends TestCase
 {
     private DadataApiInterface|MockObject $api;
+
     private DadataBankRepository $repository;
 
     protected function setUp(): void

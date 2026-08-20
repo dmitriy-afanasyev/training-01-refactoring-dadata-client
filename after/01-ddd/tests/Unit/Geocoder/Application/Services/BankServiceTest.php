@@ -15,7 +15,6 @@ use App\Geocoder\Domain\Exceptions\InvalidBicException;
 use App\Geocoder\Domain\Repositories\BankRepositoryInterface;
 use App\Geocoder\Domain\ValueObjects\Bic;
 use App\Geocoder\Domain\ValueObjects\Inn;
-use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\TestDox;
@@ -118,31 +117,36 @@ class BankServiceTest extends TestCase
     }
 
     #[TestDox('Выбрасывает исключение если банк не найден')]
-    #[AllowMockObjectsWithoutExpectations]
     public function test_find_by_bic_throws_bank_not_found(): void
     {
         $bic = '044525225';
 
         $this->mockCacheRememberThrows($bic, new BankNotFoundException($bic));
 
+        $this->repository
+            ->expects($this->never())
+            ->method('findByBicOrFail');
+
         $this->expectException(BankNotFoundException::class);
         $this->service->findByBic($bic);
     }
 
     #[TestDox('Выбрасывает исключение при ошибке внешнего API')]
-    #[AllowMockObjectsWithoutExpectations]
     public function test_find_by_bic_throws_external_api_exception(): void
     {
         $bic = '044525225';
 
         $this->mockCacheRememberThrows($bic, new ExternalApiException('API error'));
 
+        $this->repository
+            ->expects($this->never())
+            ->method('findByBicOrFail');
+
         $this->expectException(ExternalApiException::class);
         $this->service->findByBic($bic);
     }
 
     #[TestDox('Выбрасывает исключение при невалидном БИК')]
-    #[AllowMockObjectsWithoutExpectations]
     #[DataProvider('invalidBicProvider')]
     public function test_find_by_bic_throws_invalid_bic_exception(string $bic): void
     {
@@ -150,6 +154,10 @@ class BankServiceTest extends TestCase
             ->expects($this->once())
             ->method('remember')
             ->willReturnCallback(fn ($key, $ttl, $callback) => $callback());
+
+        $this->repository
+            ->expects($this->never())
+            ->method('findByBicOrFail');
 
         $this->expectException(InvalidBicException::class);
         $this->service->findByBic($bic);

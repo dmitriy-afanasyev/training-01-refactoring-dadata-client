@@ -8,13 +8,14 @@ use App\Geocoder\Domain\ValueObjects\Address;
 use App\Geocoder\Infrastructure\Http\Dadata\DadataApiInterface;
 use App\Geocoder\Infrastructure\Persistence\DadataAddressRepository;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 #[CoversClass(DadataAddressRepository::class)]
 class DadataAddressRepositoryTest extends TestCase
 {
     private DadataApiInterface|MockObject $api;
+
     private DadataAddressRepository $repository;
 
     protected function setUp(): void

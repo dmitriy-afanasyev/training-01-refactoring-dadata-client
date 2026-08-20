@@ -14,7 +14,6 @@ use App\Geocoder\Domain\Exceptions\InvalidInnException;
 use App\Geocoder\Domain\Exceptions\PartyNotFoundException;
 use App\Geocoder\Domain\Repositories\PartyRepositoryInterface;
 use App\Geocoder\Domain\ValueObjects\Inn;
-use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\TestDox;
@@ -115,31 +114,36 @@ class PartyServiceTest extends TestCase
     }
 
     #[TestDox('Выбрасывает исключение если организация не найдена')]
-    #[AllowMockObjectsWithoutExpectations]
     public function test_find_by_inn_throws_party_not_found(): void
     {
         $inn = '7707083893';
 
         $this->mockCacheRememberThrows($inn, new PartyNotFoundException($inn));
 
+        $this->repository
+            ->expects($this->never())
+            ->method('findByInn');
+
         $this->expectException(PartyNotFoundException::class);
         $this->service->findByInn($inn);
     }
 
     #[TestDox('Выбрасывает исключение при ошибке внешнего API')]
-    #[AllowMockObjectsWithoutExpectations]
     public function test_find_by_inn_throws_external_api_exception(): void
     {
         $inn = '7707083893';
 
         $this->mockCacheRememberThrows($inn, new ExternalApiException('API error'));
 
+        $this->repository
+            ->expects($this->never())
+            ->method('findByInn');
+
         $this->expectException(ExternalApiException::class);
         $this->service->findByInn($inn);
     }
 
     #[TestDox('Выбрасывает исключение при невалидном ИНН')]
-    #[AllowMockObjectsWithoutExpectations]
     #[DataProvider('invalidInnProvider')]
     public function test_find_by_inn_throws_invalid_inn_exception(string $inn): void
     {
@@ -147,6 +151,10 @@ class PartyServiceTest extends TestCase
             ->expects($this->once())
             ->method('remember')
             ->willReturnCallback(fn ($key, $ttl, $callback) => $callback());
+
+        $this->repository
+            ->expects($this->never())
+            ->method('findByInn');
 
         $this->expectException(InvalidInnException::class);
         $this->service->findByInn($inn);
