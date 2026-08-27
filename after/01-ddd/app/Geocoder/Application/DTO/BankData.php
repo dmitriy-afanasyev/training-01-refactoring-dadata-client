@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Geocoder\Application\DTO;
 
-use App\Geocoder\Domain\Enums\BankStatus;
-
 final readonly class BankData
 {
     /**
@@ -17,7 +15,7 @@ final readonly class BankData
      * @param bool $isActive Активен ли банк
      * @param string|null $correspondentAccount Корреспондентский счёт
      * @param string|null $address Адрес банка
-     * @param string|null $status Статус банка (строковое представление)
+     * @param string|null $status Статус банка
      */
     public function __construct(
         public string $id,
