@@ -39,4 +39,34 @@ class AddressTest extends TestCase
 
         Address::fromString('   ');
     }
+
+    public function test_empty_string_after_trim_throws_exception(): void
+    {
+        $this->expectException(InvalidAddressException::class);
+
+        Address::fromString('  ');
+    }
+
+    public function test_special_characters_allowed(): void
+    {
+        $address = Address::fromString('г. Москва, ул. Ленина, д. 1, кв. 5!');
+
+        $this->assertEquals('г. Москва, ул. Ленина, д. 1, кв. 5!', $address->value);
+    }
+
+    public function test_unicode_characters_allowed(): void
+    {
+        $address = Address::fromString('г. Казань, ул. Баумана, д. 1');
+
+        $this->assertEquals('г. Казань, ул. Баумана, д. 1', $address->value);
+    }
+
+    public function test_max_length_allowed(): void
+    {
+        $longAddress = str_repeat('г. Москва, ул. ', 10) . 'д. 1';
+
+        $address = Address::fromString($longAddress);
+
+        $this->assertEquals($longAddress, $address->value);
+    }
 }

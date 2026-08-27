@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Geocoder\Application\Services;
 
 use App\Geocoder\Domain\Exceptions\ExternalApiException;
+use App\Geocoder\Domain\Exceptions\InvalidAddressException;
 use App\Geocoder\Domain\Repositories\AddressRepositoryInterface;
 use App\Geocoder\Domain\ValueObjects\Address;
 
@@ -41,9 +42,12 @@ readonly class AddressService
 
     /**
      * @throws ExternalApiException
+     * @throws InvalidAddressException
      */
     public function searchAddress(string $query, ?array $locations = null): array
     {
+        Address::fromString($query); // Валидация входных данных перед отправкой в API
+
         $cacheKey = sprintf(
             'geocoder.address.%s.%s',
             md5($query),
