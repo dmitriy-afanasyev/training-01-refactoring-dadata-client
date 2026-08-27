@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Unit\Geocoder\Presentation\Api\Transformers;
 
 use App\Geocoder\Application\DTO\PartyData;
-use App\Geocoder\Domain\Enums\PartyStatus;
 use App\Geocoder\Presentation\Api\Transformers\PartyTransformer;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
@@ -24,7 +23,8 @@ class PartyTransformerTest extends TestCase
             ogrn: '1027700132195',
             okpo: '00032537',
             address: 'г. Москва, ул. Вавилова, д. 19',
-            status: PartyStatus::ACTIVE,
+            status: 'ACTIVE',
+            isActive: true
         );
 
         $transformer = new PartyTransformer();
@@ -48,6 +48,7 @@ class PartyTransformerTest extends TestCase
             name: 'ООО Тест',
             shortName: 'Тест',
             inn: '7707083893',
+            isActive: false
         );
 
         $transformer = new PartyTransformer();

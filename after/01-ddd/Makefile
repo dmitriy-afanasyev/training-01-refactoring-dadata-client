@@ -50,6 +50,9 @@ test: ## Запустить все тесты
 test-compact: ## Тесты в компактном режиме
 	./vendor/bin/sail test --compact
 
+test-filter: ## Тесты конкретного фильтра
+	./vendor/bin/sail test --filter="$(filter-out test-filter, $(MAKECMDGOALS))"
+
 COVERAGE_DIR := storage/app/coverage-report
 
 test-coverage: ## Запустить все тесты, создать и открыть отчет по покрытию

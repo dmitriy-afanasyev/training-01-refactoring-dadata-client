@@ -25,7 +25,7 @@ class PartyTest extends TestCase
             ogrn: '1027700132195',
             okpo: '00032537',
             address: 'г. Москва, ул. Вавилова, д. 19',
-            status: PartyStatus::ACTIVE,
+            status: PartyStatus::ACTIVE
         );
 
         $this->assertEquals('ПАО "СБЕРБАНК"', $party->name);
@@ -88,6 +88,7 @@ class PartyTest extends TestCase
             'okpo' => null,
             'address' => null,
             'status' => 'ACTIVE',
+            'is_active' => true,
         ], $array);
     }
 }

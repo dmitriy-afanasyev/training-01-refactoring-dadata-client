@@ -52,6 +52,7 @@ final class Party
             'okpo' => $this->okpo,
             'address' => $this->address,
             'status' => $this->status?->value,
+            'is_active' => $this->isActive(),
         ];
     }
 }

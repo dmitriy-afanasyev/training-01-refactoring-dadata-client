@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Geocoder\Application\DTO;
 
-use App\Geocoder\Domain\Enums\PartyStatus;
-
 final readonly class PartyData
 {
     /**
@@ -17,18 +15,20 @@ final readonly class PartyData
      * @param string|null $ogrn ОГРН компании
      * @param string|null $okpo ОКПО компании
      * @param string|null $address Адрес компании
-     * @param PartyStatus|null $status Статус компании
+     * @param string|null $status Статус компании
+     * @param bool|null $isActive Статус активности компании
      */
     public function __construct(
         public string $id,
         public string $name,
         public string $shortName,
         public string $inn,
+        public bool $isActive,
         public ?string $kpp = null,
         public ?string $ogrn = null,
         public ?string $okpo = null,
         public ?string $address = null,
-        public ?PartyStatus $status = null,
+        public ?string $status = null
     ) {}
 
     /**
@@ -41,13 +41,12 @@ final readonly class PartyData
             name: $data['name'] ?? '',
             shortName: $data['short_name'] ?? '',
             inn: $data['inn'] ?? '',
+            isActive: $data['is_active'],
             kpp: $data['kpp'] ?? null,
             ogrn: $data['ogrn'] ?? null,
             okpo: $data['okpo'] ?? null,
             address: $data['address'] ?? null,
-            status: isset($data['status']) && is_string($data['status'])
-                ? PartyStatus::fromString($data['status'])
-                : ($data['status'] ?? null),
+            status: $data['status'] ?? null
         );
     }
 }

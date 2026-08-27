@@ -63,7 +63,7 @@ class PartyServiceTest extends TestCase
             ->expects($this->once())
             ->method('findByInn')
             // Проверяем что сервис передал в репозиторий корректный Inn VO со значением $inn
-            ->with($this->callback(fn (Inn $innVO): bool => $innVO->value === $inn))
+            ->with($this->callback(fn(Inn $innVO): bool => $innVO->value === $inn))
             ->willReturn($party);
 
         $result = $this->service->findByInn($inn);
@@ -77,7 +77,8 @@ class PartyServiceTest extends TestCase
             ogrn: '1027700132195',
             okpo: '00032537',
             address: 'г Москва, ул Вавилова, д 19',
-            status: PartyStatus::ACTIVE,
+            status: 'ACTIVE',
+            isActive: true,
         );
 
         $this->assertEquals($expected, $result);
@@ -150,7 +151,7 @@ class PartyServiceTest extends TestCase
         $this->cache
             ->expects($this->once())
             ->method('remember')
-            ->willReturnCallback(fn ($key, $ttl, $callback) => $callback());
+            ->willReturnCallback(fn($key, $ttl, $callback) => $callback());
 
         $this->repository
             ->expects($this->never())
@@ -192,7 +193,7 @@ class PartyServiceTest extends TestCase
             ->expects($this->once())
             ->method('remember')
             ->with("geocoder.party.inn.{$inn}", 1440, static::isCallable())
-            ->willReturnCallback(fn ($key, $ttl, $callback) => $callback());
+            ->willReturnCallback(fn($key, $ttl, $callback) => $callback());
     }
 
     private function mockCacheRememberThrows(string $inn, \Throwable $exception): void
