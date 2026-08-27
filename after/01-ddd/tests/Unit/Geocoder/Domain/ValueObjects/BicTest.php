@@ -54,4 +54,39 @@ class BicTest extends TestCase
 
         Bic::fromString('invalid');
     }
+
+    public function test_empty_string_throws_exception(): void
+    {
+        $this->expectException(InvalidBicException::class);
+
+        Bic::fromString('');
+    }
+
+    public function test_special_characters_throws_exception(): void
+    {
+        $this->expectException(InvalidBicException::class);
+
+        Bic::fromString('04452522!');
+    }
+
+    public function test_spaces_inside_bic_throws_exception(): void
+    {
+        $this->expectException(InvalidBicException::class);
+
+        Bic::fromString('044 525 225');
+    }
+
+    public function test_negative_number_throws_exception(): void
+    {
+        $this->expectException(InvalidBicException::class);
+
+        Bic::fromString('-044525225');
+    }
+
+    public function test_only_whitespace_throws_exception(): void
+    {
+        $this->expectException(InvalidBicException::class);
+
+        Bic::fromString('   ');
+    }
 }
