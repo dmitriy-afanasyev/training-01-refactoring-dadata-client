@@ -60,7 +60,7 @@ class BankTest extends TestCase
             'inn' => '7707083893',
             'correspondent_account' => '30101810400000000225',
             'address' => null,
-            'status' => BankStatus::ACTIVE,
+            'status' => 'ACTIVE',
             'is_active' => true,
         ], $array);
     }

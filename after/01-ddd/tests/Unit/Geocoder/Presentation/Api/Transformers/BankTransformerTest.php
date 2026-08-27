@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Unit\Geocoder\Presentation\Api\Transformers;
 
 use App\Geocoder\Application\DTO\BankData;
-use App\Geocoder\Domain\Enums\BankStatus;
 use App\Geocoder\Presentation\Api\Transformers\BankTransformer;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
@@ -24,7 +23,7 @@ class BankTransformerTest extends TestCase
             isActive: true,
             correspondentAccount: '30101810400000000225',
             address: 'г. Москва, ул. Вавилова, д. 19',
-            status: BankStatus::ACTIVE,
+            status: 'ACTIVE',
         );
 
         $transformer = new BankTransformer();

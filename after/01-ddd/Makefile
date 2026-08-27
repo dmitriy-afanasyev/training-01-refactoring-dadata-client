@@ -50,7 +50,7 @@ test: ## Запустить все тесты
 test-compact: ## Тесты в компактном режиме
 	./vendor/bin/sail test --compact
 
-test-filter: ## Тесты конкретного фильтра
+test-filter: ## Тесты конкретного фильтра make: test-filter "PartyDataTest|PartyTest"
 	./vendor/bin/sail test --filter="$(filter-out test-filter, $(MAKECMDGOALS))"
 
 COVERAGE_DIR := storage/app/coverage-report

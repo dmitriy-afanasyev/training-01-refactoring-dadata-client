@@ -26,7 +26,7 @@ final class BankTransformer extends Transformer
             'inn' => $data->inn,
             'correspondent_account' => $data->correspondentAccount,
             'address' => $data->address,
-            'status' => $data->status?->value,
+            'status' => $data->status,
             'is_active' => $data->isActive,
         ];
     }

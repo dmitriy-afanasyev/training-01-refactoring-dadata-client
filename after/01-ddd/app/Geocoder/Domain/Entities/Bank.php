@@ -49,7 +49,7 @@ final class Bank
             'inn' => $this->inn->value,
             'correspondent_account' => $this->correspondentAccount,
             'address' => $this->address,
-            'status' => $this->status,
+            'status' => $this->status?->value,
             'is_active' => $this->isActive(),
         ];
     }

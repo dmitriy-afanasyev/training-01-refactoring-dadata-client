@@ -14,9 +14,10 @@ final readonly class BankData
      * @param string $shortName Краткое название банка
      * @param string $bic БИК банка
      * @param string $inn ИНН банка
+     * @param bool $isActive Активен ли банк
      * @param string|null $correspondentAccount Корреспондентский счёт
      * @param string|null $address Адрес банка
-     * @param BankStatus|null $status Статус банка
+     * @param string|null $status Статус банка (строковое представление)
      */
     public function __construct(
         public string $id,
@@ -27,7 +28,7 @@ final readonly class BankData
         public bool $isActive,
         public ?string $correspondentAccount = null,
         public ?string $address = null,
-        public ?BankStatus $status = null,
+        public ?string $status = null,
 
     ) {}
 
@@ -45,9 +46,7 @@ final readonly class BankData
             isActive: $data['is_active'] ?? throw new \InvalidArgumentException('Bank is_active is required'),
             correspondentAccount: $data['correspondent_account'] ?? null,
             address: $data['address'] ?? null,
-            status: isset($data['status']) && is_string($data['status'])
-                ? BankStatus::fromString($data['status'])
-                : ($data['status'] ?? null),
+            status: $data['status'] ?? null,
         );
     }
 }

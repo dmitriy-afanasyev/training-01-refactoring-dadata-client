@@ -63,12 +63,12 @@ class BankServiceTest extends TestCase
             ->expects($this->once())
             ->method('remember')
             ->with("geocoder.bank.bic.{$bic}", 1440, static::isCallable())
-            ->willReturnCallback(fn ($key, $ttl, $callback) => $callback());
+            ->willReturnCallback(fn($key, $ttl, $callback) => $callback());
 
         $this->repository
             ->expects($this->once())
             ->method('findByBicOrFail')
-            ->with($this->callback(fn (Bic $bicVO): bool => $bicVO->value === $bic))
+            ->with($this->callback(fn(Bic $bicVO): bool => $bicVO->value === $bic))
             ->willReturn($bank);
 
         $result = $this->service->findByBic($bic);
@@ -80,7 +80,7 @@ class BankServiceTest extends TestCase
             bic: $bic,
             inn: '7707083893',
             isActive: true,
-            status: BankStatus::ACTIVE,
+            status: 'ACTIVE',
         );
 
         $this->assertEquals($expected, $result);
@@ -153,7 +153,7 @@ class BankServiceTest extends TestCase
         $this->cache
             ->expects($this->once())
             ->method('remember')
-            ->willReturnCallback(fn ($key, $ttl, $callback) => $callback());
+            ->willReturnCallback(fn($key, $ttl, $callback) => $callback());
 
         $this->repository
             ->expects($this->never())

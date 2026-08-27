@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Unit\Geocoder\Application\DTO;
 
 use App\Geocoder\Application\DTO\BankData;
-use App\Geocoder\Domain\Enums\BankStatus;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -35,7 +34,7 @@ class BankDataTest extends TestCase
         $this->assertEquals('7707083893', $bankData->inn);
         $this->assertEquals('30101810400000000225', $bankData->correspondentAccount);
         $this->assertEquals('г. Москва, ул. Вавилова, д. 19', $bankData->address);
-        $this->assertEquals(BankStatus::ACTIVE, $bankData->status);
+        $this->assertEquals('ACTIVE', $bankData->status);
     }
 
     public function test_create_with_null_values(): void
