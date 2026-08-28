@@ -34,7 +34,7 @@ class DadataAddressRepositoryTest extends TestCase
             ->with('Ленина', null)
             ->willReturn(['г. Москва, ул. Ленина', 'г. Санкт-Петербург, ул. Ленина']);
 
-        $result = $this->repository->searchAddress('Ленина');
+        $result = $this->repository->searchAddress(Address::fromString('Ленина'));
 
         $this->assertCount(2, $result);
         $this->assertInstanceOf(Address::class, $result[0]);
@@ -53,7 +53,7 @@ class DadataAddressRepositoryTest extends TestCase
             ->with('Ленина', $locations)
             ->willReturn(['г. Москва, ул. Ленина']);
 
-        $result = $this->repository->searchAddress('Ленина', $locations);
+        $result = $this->repository->searchAddress(Address::fromString('Ленина'), $locations);
 
         $this->assertCount(1, $result);
         $this->assertEquals('г. Москва, ул. Ленина', $result[0]->value);
@@ -66,7 +66,7 @@ class DadataAddressRepositoryTest extends TestCase
             ->with('НесуществующийАдрес', null)
             ->willReturn([]);
 
-        $result = $this->repository->searchAddress('НесуществующийАдрес');
+        $result = $this->repository->searchAddress(Address::fromString('НесуществующийАдрес'));
 
         $this->assertEmpty($result);
     }

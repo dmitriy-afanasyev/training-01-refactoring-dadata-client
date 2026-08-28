@@ -46,18 +46,18 @@ readonly class AddressService
      */
     public function searchAddress(string $query, ?array $locations = null): array
     {
-        Address::fromString($query); // Валидация входных данных перед отправкой в API
+        $address = Address::fromString($query); // Валидация входных данных перед отправкой в API
 
         $cacheKey = sprintf(
             'geocoder.address.%s.%s',
-            md5($query),
+            md5($address->value),
             $locations ? md5(json_encode($locations, JSON_THROW_ON_ERROR)) : 'all'
         );
 
         return Cache::remember(
             $cacheKey,
             now()->addMinutes($this->addressCacheTtlMinutes),
-            fn() => $this->searchAddresses($query, $locations)
+            fn() => $this->searchAddresses($address, $locations)
         );
     }
 
@@ -77,9 +77,9 @@ readonly class AddressService
      * @param array<string, mixed>|null $locations
      * @return array<int, string>
      */
-    private function searchAddresses(string $query, ?array $locations): array
+    private function searchAddresses(Address $address, ?array $locations): array
     {
-        $addresses = $this->repository->searchAddress($query, $locations);
+        $addresses = $this->repository->searchAddress($address, $locations);
 
         return array_map(
             fn(Address $address): string => $address->value,

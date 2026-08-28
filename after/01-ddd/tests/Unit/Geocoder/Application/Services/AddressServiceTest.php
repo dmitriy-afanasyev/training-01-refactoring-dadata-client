@@ -45,7 +45,7 @@ class AddressServiceTest extends TestCase
         $this->repository
             ->expects($this->once())
             ->method('searchAddress')
-            ->with('Ботаническая', null)
+            ->with(Address::fromString('Ботаническая'), null)
             ->willReturn($addresses);
 
         $result = $this->service->searchAddress('Ботаническая');
@@ -76,7 +76,7 @@ class AddressServiceTest extends TestCase
         $this->repository
             ->expects($this->once())
             ->method('searchAddress')
-            ->with($query, $locations)
+            ->with(Address::fromString($query), $locations)
             ->willReturn($addresses);
 
         $result = $this->service->searchAddress($query, $locations);
@@ -119,7 +119,7 @@ class AddressServiceTest extends TestCase
         $this->repository
             ->expects($this->once())
             ->method('searchAddress')
-            ->with('Неизвестный адрес', null)
+            ->with(Address::fromString('Неизвестный адрес'), null)
             ->willThrowException($exception);
 
         $this->expectException(ExternalApiException::class);

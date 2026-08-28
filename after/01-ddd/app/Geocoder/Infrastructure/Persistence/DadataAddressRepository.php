@@ -21,9 +21,9 @@ readonly class DadataAddressRepository implements AddressRepositoryInterface
         private DadataApiInterface $api,
     ) {}
 
-    public function searchAddress(string $query, ?array $locations = null): array
+    public function searchAddress(Address $address, ?array $locations = null): array
     {
-        $values = $this->api->searchAddress($query, $locations);
+        $values = $this->api->searchAddress($address->value, $locations);
 
         // DDD: Доменный слой из репозитория получает доменные сущности
         //  Слой инфраструктуры зависит от слоя Домена и может напрямую использовать сущности.
