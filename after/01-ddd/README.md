@@ -97,6 +97,8 @@ cd training-01-refactoring-dadata-client/after/01-ddd
 
 ### 2. Установить и запустить
 
+Возможные проблемы - [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
+
 Установка автоматизирована в [Makefile](Makefile) — одной командой:
 
 ```bash
@@ -133,8 +135,8 @@ DADATA_BASE_URL=https://suggestions.dadata.ru/suggestions/api/4_1/rs
 | `make help`          | Показать список всех целей                                      |
 | `make up`            | Запустить Sail-контейнеры                                       |
 | `make down`          | Остановить Sail-контейнеры                                      |
-| `make test`          | Запустить все тесты                                             |
-| `make test-compact`  | Запустить тесты с компактным выводом                            |
+| `make test`          | Запустить все тесты (с компактным выводом)                      |
+| `make test-full`     | Запустить тесты (полный вывод)                                  |
 | `make test-coverage` | Тесты + отчёт по покрытию                                       |
 | `make logs`          | Показать логи Sail                                              |
 | `make vendor-update` | Обновить пакеты                                                 |

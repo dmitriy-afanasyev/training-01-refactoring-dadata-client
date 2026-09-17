@@ -44,11 +44,11 @@ up: ## Запустить Sail-контейнеры
 down: ## Остановить Sail-контейнеры
 	./vendor/bin/sail down
 
-test: ## Запустить все тесты
-	./vendor/bin/sail test
-
-test-compact: ## Тесты в компактном режиме
+test: ## Запустить все тесты (в компактном режиме)
 	./vendor/bin/sail test --compact
+
+test-full: ## Запустить все тесты
+	./vendor/bin/sail test
 
 test-filter: ## Тесты конкретного фильтра make: test-filter "PartyDataTest|PartyTest"
 	./vendor/bin/sail test --filter="$(filter-out test-filter, $(MAKECMDGOALS))"
